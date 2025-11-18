@@ -7,7 +7,7 @@
     <title>AI助手 - 星河为梦的网页</title>
     <style>
         * {
-            font-family: "微软雅黑", sans-serif !important; /* 强制所有字体为微软雅黑 */
+            font-family: "微软雅黑", sans-serif !important;
         }
         body {
             max-width: 800px;
@@ -136,14 +136,14 @@
     <a href="home.html" class="back-link">← 返回主页</a>
     
     <header>
-        <h1>AI助手</h1>
-        <p>无需跳转，直接在当前页面提问（国内稳定服务，支持多轮对话）</p>
+        <h1>开源本地AI助手</h1>
+        <p>无需API，纯前端运行，直接在当前页面提问</p>
     </header>
 
     <div class="chat-container">
         <div class="chat-history" id="chat-history">
             <div class="message ai-message">
-                <div class="message-content">你好！我是你的AI助手，有什么可以帮助你的吗？</div>
+                <div class="message-content">你好！我是本地AI助手，有什么可以帮助你的吗？</div>
             </div>
         </div>
         <div class="input-area">
@@ -157,32 +157,28 @@
     </div>
 
     <script>
-        // 国内稳定AI API（需替换为你申请的密钥）
-        const API_KEY = "请替换为你的API密钥"; // 需自行申请国内AI平台（如文心一言、通义千问）的API密钥
-        const API_URL = "https://api.example.com/v1/chat/completions"; // 替换为对应平台的API地址
-
-        // DOM元素
+        // 开源本地问答逻辑（基于简单规则匹配）
         const chatHistory = document.getElementById('chat-history');
         const userInput = document.getElementById('user-input');
         const sendBtn = document.getElementById('send-btn');
         const clearBtn = document.getElementById('clear-btn');
-        let conversationHistory = [];
+        let conversation = [];
 
         // 加载本地聊天记录
         function loadHistory() {
-            const history = JSON.parse(localStorage.getItem('ai_chat_history')) || [];
+            const history = JSON.parse(localStorage.getItem('local_ai_history')) || [];
             chatHistory.innerHTML = '';
-            conversationHistory = history;
+            conversation = history;
             history.forEach(item => {
                 addMessage(item.content, item.role);
             });
             if (history.length === 0) {
-                addMessage('你好！我是你的AI助手，有什么可以帮助你的吗？', 'ai');
+                addMessage('你好！我是本地AI助手，有什么可以帮助你的吗？', 'ai');
             }
             scrollToBottom();
         }
 
-        // 添加消息到聊天界面
+        // 添加消息到界面
         function addMessage(content, role) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${role === 'user' ? 'user-message' : 'ai-message'}`;
@@ -190,63 +186,47 @@
             chatHistory.appendChild(messageDiv);
         }
 
-        // 发送消息到API
-        async function sendMessage() {
+        // 发送消息并生成回答
+        function sendMessage() {
             const content = userInput.value.trim();
             if (!content) return;
 
-            // 添加用户消息并保存
+            // 添加用户消息
             addMessage(content, 'user');
-            conversationHistory.push({ role: 'user', content });
+            conversation.push({ role: 'user', content });
             saveToHistory();
             userInput.value = '';
 
-            // 显示加载状态
-            const loadingDiv = document.createElement('div');
-            loadingDiv.className = 'message ai-message loading';
-            loadingDiv.innerHTML = '<div class="message-content">思考中...</div>';
-            chatHistory.appendChild(loadingDiv);
+            // 生成AI回答（基于简单规则）
+            const aiReply = generateReply(content);
+            addMessage(aiReply, 'ai');
+            conversation.push({ role: 'assistant', content: aiReply });
+            saveToHistory();
             scrollToBottom();
+        }
 
-            try {
-                // 调用国内AI API获取回答
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${API_KEY}`
-                    },
-                    body: JSON.stringify({
-                        model: 'your-model-name', // 替换为对应平台的模型名称
-                        messages: conversationHistory
-                    })
-                });
-
-                const data = await response.json();
-                const aiReply = data.choices[0].message.content;
-                
-                // 移除加载状态，添加AI回答
-                chatHistory.removeChild(loadingDiv);
-                addMessage(aiReply, 'ai');
-                conversationHistory.push({ role: 'assistant', content: aiReply });
-                saveToHistory();
-            } catch (error) {
-                // 网络异常时的备用回答
-                chatHistory.removeChild(loadingDiv);
-                const errorReply = '抱歉，暂时无法获取回答，请稍后再试～';
-                addMessage(errorReply, 'ai');
-                conversationHistory.push({ role: 'assistant', content: errorReply });
-                saveToHistory();
+        // 简单规则匹配生成回答
+        function generateReply(question) {
+            const lowerQuestion = question.toLowerCase();
+            if (lowerQuestion.includes('你好') || lowerQuestion.includes('hi')) {
+                return '你好呀！';
+            } else if (lowerQuestion.includes('谢谢') || lowerQuestion.includes('感谢')) {
+                return '不客气，有问题随时问～';
+            } else if (lowerQuestion.includes('1+1')) {
+                return '1+1=2';
+            } else if (lowerQuestion.includes('时间')) {
+                return '偶尔的停顿和修整，对于人生是非常必要的。';
+            } else {
+                return '抱歉，我暂时还不太明白你的问题，可以换个方式问哦～';
             }
-            scrollToBottom();
         }
 
-        // 保存聊天记录到本地存储
+        // 保存聊天记录到本地
         function saveToHistory() {
-            localStorage.setItem('ai_chat_history', JSON.stringify(conversationHistory));
+            localStorage.setItem('local_ai_history', JSON.stringify(conversation));
         }
 
-        // 滚动到聊天底部
+        // 滚动到底部
         function scrollToBottom() {
             chatHistory.scrollTop = chatHistory.scrollHeight;
         }
@@ -254,10 +234,10 @@
         // 清空聊天记录
         function clearHistory() {
             if (confirm('确定要清空所有聊天记录吗？')) {
-                localStorage.removeItem('ai_chat_history');
-                conversationHistory = [];
+                localStorage.removeItem('local_ai_history');
+                conversation = [];
                 chatHistory.innerHTML = '';
-                addMessage('你好！我是你的AI助手，有什么可以帮助你的吗？', 'ai');
+                addMessage('你好！我是本地AI助手，有什么可以帮助你的吗？', 'ai');
             }
         }
 
