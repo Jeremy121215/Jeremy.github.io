@@ -149,8 +149,8 @@
         <h2>所有文件</h2>
         
         <!-- 下载项1 -->
-        <div class="download-item" data-search="Plain Craft Launcher 2.exe">
-            <div class="download-icon">📁</div>
+        <div class="download-item">
+            <div class="download-icon">📦</div>
             <div class="download-info">
                 <p class="download-title">Plain Craft Launcher 2.exe</p>
                 <p class="download-desc">PCL - Minecraft启动器</p>
@@ -159,8 +159,8 @@
         </div>
 
         <!-- 下载项2 -->
-        <div class="download-item" data-search="dongdong羊像素画.litematic">
-            <div class="download-icon">📁</div>
+        <div class="download-item">
+            <div class="download-icon">📄</div>
             <div class="download-info">
                 <p class="download-title">dongdong羊像素画.litematic</p>
                 <p class="download-desc">dongdong羊像素画 - MC投影</p>
@@ -169,8 +169,8 @@
         </div>
 
         <!-- 下载项3 -->
-        <div class="download-item" data-search="小蓝豆.litematic">
-            <div class="download-icon">📁</div>
+        <div class="download-item">
+            <div class="download-icon">📄</div>
             <div class="download-info">
                 <p class="download-title">小蓝豆.litematic</p>
                 <p class="download-desc">小蓝豆 - MC投影</p>
@@ -179,8 +179,8 @@
         </div>
 
         <!-- 下载项4 -->
-        <div class="download-item" data-search="悬轨列车轨道站点组合.litematic">
-            <div class="download-icon">📁</div>
+        <div class="download-item">
+            <div class="download-icon">📄</div>
             <div class="download-info">
                 <p class="download-title">悬轨列车轨道站点组合.litematic</p>
                 <p class="download-desc">悬轨列车轨道站点组合 - MC投影</p>
@@ -189,8 +189,8 @@
         </div>
 
         <!-- 下载项5 -->
-        <div class="download-item" data-search="猪神.litematic">
-            <div class="download-icon">📁</div>
+        <div class="download-item">
+            <div class="download-icon">📄</div>
             <div class="download-info">
                 <p class="download-title">猪神.litematic</p>
                 <p class="download-desc">猪神.litematic - MC投影</p>
@@ -199,8 +199,8 @@
         </div>
 
         <!-- 下载项6 -->
-        <div class="download-item" data-search="纳粹1.litematic">
-            <div class="download-icon">📁</div>
+        <div class="download-item">
+            <div class="download-icon">📄</div>
             <div class="download-info">
                 <p class="download-title">纳粹1.litematic</p>
                 <p class="download-desc">纳粹1 - MC投影</p>
@@ -209,8 +209,8 @@
         </div>
 
         <!-- 下载项7 -->
-        <div class="download-item" data-search="纳粹2.litematic">
-            <div class="download-icon">📁</div>
+        <div class="download-item">
+            <div class="download-icon">📄</div>
             <div class="download-info">
                 <p class="download-title">纳粹2.litematic</p>
                 <p class="download-desc">纳粹2 - MC投影</p>
@@ -219,8 +219,8 @@
         </div>
 
         <!-- 下载项8 -->
-        <div class="download-item" data-search="VisualStudioSetup.exe">
-            <div class="download-icon">📁</div>
+        <div class="download-item">
+            <div class="download-icon">📦</div>
             <div class="download-info">
                 <p class="download-title">VisualStudioSetup.exe</p>
                 <p class="download-desc">VisualStudioSetup - 史上最好用的编程软件，支持C++、python等语言</p>
@@ -229,46 +229,47 @@
         </div>
 
         <!-- 下载项9 -->
-        <div class="download-item" data-search="HMCL-3.6.12.exe">
-            <div class="download-icon">📁</div>
+        <div class="download-item">
+            <div class="download-icon">📦</div>
             <div class="download-info">
                 <p class="download-title">HMCL-3.6.12.exe</p>
                 <p class="download-desc">HMCL-3.6.12.exe - Minecraft启动器</p>
             </div>
             <a href="HMCL-3.6.12.exe" download><button class="download-btn">下载</button></a>
         </div>
-
-        <!-- 可继续添加更多文件 -->
     </div>
 
     <script>
-        // 搜索功能实现
+        // 搜索功能实现（支持文件名和描述词搜索）
         const searchInput = document.getElementById('search-input');
         const searchBtn = document.getElementById('search-btn');
         const downloadItems = document.querySelectorAll('.download-item');
         const resultInfo = document.getElementById('search-result-info');
         const matchCount = document.getElementById('match-count');
 
-        // 搜索逻辑
+        // 搜索逻辑：同时匹配文件名和描述内容
         function handleSearch() {
             const searchText = searchInput.value.trim().toLowerCase();
             let count = 0;
 
-            // 遍历所有文件项，匹配搜索关键词
             downloadItems.forEach(item => {
-                // 获取文件的搜索关键词（来自data-search属性）
-                const itemKeywords = item.getAttribute('data-search').toLowerCase();
-                
+                // 获取文件名文本（如"Plain Craft Launcher 2.exe"）
+                const fileName = item.querySelector('.download-title').textContent.toLowerCase();
+                // 获取描述文本（如"PCL - Minecraft启动器"）
+                const fileDesc = item.querySelector('.download-desc').textContent.toLowerCase();
+
+                // 搜索为空时显示所有文件
                 if (searchText === '') {
-                    // 搜索为空时显示所有文件
                     item.classList.remove('hidden');
                     count++;
-                } else if (itemKeywords.includes(searchText)) {
-                    // 关键词匹配时显示
+                } 
+                // 关键词匹配文件名或描述时显示
+                else if (fileName.includes(searchText) || fileDesc.includes(searchText)) {
                     item.classList.remove('hidden');
                     count++;
-                } else {
-                    // 不匹配时隐藏
+                } 
+                // 不匹配时隐藏
+                else {
                     item.classList.add('hidden');
                 }
             });
