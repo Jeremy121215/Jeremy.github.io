@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录/注册入口</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            padding: 2.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .form-title {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #1a73e8;
+            font-size: 1.8rem;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #5f6368;
+            font-size: 0.9rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #dadce0;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #1a73e8;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.8rem;
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 1rem;
+        }
+
+        .btn:hover {
+            background-color: #1557b0;
+        }
+
+        .toggle-link {
+            text-align: center;
+            margin-top: 1.2rem;
+            color: #5f6368;
+        }
+
+        .toggle-btn {
+            color: #1a73e8;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            padding: 0;
+        }
+
+        .toggle-btn:hover {
+            text-decoration: underline;
+        }
+
+        .form-panel {
+            display: none;
+        }
+
+        .form-panel.active {
+            display: block;
+        }
+
+        .error-message {
+            color: #d93025;
+            font-size: 0.85rem;
+            margin-top: 0.3rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 登录面板 -->
+        <div id="login-panel" class="form-panel active">
+            <h2 class="form-title">登录</h2>
+            <div class="input-group">
+                <label for="login-email">邮箱</label>
+                <input type="email" id="login-email" required>
+                <div class="error-message" id="login-email-error">请输入有效的邮箱地址</div>
+            </div>
+            <div class="input-group">
+                <label for="login-password">密码</label>
+                <input type="password" id="login-password" required>
+                <div class="error-message" id="login-password-error">密码长度至少6位</div>
+            </div>
+            <button class="btn" id="login-btn">登录</button>
+            <p class="toggle-link">
+                还没有账号？<button class="toggle-btn" id="show-register">立即注册</button>
+            </p>
+        </div>
+
+        <!-- 注册面板 -->
+        <div id="register-panel" class="form-panel">
+            <h2 class="form-title">注册</h2>
+            <div class="input-group">
+                <label for="register-name">用户名</label>
+                <input type="text" id="register-name" required>
+                <div class="error-message" id="register-name-error">用户名不能为空</div>
+            </div>
+            <div class="input-group">
+                <label for="register-email">邮箱</label>
+                <input type="email" id="register-email" required>
+                <div class="error-message" id="register-email-error">请输入有效的邮箱地址</div>
+            </div>
+            <div class="input-group">
+                <label for="register-password">密码</label>
+                <input type="password" id="register-password" required>
+                <div class="error-message" id="register-password-error">密码长度至少6位</div>
+            </div>
+            <button class="btn" id="register-btn">注册</button>
+            <p class="toggle-link">
+                已有账号？<button class="toggle-btn" id="show-login">立即登录</button>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // 面板切换逻辑
+        const loginPanel = document.getElementById('login-panel');
+        const registerPanel = document.getElementById('register-panel');
+        const showRegisterBtn = document.getElementById('show-register');
+        const showLoginBtn = document.getElementById('show-login');
+
+        showRegisterBtn.addEventListener('click', () => {
+            loginPanel.classList.remove('active');
+            registerPanel.classList.add('active');
+        });
+
+        showLoginBtn.addEventListener('click', () => {
+            registerPanel.classList.remove('active');
+            loginPanel.classList.add('active');
+        });
+
+        // 登录表单验证
+        const loginBtn = document.getElementById('login-btn');
+        const loginEmail = document.getElementById('login-email');
+        const loginPassword = document.getElementById('login-password');
+        const loginEmailError = document.getElementById('login-email-error');
+        const loginPasswordError = document.getElementById('login-password-error');
+
+        loginBtn.addEventListener('click', () => {
+            let isValid = true;
+            
+            // 邮箱验证
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(loginEmail.value)) {
+                loginEmailError.style.display = 'block';
+                isValid = false;
+            } else {
+                loginEmailError.style.display = 'none';
+            }
+
+            // 密码验证
+            if (loginPassword.value.length < 6) {
+                loginPasswordError.style.display = 'block';
+                isValid = false;
+            } else {
+                loginPasswordError.style.display = 'none';
+            }
+
+            if (isValid) {
+                alert('登录成功！即将进入主页');
+                // 实际项目中这里会跳转到主页，示例用alert代替
+                // window.location.href = 'home.html';
+            }
+        });
+
+        // 注册表单验证
+        const registerBtn = document.getElementById('register-btn');
+        const registerName = document.getElementById('register-name');
+        const registerEmail = document.getElementById('register-email');
+        const registerPassword = document.getElementById('register-password');
+        const registerNameError = document.getElementById('register-name-error');
+        const registerEmailError = document.getElementById('register-email-error');
+        const registerPasswordError = document.getElementById('register-password-error');
+
+        registerBtn.addEventListener('click', () => {
+            let isValid = true;
+            
+            // 用户名验证
+            if (registerName.value.trim() === '') {
+                registerNameError.style.display = 'block';
+                isValid = false;
+            } else {
+                registerNameError.style.display = 'none';
+            }
+
+            // 邮箱验证
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registerEmail.value)) {
+                registerEmailError.style.display = 'block';
+                isValid = false;
+            } else {
+                registerEmailError.style.display = 'none';
+            }
+
+            // 密码验证
+            if (registerPassword.value.length < 6) {
+                registerPasswordError.style.display = 'block';
+                isValid = false;
+            } else {
+                registerPasswordError.style.display = 'none';
+            }
+
+            if (isValid) {
+                alert('注册成功！即将跳转到登录页');
+                registerPanel.classList.remove('active');
+                loginPanel.classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>
