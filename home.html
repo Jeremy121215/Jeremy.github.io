@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="logo.png" type="image/png">
+    <link rel="icon" href="logo.png" type="image/png" sizes="32x32">
     <title>星河为梦的网页</title>
     <style>
         body {
@@ -49,8 +49,8 @@
         a:hover {
             text-decoration: underline;
         }
-        /* 下载页跳转按钮 */
-        .download-page-btn {
+        /* 功能按钮样式（统一下载和AI按钮风格） */
+        .function-btn {
             display: inline-block;
             margin: 20px 0;
             padding: 12px 25px;
@@ -61,9 +61,16 @@
             font-weight: 500;
             transition: background 0.3s;
         }
-        .download-page-btn:hover {
+        .function-btn:hover {
             background-color: #2980b9;
             text-decoration: none;
+        }
+        /* AI按钮可单独设置不同颜色（可选） */
+        .ai-btn {
+            background-color: #9b59b6;
+        }
+        .ai-btn:hover {
+            background-color: #8e44ad;
         }
     </style>
 </head>
@@ -94,7 +101,17 @@
         <h2>文件下载区</h2>
         <p>点击下方按钮进入文件下载页面，可搜索并下载所需文件：</p>
         <!-- 跳转至下载页的按钮 -->
-        <a href="downloads.html" class="download-page-btn">进入文件下载页</a>
+        <a href="downloads.html" class="function-btn">进入文件下载页</a>
+    </div>
+
+    <!-- 新增AI功能区 -->
+    <div class="section">
+        <h2>AI助手</h2>
+        <p>点击下方按钮进入AI助手页面，支持多种AI工具调用及历史记录管理：</p>
+        <a href="ai.html" class="function-btn ai-btn">打开AI助手</a>
+        <p style="margin-top: 15px; color: #666;">
+            支持功能：豆包/DeepSeek问答、历史记录查看、记录删除等
+        </p>
     </div>
 
     <div class="section">
