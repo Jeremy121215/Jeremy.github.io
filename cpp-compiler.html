@@ -118,7 +118,7 @@
             margin-bottom: 10px;
             font-weight: 500;
         }
-        /* 代码编辑区样式（改为控制台风格字体 Consolas） */
+        /* 代码编辑区样式（使用textarea确保可编辑） */
         #code-editor {
             width: 100%;
             min-height: 200px;
@@ -131,6 +131,34 @@
             resize: vertical;
             outline: none;
             tab-size: 4;
+            background-color: #f8f9fa;
+            white-space: pre;
+            overflow-x: auto;
+        }
+        /* 语法高亮预览层（覆盖在textarea上方） */
+        #code-highlight {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 15px;
+            margin: 0;
+            border: none;
+            background: transparent;
+            pointer-events: none;
+            overflow: hidden;
+            white-space: pre;
+            font-family: "Consolas", "Monaco", "Courier New", monospace !important;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: transparent;
+        }
+        #code-highlight span {
+            color: inherit !important;
+        }
+        .code-wrapper {
+            position: relative;
         }
         .input-output-container {
             display: grid;
@@ -203,15 +231,18 @@
             <button class="btn reset-btn" id="reset-btn">重置代码</button>
         </div>
 
-        <!-- 代码输入区（带语法高亮） -->
+        <!-- 代码输入区（textarea + 高亮层实现可编辑+高亮） -->
         <div class="code-input-container">
             <div class="section-title">代码编辑区</div>
-            <pre><code id="code-editor" class="language-cpp">#include &lt;iostream&gt;
+            <div class="code-wrapper">
+                <textarea id="code-editor">#include <iostream>
 using namespace std;
 int main() {
     cout << "Hello world!" << endl;
     return 0;
-}</code></pre>
+}</textarea>
+                <pre id="code-highlight" class="language-cpp"></pre>
+            </div>
             <div class="sample-code-tip">提示：支持标准输入输出（cin/cout），输入内容请在下方「程序输入」框中填写</div>
         </div>
 
@@ -234,11 +265,9 @@ int main() {
     </div>
 
     <script>
-        // 初始化语法高亮
-        hljs.highlightElement(document.getElementById('code-editor'));
-
         // DOM元素
         const codeEditor = document.getElementById('code-editor');
+        const codeHighlight = document.getElementById('code-highlight');
         const cppVersion = document.getElementById('cpp-version');
         const programInput = document.getElementById('program-input');
         const programOutput = document.getElementById('program-output');
@@ -246,8 +275,17 @@ int main() {
         const resetBtn = document.getElementById('reset-btn');
         const statusBar = document.getElementById('status-bar');
 
-        // 重置默认代码（修正缩进，保持console风格整洁）
-        const defaultCode = `#include &lt;iostream&gt;
+        // 初始化语法高亮
+        function updateHighlight() {
+            codeHighlight.textContent = codeEditor.value;
+            hljs.highlightElement(codeHighlight);
+        }
+
+        // 初始化
+        updateHighlight();
+
+        // 重置默认代码
+        const defaultCode = `#include <iostream>
 using namespace std;
 int main() {
     cout << "Hello world!" << endl;
@@ -256,8 +294,8 @@ int main() {
 
         // 重置按钮事件
         resetBtn.addEventListener('click', () => {
-            codeEditor.textContent = defaultCode;
-            hljs.highlightElement(codeEditor); // 重置后重新高亮
+            codeEditor.value = defaultCode;
+            updateHighlight(); // 重置后重新高亮
             programInput.value = '';
             programOutput.value = '';
             statusBar.textContent = '就绪：点击「运行代码」按钮执行编译和运行';
@@ -266,12 +304,7 @@ int main() {
 
         // 运行按钮事件
         runBtn.addEventListener('click', async () => {
-            // 获取代码内容（替换HTML实体为实际字符）
-            let code = codeEditor.textContent
-                .replace(/&lt;/g, '<')
-                .replace(/&gt;/g, '>')
-                .trim();
-                
+            const code = codeEditor.value.trim();
             if (!code) {
                 showStatus('错误：代码编辑区不能为空', true);
                 return;
@@ -310,22 +343,26 @@ int main() {
             }
         });
 
-        // 代码编辑时自动重新高亮
-        codeEditor.addEventListener('input', () => {
-            hljs.highlightElement(codeEditor);
+        // 代码编辑时自动更新高亮
+        codeEditor.addEventListener('input', updateHighlight);
+
+        // 同步滚动位置（确保编辑区和高亮层滚动一致）
+        codeEditor.addEventListener('scroll', () => {
+            codeHighlight.scrollTop = codeEditor.scrollTop;
+            codeHighlight.scrollLeft = codeEditor.scrollLeft;
         });
 
-        // 优化换行行为：支持普通Enter换行（符合控制台编辑习惯）
+        // 支持Tab键缩进
         codeEditor.addEventListener('keydown', (e) => {
-            // 移除原阻止换行逻辑，允许正常Enter换行
             if (e.key === 'Tab') {
-                // 支持Tab缩进（控制台常用功能）
                 e.preventDefault();
                 const start = codeEditor.selectionStart;
                 const end = codeEditor.selectionEnd;
-                codeEditor.textContent = codeEditor.textContent.substring(0, start) + '    ' + codeEditor.textContent.substring(end);
+                // 在光标位置插入4个空格
+                codeEditor.value = codeEditor.value.substring(0, start) + '    ' + codeEditor.value.substring(end);
+                // 移动光标到插入位置后
                 codeEditor.selectionStart = codeEditor.selectionEnd = start + 4;
-                hljs.highlightElement(codeEditor);
+                updateHighlight();
             }
         });
 
