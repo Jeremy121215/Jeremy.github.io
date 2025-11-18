@@ -137,13 +137,13 @@
     
     <header>
         <h1>AI助手</h1>
-        <p>无需跳转，直接在当前页面提问（国内稳定服务，响应快速）</p>
+        <p>无需跳转，直接在当前页面提问（国内稳定服务，支持多轮对话）</p>
     </header>
 
     <div class="chat-container">
         <div class="chat-history" id="chat-history">
             <div class="message ai-message">
-                <div class="message-content">你好！有什么可以帮助你的吗？</div>
+                <div class="message-content">你好！我是你的AI助手，有什么可以帮助你的吗？</div>
             </div>
         </div>
         <div class="input-area">
@@ -157,24 +157,27 @@
     </div>
 
     <script>
-        // 国内稳定免费API（无需密钥，直接调用）
-        const API_URL = "https://v1.hitokoto.cn/?c=k&encode=json";
+        // 国内稳定AI API（需替换为你申请的密钥）
+        const API_KEY = "请替换为你的API密钥"; // 需自行申请国内AI平台（如文心一言、通义千问）的API密钥
+        const API_URL = "https://api.example.com/v1/chat/completions"; // 替换为对应平台的API地址
 
         // DOM元素
         const chatHistory = document.getElementById('chat-history');
         const userInput = document.getElementById('user-input');
         const sendBtn = document.getElementById('send-btn');
         const clearBtn = document.getElementById('clear-btn');
+        let conversationHistory = [];
 
         // 加载本地聊天记录
         function loadHistory() {
             const history = JSON.parse(localStorage.getItem('ai_chat_history')) || [];
             chatHistory.innerHTML = '';
+            conversationHistory = history;
             history.forEach(item => {
                 addMessage(item.content, item.role);
             });
             if (history.length === 0) {
-                addMessage('你好！有什么可以帮助你的吗？', 'ai');
+                addMessage('你好！我是你的AI助手，有什么可以帮助你的吗？', 'ai');
             }
             scrollToBottom();
         }
@@ -194,7 +197,8 @@
 
             // 添加用户消息并保存
             addMessage(content, 'user');
-            saveToHistory(content, 'user');
+            conversationHistory.push({ role: 'user', content });
+            saveToHistory();
             userInput.value = '';
 
             // 显示加载状态
@@ -205,30 +209,41 @@
             scrollToBottom();
 
             try {
-                // 调用国内API获取回答（稳定快速）
-                const response = await fetch(API_URL);
+                // 调用国内AI API获取回答
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        model: 'your-model-name', // 替换为对应平台的模型名称
+                        messages: conversationHistory
+                    })
+                });
+
                 const data = await response.json();
+                const aiReply = data.choices[0].message.content;
                 
                 // 移除加载状态，添加AI回答
                 chatHistory.removeChild(loadingDiv);
-                const aiReply = data.hitokoto || '抱歉，我已经收到你的问题啦～';
                 addMessage(aiReply, 'ai');
-                saveToHistory(aiReply, 'ai');
+                conversationHistory.push({ role: 'assistant', content: aiReply });
+                saveToHistory();
             } catch (error) {
                 // 网络异常时的备用回答
                 chatHistory.removeChild(loadingDiv);
-                const errorReply = '网络正常但暂时无法获取回答，你可以换个问题试试～';
+                const errorReply = '抱歉，暂时无法获取回答，请稍后再试～';
                 addMessage(errorReply, 'ai');
-                saveToHistory(errorReply, 'ai');
+                conversationHistory.push({ role: 'assistant', content: errorReply });
+                saveToHistory();
             }
             scrollToBottom();
         }
 
         // 保存聊天记录到本地存储
-        function saveToHistory(content, role) {
-            const history = JSON.parse(localStorage.getItem('ai_chat_history')) || [];
-            history.push({ content, role, time: new Date().toLocaleString() });
-            localStorage.setItem('ai_chat_history', JSON.stringify(history));
+        function saveToHistory() {
+            localStorage.setItem('ai_chat_history', JSON.stringify(conversationHistory));
         }
 
         // 滚动到聊天底部
@@ -240,8 +255,9 @@
         function clearHistory() {
             if (confirm('确定要清空所有聊天记录吗？')) {
                 localStorage.removeItem('ai_chat_history');
+                conversationHistory = [];
                 chatHistory.innerHTML = '';
-                addMessage('你好！有什么可以帮助你的吗？', 'ai');
+                addMessage('你好！我是你的AI助手，有什么可以帮助你的吗？', 'ai');
             }
         }
 
