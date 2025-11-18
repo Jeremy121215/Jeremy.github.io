@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="logo.png" type="image/png" sizes="32x32">
     <title>AI助手 - 星河为梦的网页</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.16.0/dist/tf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/bert@2.0.0/dist/bert.min.js"></script>
     <style>
         * {
             font-family: "微软雅黑", sans-serif !important;
@@ -138,19 +136,19 @@
     <a href="home.html" class="back-link">← 返回主页</a>
     
     <header>
-        <h1>开源AI助手（BERT模型）</h1>
-        <p>加载中文问答模型，直接在当前页面精准回答</p>
+        <h1>开源AI助手（Pollinations）</h1>
+        <p>无需密钥，直接回答任意问题</p>
     </header>
 
     <div class="chat-container">
         <div class="chat-history" id="chat-history">
             <div class="message ai-message">
-                <div class="message-content">模型加载中，请稍候...</div>
+                <div class="message-content">你好！请问有什么可以帮助你的吗？</div>
             </div>
         </div>
         <div class="input-area">
             <textarea id="user-input" placeholder="输入你的问题..."></textarea>
-            <button id="send-btn" disabled>发送</button>
+            <button id="send-btn">发送</button>
         </div>
     </div>
 
@@ -159,36 +157,55 @@
     </div>
 
     <script>
-        let bertModel;
         const chatHistory = document.getElementById('chat-history');
         const userInput = document.getElementById('user-input');
         const sendBtn = document.getElementById('send-btn');
         const clearBtn = document.getElementById('clear-btn');
         let conversation = [];
 
-        // 加载BERT中文问答模型
-        async function loadModel() {
+        // 发送消息并调用免费API
+        async function sendMessage() {
+            const question = userInput.value.trim();
+            if (!question) return;
+
+            // 添加用户消息
+            addMessage(question, 'user');
+            conversation.push({ role: 'user', content: question });
+            saveToHistory();
+            userInput.value = '';
+
+            // 显示加载状态
+            const loadingId = Date.now();
+            addMessage('思考中...', 'ai', loadingId);
+
             try {
-                // 加载预训练的中文问答模型
-                bertModel = await bert.loadQuestionAnswerModel('https://storage.googleapis.com/tfjs-models/tfjs/bert/qa_bert_base_chinese/model.json');
-                // 模型加载完成后更新状态
-                updateMessage('模型加载完成！请输入你的问题', 'ai');
-                sendBtn.disabled = false;
+                // 调用Pollinations免费API（无需密钥）
+                const encodedQuestion = encodeURIComponent(question);
+                const response = await fetch(`https://text.pollinations.ai/openai/${encodedQuestion}?model=openai`);
+                const data = await response.json();
+                const aiReply = data.result || '抱歉，暂时无法回答';
+                
+                // 移除加载状态，添加AI回答
+                document.getElementById(`msg-${loadingId}`).remove();
+                addMessage(aiReply, 'ai');
+                conversation.push({ role: 'assistant', content: aiReply });
+                saveToHistory();
             } catch (error) {
-                updateMessage('模型加载失败，请刷新页面重试', 'ai');
-                console.error('模型加载错误:', error);
+                document.getElementById(`msg-${loadingId}`).remove();
+                addMessage('网络异常，请稍后再试', 'ai');
+                conversation.push({ role: 'assistant', content: '网络异常，请稍后再试' });
+                saveToHistory();
             }
+            scrollToBottom();
         }
 
-        // 更新聊天记录
-        function updateMessage(content, role, id) {
+        // 添加消息到界面
+        function addMessage(content, role, id) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${role === 'user' ? 'user-message' : 'ai-message'}`;
             if (id) messageDiv.id = `msg-${id}`;
             messageDiv.innerHTML = `<div class="message-content">${content}</div>`;
             chatHistory.appendChild(messageDiv);
-            scrollToBottom();
-            saveToHistory(content, role);
         }
 
         // 滚动到底部
@@ -196,65 +213,32 @@
             chatHistory.scrollTop = chatHistory.scrollHeight;
         }
 
-        // 保存聊天记录到本地存储
-        function saveToHistory(content, role) {
-            const history = JSON.parse(localStorage.getItem('bert_ai_history')) || [];
-            history.push({ content, role, time: new Date().toLocaleString() });
-            localStorage.setItem('bert_ai_history', JSON.stringify(history));
+        // 保存聊天记录到本地
+        function saveToHistory() {
+            localStorage.setItem('pollinations_ai_history', JSON.stringify(conversation));
         }
 
         // 加载本地聊天记录
         function loadHistory() {
-            const history = JSON.parse(localStorage.getItem('bert_ai_history')) || [];
+            const history = JSON.parse(localStorage.getItem('pollinations_ai_history')) || [];
             chatHistory.innerHTML = '';
             conversation = history;
             history.forEach(item => {
-                updateMessage(item.content, item.role);
+                addMessage(item.content, item.role);
             });
             if (history.length === 0) {
-                updateMessage('模型加载中，请稍候...', 'ai');
-                loadModel();
+                addMessage('你好！请问有什么可以帮助你的吗？', 'ai');
             }
-        }
-
-        // 发送问题并获取回答
-        async function sendMessage() {
-            const question = userInput.value.trim();
-            if (!question) return;
-
-            // 添加用户问题
-            updateMessage(question, 'user');
-            userInput.value = '';
-
-            // 显示加载状态
-            const loadingId = Date.now();
-            updateMessage('思考中...', 'ai', loadingId);
-
-            try {
-                // 定义上下文（可根据网页内容自定义）
-                const context = `这是星河为梦的个人网页，包含文件下载区和AI助手功能。文件下载区可以搜索并下载Minecraft启动器、像素画投影文件等资源。AI助手基于BERT模型，能回答网页相关问题。`;
-                
-                // 调用BERT模型获取回答
-                const result = await bertModel.questionAnswer(question, context);
-                const answer = result.answer || '抱歉，我无法回答这个问题';
-
-                // 移除加载状态，添加AI回答
-                document.getElementById(`msg-${loadingId}`).remove();
-                updateMessage(answer, 'ai');
-            } catch (error) {
-                document.getElementById(`msg-${loadingId}`).remove();
-                updateMessage('回答生成失败，请重试', 'ai');
-                console.error('回答错误:', error);
-            }
+            scrollToBottom();
         }
 
         // 清空聊天记录
         function clearHistory() {
             if (confirm('确定要清空所有聊天记录吗？')) {
-                localStorage.removeItem('bert_ai_history');
+                localStorage.removeItem('pollinations_ai_history');
+                conversation = [];
                 chatHistory.innerHTML = '';
-                updateMessage('模型加载中，请稍候...', 'ai');
-                loadModel();
+                addMessage('你好！请问有什么可以帮助你的吗？', 'ai');
             }
         }
 
