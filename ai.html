@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="logo.png" type="image/png" sizes="32x32">
     <title>AI助手 - 星河为梦的网页</title>
+    <!-- 引入Transformers.js库 -->
+    <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2"></script>
     <style>
         body {
             font-family: "微软雅黑", Arial, sans-serif;
-            max-width: 1000px;
+            max-width: 800px;
             margin: 0 auto;
             padding: 20px;
             background-color: #f9f9f9;
@@ -18,6 +20,7 @@
             display: inline-block;
             margin: 20px 0;
             color: #3498db;
+            text-decoration: none;
         }
         .back-link:hover {
             text-decoration: underline;
@@ -29,111 +32,85 @@
         h1 {
             color: #2c3e50;
         }
-        .ai-tools {
+        .chat-container {
             background: white;
-            padding: 25px;
             border-radius: 8px;
-            margin-bottom: 30px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
         }
-        .tool-card {
-            border: 1px solid #eee;
-            border-radius: 8px;
+        .chat-history {
+            height: 450px;
+            overflow-y: auto;
             padding: 20px;
-            margin: 15px 0;
-            transition: transform 0.3s, box-shadow 0.3s;
+            background-color: #fafafa;
         }
-        .tool-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        .message {
+            margin-bottom: 15px;
+            max-width: 80%;
         }
-        .tool-card h3 {
-            color: #9b59b6;
-            margin-top: 0;
+        .user-message {
+            margin-left: auto;
         }
-        .tool-desc {
-            color: #666;
-            margin: 10px 0;
+        .ai-message {
+            margin-right: auto;
         }
-        .tool-link {
-            display: inline-block;
-            padding: 8px 15px;
-            background-color: #9b59b6;
+        .message-content {
+            padding: 10px 15px;
+            border-radius: 18px;
+            word-wrap: break-word;
+        }
+        .user-message .message-content {
+            background-color: #3498db;
             color: white;
-            border-radius: 4px;
-            text-decoration: none;
+        }
+        .ai-message .message-content {
+            background-color: #e9e9eb;
+            color: #333;
+        }
+        .input-area {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+        #user-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            font-size: 1rem;
+            outline: none;
+            resize: none;
+            height: 50px;
+        }
+        #send-btn {
+            margin-left: 10px;
+            padding: 0 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
             transition: background 0.3s;
         }
-        .tool-link:hover {
-            background-color: #8e44ad;
-        }
-        .history-section {
-            background: white;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        h2 {
-            color: #3498db;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-        .history-list {
-            max-height: 300px;
-            overflow-y: auto;
-            border: 1px solid #eee;
-            border-radius: 5px;
-            padding: 10px;
-        }
-        .history-item {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            margin-bottom: 10px;
-        }
-        .history-item:last-child {
-            border-bottom: none;
-        }
-        .history-question {
-            font-weight: bold;
-            color: #2c3e50;
-        }
-        .history-answer {
-            color: #666;
-            margin-top: 5px;
-            font-size: 0.9rem;
+        #send-btn:hover {
+            background-color: #2980b9;
         }
         .history-actions {
-            margin-top: 10px;
+            margin-top: 15px;
             text-align: right;
         }
-        .delete-btn {
-            background: none;
-            border: none;
-            color: #e74c3c;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-        .delete-btn:hover {
-            text-decoration: underline;
-        }
-        .clear-all {
-            margin-top: 15px;
+        .clear-btn {
             padding: 8px 15px;
             background-color: #e74c3c;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            transition: background 0.3s;
         }
-        .clear-all:hover {
-            background-color: #c0392b;
-        }
-        .no-history {
-            color: #999;
+        .status {
             text-align: center;
             padding: 20px;
+            color: #666;
         }
     </style>
 </head>
@@ -141,111 +118,139 @@
     <a href="home.html" class="back-link">← 返回主页</a>
     
     <header>
-        <h1>AI助手</h1>
-        <p>选择以下AI工具进行问答，支持查看和管理历史记录</p>
+        <h1>本地AI助手</h1>
+        <p>无需跳转，直接在当前页面提问（首次使用需加载模型，耐心等待）</p>
     </header>
 
-    <!-- AI工具入口区 -->
-    <div class="ai-tools">
-        <h2>可用AI工具</h2>
-        
-        <!-- 豆包AI -->
-        <div class="tool-card">
-            <h3>豆包AI</h3>
-            <p class="tool-desc">字节跳动旗下AI助手，支持多轮对话、知识问答、创意生成等</p>
-            <a href="https://www.doubao.com" target="_blank" class="tool-link">打开豆包</a>
+    <div class="chat-container">
+        <div class="chat-history" id="chat-history">
+            <div class="message ai-message">
+                <div class="message-content">你好！我是本地AI助手，正在加载模型，请稍候...</div>
+            </div>
         </div>
-        
-        <!-- DeepSeek -->
-        <div class="tool-card">
-            <h3>DeepSeek</h3>
-            <p class="tool-desc">专注于代码和专业领域的AI模型，适合技术问题解答</p>
-            <a href="https://www.deepseek.com" target="_blank" class="tool-link">打开DeepSeek</a>
+        <div class="input-area">
+            <textarea id="user-input" placeholder="输入你的问题..."></textarea>
+            <button id="send-btn" disabled>发送</button>
         </div>
     </div>
 
-    <!-- 历史记录管理区 -->
-    <div class="history-section">
-        <h2>对话历史记录</h2>
-        <div class="history-list" id="history-list">
-            <!-- 历史记录会通过JavaScript动态生成 -->
-            <div class="no-history">暂无历史记录</div>
-        </div>
-        <button class="clear-all" id="clear-all">清空所有记录</button>
+    <div class="history-actions">
+        <button class="clear-btn" id="clear-btn">清空聊天记录</button>
     </div>
 
     <script>
-        // 存储和管理历史记录（使用localStorage）
-        const HISTORY_KEY = 'ai_chat_history';
+        // 初始化变量
+        let pipeline;
+        const chatHistory = document.getElementById('chat-history');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const clearBtn = document.getElementById('clear-btn');
 
-        // 初始化：加载历史记录
-        function loadHistory() {
-            const historyList = document.getElementById('history-list');
-            const history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
-
-            // 清空列表
-            historyList.innerHTML = '';
-
-            if (history.length === 0) {
-                historyList.innerHTML = '<div class="no-history">暂无历史记录</div>';
-                return;
+        // 加载本地AI模型（轻量级问答模型）
+        async function loadModel() {
+            try {
+                // 加载问答模型（适合中文的轻量模型）
+                pipeline = await pipeline('question-answering', 'Xenova/distilbert-base-uncased-distilled-squad');
+                
+                // 模型加载完成后更新状态
+                updateMessage('模型加载完成！有什么可以帮助你的吗？', 'ai');
+                sendBtn.disabled = false; // 启用发送按钮
+            } catch (error) {
+                updateMessage('模型加载失败，请刷新页面重试', 'ai');
+                console.error('模型加载错误:', error);
             }
+        }
 
-            // 生成历史记录项
-            history.forEach((item, index) => {
-                const historyItem = document.createElement('div');
-                historyItem.className = 'history-item';
-                historyItem.innerHTML = `
-                    <div class="history-question">问：${item.question}</div>
-                    <div class="history-answer">答：${item.answer}</div>
-                    <div class="history-actions">
-                        <button class="delete-btn" data-index="${index}">删除</button>
-                    </div>
-                `;
-                historyList.appendChild(historyItem);
-            });
+        // 发送消息
+        async function sendMessage() {
+            const question = userInput.value.trim();
+            if (!question) return;
 
-            // 绑定删除按钮事件
-            document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const index = parseInt(e.target.getAttribute('data-index'));
-                    deleteHistory(index);
-                });
+            // 添加用户消息
+            updateMessage(question, 'user');
+            userInput.value = '';
+
+            // 显示加载状态
+            const loadingId = Date.now();
+            updateMessage('思考中...', 'ai', loadingId);
+
+            try {
+                // 调用本地模型生成回答（基于上下文的简单问答）
+                // 注意：轻量模型能力有限，复杂问题可能回答不准确
+                const context = "这是一个文件下载网站，包含Minecraft启动器、像素画投影文件等资源。用户可以通过搜索功能查找文件，也可以使用AI助手提问。";
+                const result = await pipeline({ question: question, context: context });
+
+                // 移除加载消息，添加AI回答
+                removeMessage(loadingId);
+                updateMessage(result.answer || '抱歉，我不太明白你的问题', 'ai');
+            } catch (error) {
+                removeMessage(loadingId);
+                updateMessage('回答生成失败，请重试', 'ai');
+            }
+        }
+
+        // 更新聊天记录
+        function updateMessage(content, role, id) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role === 'user' ? 'user-message' : 'ai-message'}`;
+            if (id) messageDiv.id = `msg-${id}`;
+            messageDiv.innerHTML = `<div class="message-content">${content}</div>`;
+            chatHistory.appendChild(messageDiv);
+            scrollToBottom();
+
+            // 保存到本地存储
+            saveHistory(content, role);
+        }
+
+        // 移除消息（用于加载状态）
+        function removeMessage(id) {
+            const msg = document.getElementById(`msg-${id}`);
+            if (msg) chatHistory.removeChild(msg);
+        }
+
+        // 滚动到底部
+        function scrollToBottom() {
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        // 保存历史记录
+        function saveHistory(content, role) {
+            const history = JSON.parse(localStorage.getItem('local_ai_history')) || [];
+            history.push({ content, role, time: new Date().toISOString() });
+            localStorage.setItem('local_ai_history', JSON.stringify(history));
+        }
+
+        // 加载历史记录
+        function loadHistory() {
+            const history = JSON.parse(localStorage.getItem('local_ai_history')) || [];
+            chatHistory.innerHTML = '';
+            history.forEach(item => {
+                updateMessage(item.content, item.role);
             });
         }
 
-        // 删除单条记录
-        function deleteHistory(index) {
-            let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
-            history.splice(index, 1); // 移除指定索引的记录
-            localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
-            loadHistory(); // 重新加载列表
+        // 清空历史记录
+        function clearHistory() {
+            if (confirm('确定要清空所有聊天记录吗？')) {
+                localStorage.removeItem('local_ai_history');
+                chatHistory.innerHTML = '';
+                updateMessage('聊天记录已清空，有什么可以帮助你的吗？', 'ai');
+            }
         }
 
-        // 清空所有记录
-        document.getElementById('clear-all').addEventListener('click', () => {
-            if (confirm('确定要清空所有历史记录吗？')) {
-                localStorage.removeItem(HISTORY_KEY);
-                loadHistory();
+        // 事件监听
+        sendBtn.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
             }
         });
+        clearBtn.addEventListener('click', clearHistory);
 
-        // 监听AI工具页面的对话（模拟记录，实际需根据AI页面交互调整）
-        // 注意：由于AI工具是外部链接，实际记录需要在AI页面内通过API或嵌套iframe实现
-        // 这里仅作为本地存储示例，实际使用时需根据具体AI的接口进行开发
-        function addSampleHistory(question, answer) {
-            let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
-            history.push({
-                question: question,
-                answer: answer,
-                time: new Date().toLocaleString()
-            });
-            localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
-            loadHistory();
-        }
-
-        // 页面加载时初始化历史记录
-        window.onload = loadHistory;
+        // 初始化：加载模型和历史记录
+        loadModel();
+        loadHistory();
     </script>
 </body>
 </html>
