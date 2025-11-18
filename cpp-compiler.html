@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="logo.png" type="image/png" sizes="32x32">
     <title>C++编译器 - 星河为梦的网页</title>
+    <!-- 引入语法高亮库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-light.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cpp.min.js"></script>
     <style>
         * {
             font-family: "微软雅黑", Arial, sans-serif !important;
@@ -114,17 +118,18 @@
             margin-bottom: 10px;
             font-weight: 500;
         }
+        /* 代码编辑区样式 */
         #code-editor {
             width: 100%;
-            height: 300px;
+            min-height: 200px;
             padding: 15px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            font-family: "Consolas", "Monaco", monospace !important;
             font-size: 0.95rem;
             line-height: 1.5;
             resize: vertical;
-            background-color: #f8f9fa;
+            outline: none;
+            tab-size: 4;
         }
         .input-output-container {
             display: grid;
@@ -197,24 +202,15 @@
             <button class="btn reset-btn" id="reset-btn">重置代码</button>
         </div>
 
-        <!-- 代码输入区 -->
+        <!-- 代码输入区（带语法高亮） -->
         <div class="code-input-container">
             <div class="section-title">代码编辑区</div>
-            <textarea id="code-editor">#include <iostream>
+            <pre><code id="code-editor" class="language-cpp">#include &lt;iostream&gt;
 using namespace std;
-
 int main() {
-    // 示例：输出Hello World
-    cout << "Hello, C++" << endl;
-    
-    // 示例：读取输入并处理
-    int num;
-    cout << "请输入一个整数：";
-    cin >> num;
-    cout << "你输入的整数是：" << num << endl;
-    
+    cout << "Hello world!" << endl;
     return 0;
-}</textarea>
+}</code></pre>
             <div class="sample-code-tip">提示：支持标准输入输出（cin/cout），输入内容请在下方「程序输入」框中填写</div>
         </div>
 
@@ -237,6 +233,9 @@ int main() {
     </div>
 
     <script>
+        // 初始化语法高亮
+        hljs.highlightElement(document.getElementById('code-editor'));
+
         // DOM元素
         const codeEditor = document.getElementById('code-editor');
         const cppVersion = document.getElementById('cpp-version');
@@ -246,26 +245,18 @@ int main() {
         const resetBtn = document.getElementById('reset-btn');
         const statusBar = document.getElementById('status-bar');
 
-        // 重置默认代码
-        const defaultCode = `#include <iostream>
+        // 重置默认代码（无多余空行）
+        const defaultCode = `#include &lt;iostream&gt;
 using namespace std;
-
 int main() {
-    // 示例：输出Hello World
-    cout << "Hello, C++" << endl;
-    
-    // 示例：读取输入并处理
-    int num;
-    cout << "请输入一个整数：";
-    cin >> num;
-    cout << "你输入的整数是：" << num << endl;
-    
-    return 0;
+cout << "Hello world!" << endl;
+return 0;
 }`;
 
         // 重置按钮事件
         resetBtn.addEventListener('click', () => {
-            codeEditor.value = defaultCode;
+            codeEditor.textContent = defaultCode;
+            hljs.highlightElement(codeEditor); // 重置后重新高亮
             programInput.value = '';
             programOutput.value = '';
             statusBar.textContent = '就绪：点击「运行代码」按钮执行编译和运行';
@@ -274,7 +265,12 @@ int main() {
 
         // 运行按钮事件
         runBtn.addEventListener('click', async () => {
-            const code = codeEditor.value.trim();
+            // 获取代码内容（替换HTML实体为实际字符）
+            let code = codeEditor.textContent
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>')
+                .trim();
+                
             if (!code) {
                 showStatus('错误：代码编辑区不能为空', true);
                 return;
@@ -286,15 +282,15 @@ int main() {
             showStatus('编译中...', false);
 
             try {
-                // 调用Piston API执行C++代码（免费开源API，支持多版本）
+                // 调用Piston API执行C++代码
                 const response = await fetch('https://emkc.org/api/v2/piston/execute', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         language: 'cpp',
-                        version: getCppVersion(), // 根据选择的版本映射API版本
+                        version: getCppVersion(),
                         files: [{ content: code }],
-                        stdin: programInput.value.trim() // 程序输入
+                        stdin: programInput.value.trim()
                     })
                 });
 
@@ -313,15 +309,27 @@ int main() {
             }
         });
 
-        // C++版本映射（Piston API支持的C++版本）
+        // 代码编辑时自动重新高亮
+        codeEditor.addEventListener('input', () => {
+            hljs.highlightElement(codeEditor);
+        });
+
+        // 禁用默认换行行为（仅允许手动输入换行）
+        codeEditor.addEventListener('keydown', (e) => {
+            // 允许Shift+Enter换行，其他情况阻止自动换行
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+            }
+        });
+
+        // C++版本映射
         function getCppVersion() {
             const version = cppVersion.value;
-            // 映射版本号到API支持的标识（参考Piston API文档）
             const versionMap = {
-                '98': '10.2.0', // GCC 10.2支持C++98
-                '11': '10.2.0', // GCC 10.2支持C++11
-                '14': '10.2.0', // GCC 10.2支持C++14
-                '17': '12.2.0'  // GCC 12.2支持C++17
+                '98': '10.2.0',
+                '11': '10.2.0',
+                '14': '10.2.0',
+                '17': '12.2.0'
             };
             return versionMap[version] || '10.2.0';
         }
@@ -331,24 +339,20 @@ int main() {
             let output = '';
             let isError = false;
 
-            // 编译错误
             if (result.compile?.stderr) {
                 output += `编译错误：\n${result.compile.stderr}\n`;
                 isError = true;
             }
 
-            // 运行时错误
             if (result.run?.stderr) {
                 output += `运行错误：\n${result.run.stderr}\n`;
                 isError = true;
             }
 
-            // 正常输出
             if (result.run?.stdout) {
                 output += `运行输出：\n${result.run.stdout}\n`;
             }
 
-            // 执行时间和内存占用
             if (result.run?.time || result.run?.memory) {
                 output += `\n执行信息：\n时间：${result.run.time}ms | 内存：${(result.run.memory / 1024).toFixed(2)}MB`;
             }
@@ -362,13 +366,6 @@ int main() {
             statusBar.textContent = text;
             statusBar.className = `status-bar ${isError ? 'error' : ''}`;
         }
-
-        // 回车快捷键：代码编辑区Shift+Enter换行，普通Enter不触发表单提交
-        codeEditor.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault(); // 阻止默认换行，需Shift+Enter换行
-            }
-        });
     </script>
 </body>
 </html>
