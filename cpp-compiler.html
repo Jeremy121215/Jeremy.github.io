@@ -118,13 +118,14 @@
             margin-bottom: 10px;
             font-weight: 500;
         }
-        /* 代码编辑区样式 */
+        /* 代码编辑区样式（改为控制台风格字体 Consolas） */
         #code-editor {
             width: 100%;
             min-height: 200px;
             padding: 15px;
             border: 1px solid #ddd;
             border-radius: 4px;
+            font-family: "Consolas", "Monaco", "Courier New", monospace !important;
             font-size: 0.95rem;
             line-height: 1.5;
             resize: vertical;
@@ -245,12 +246,12 @@ int main() {
         const resetBtn = document.getElementById('reset-btn');
         const statusBar = document.getElementById('status-bar');
 
-        // 重置默认代码（无多余空行）
+        // 重置默认代码（修正缩进，保持console风格整洁）
         const defaultCode = `#include &lt;iostream&gt;
 using namespace std;
 int main() {
-cout << "Hello world!" << endl;
-return 0;
+    cout << "Hello world!" << endl;
+    return 0;
 }`;
 
         // 重置按钮事件
@@ -314,11 +315,17 @@ return 0;
             hljs.highlightElement(codeEditor);
         });
 
-        // 禁用默认换行行为（仅允许手动输入换行）
+        // 优化换行行为：支持普通Enter换行（符合控制台编辑习惯）
         codeEditor.addEventListener('keydown', (e) => {
-            // 允许Shift+Enter换行，其他情况阻止自动换行
-            if (e.key === 'Enter' && !e.shiftKey) {
+            // 移除原阻止换行逻辑，允许正常Enter换行
+            if (e.key === 'Tab') {
+                // 支持Tab缩进（控制台常用功能）
                 e.preventDefault();
+                const start = codeEditor.selectionStart;
+                const end = codeEditor.selectionEnd;
+                codeEditor.textContent = codeEditor.textContent.substring(0, start) + '    ' + codeEditor.textContent.substring(end);
+                codeEditor.selectionStart = codeEditor.selectionEnd = start + 4;
+                hljs.highlightElement(codeEditor);
             }
         });
 
