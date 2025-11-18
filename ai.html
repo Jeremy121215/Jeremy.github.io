@@ -77,6 +77,10 @@
             background-color: #e9e9eb;
             color: #333;
         }
+        .error-message .message-content {
+            background-color: #ffebee;
+            color: #c62828;
+        }
         .input-area {
             display: flex;
             padding: 15px;
@@ -137,7 +141,7 @@
     
     <header>
         <h1>国内开源AI助手（ChatGLM）</h1>
-        <p>基于国内开源模型，稳定访问，支持任意问题回答</p>
+        <p>基于国内开源模型，显示具体错误信息</p>
     </header>
 
     <div class="chat-container">
@@ -182,12 +186,10 @@
             addMessage('思考中...', 'ai', loadingId);
 
             try {
-                // 调用国内开源模型代理接口（无需密钥，国内访问稳定）
                 const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        // 国内公开代理无需密钥，直接访问
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
                         model: "glm-4",
@@ -196,27 +198,45 @@
                     })
                 });
 
+                // 解析响应状态
+                if (!response.ok) {
+                    // 服务器返回错误状态（如404、500等）
+                    throw new Error(`API请求失败，状态码: ${response.status}（${response.statusText}）`);
+                }
+
                 const data = await response.json();
-                const aiReply = data.choices[0].message.content || '抱歉，暂时无法回答';
                 
-                // 移除加载状态，添加AI回答
+                // 检查API返回的错误信息
+                if (data.error) {
+                    throw new Error(`模型返回错误: ${data.error.message || JSON.stringify(data.error)}`);
+                }
+
+                // 正常处理回答
+                const aiReply = data.choices?.[0]?.message?.content || '未获取到回答内容';
                 document.getElementById(`msg-${loadingId}`).remove();
                 addMessage(aiReply, 'ai');
                 conversation.push({ role: 'assistant', content: aiReply });
                 saveToHistory();
+
             } catch (error) {
+                // 捕获所有错误并显示具体信息
                 document.getElementById(`msg-${loadingId}`).remove();
-                addMessage('网络异常，请稍后再试', 'ai');
-                conversation.push({ role: 'assistant', content: '网络异常，请稍后再试' });
+                // 添加错误样式的消息
+                addMessage(`错误: ${error.message}`, 'error');
+                conversation.push({ role: 'assistant', content: `错误: ${error.message}` });
                 saveToHistory();
             }
             scrollToBottom();
         }
 
-        // 添加消息到界面
+        // 添加消息到界面（支持错误类型）
         function addMessage(content, role, id) {
             const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${role === 'user' ? 'user-message' : 'ai-message'}`;
+            // 根据角色添加不同样式（用户/AI/错误）
+            messageDiv.className = `message ${
+                role === 'user' ? 'user-message' : 
+                role === 'error' ? 'error-message' : 'ai-message'
+            }`;
             if (id) messageDiv.id = `msg-${id}`;
             messageDiv.innerHTML = `<div class="message-content">${content}</div>`;
             chatHistory.appendChild(messageDiv);
@@ -238,7 +258,9 @@
             chatHistory.innerHTML = '';
             conversation = history;
             history.forEach(item => {
-                addMessage(item.content, item.role);
+                // 恢复历史记录时区分错误消息
+                const role = item.content.startsWith('错误:') ? 'error' : item.role;
+                addMessage(item.content, role);
             });
             if (history.length === 0) {
                 addMessage('你好！请问有什么可以帮助你的吗？', 'ai');
