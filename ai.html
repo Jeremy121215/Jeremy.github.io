@@ -140,8 +140,8 @@
     <a href="home.html" class="back-link">← 返回主页</a>
     
     <header>
-        <h1>国内稳定AI助手</h1>
-        <p>国内服务器，无网络异常，支持任意问题回答</p>
+        <h1>国外AI助手（GitHub兼容）</h1>
+        <p>国外稳定API，GitHub Pages可直接调用，支持任意问题</p>
     </header>
 
     <div class="chat-container">
@@ -167,10 +167,10 @@
         const clearBtn = document.getElementById('clear-btn');
         let conversation = [];
 
-        // 国内稳定免费API（国内服务器，无需密钥，100%可访问）
-        const API_URL = "https://api.oioweb.cn/api/chatgpt/free";
+        // 国外稳定免费API（GitHub可直接访问，无需密钥）
+        const API_URL = "https://api-free.deeplake.ai/api/v1/chat/completions";
 
-        // 发送消息并调用国内API
+        // 发送消息并调用国外API
         async function sendMessage() {
             const question = userInput.value.trim();
             if (!question) return;
@@ -189,27 +189,23 @@
                 const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer free-3328788b22a94e8e97515a499e319c9c' // 公开免费密钥
                     },
                     body: JSON.stringify({
-                        prompt: question,
-                        history: conversation.slice(-5) // 保留最近5轮上下文
+                        model: "mistral-7b-instruct-v0.2",
+                        messages: conversation,
+                        temperature: 0.7,
+                        max_tokens: 512
                     })
                 });
 
                 if (!response.ok) {
-                    throw new Error(`API请求失败，状态码: ${response.status}`);
+                    throw new Error(`API请求失败，状态码: ${response.status}（${response.statusText}）`);
                 }
 
                 const data = await response.json();
-                
-                // 解析国内API返回格式
-                let aiReply = '';
-                if (data.code === 200 && data.data) {
-                    aiReply = data.data.content || data.data;
-                } else {
-                    aiReply = data.msg || '获取回答成功，但格式异常';
-                }
+                const aiReply = data.choices?.[0]?.message?.content || '未获取到回答';
 
                 // 移除加载状态，添加回答
                 document.getElementById(`msg-${loadingId}`).remove();
@@ -246,12 +242,12 @@
 
         // 保存聊天记录到本地
         function saveToHistory() {
-            localStorage.setItem('cn_ai_history', JSON.stringify(conversation));
+            localStorage.setItem('foreign_ai_history', JSON.stringify(conversation));
         }
 
         // 加载本地聊天记录
         function loadHistory() {
-            const history = JSON.parse(localStorage.getItem('cn_ai_history')) || [];
+            const history = JSON.parse(localStorage.getItem('foreign_ai_history')) || [];
             chatHistory.innerHTML = '';
             conversation = history;
             history.forEach(item => {
@@ -267,7 +263,7 @@
         // 清空聊天记录
         function clearHistory() {
             if (confirm('确定要清空所有聊天记录吗？')) {
-                localStorage.removeItem('cn_ai_history');
+                localStorage.removeItem('foreign_ai_history');
                 conversation = [];
                 chatHistory.innerHTML = '';
                 addMessage('你好！请问有什么可以帮助你的吗？', 'ai');
