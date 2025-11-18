@@ -158,7 +158,7 @@
     </div>
 
     <script>
-        // 从本地存储获取用户数据（若没有则初始化空数组）
+        // 从本地存储获取用户数据
         let users = JSON.parse(localStorage.getItem('registeredUsers')) || [];
 
         // 面板切换
@@ -167,7 +167,6 @@
         document.getElementById('show-register').addEventListener('click', () => {
             loginPanel.classList.remove('active');
             registerPanel.classList.add('active');
-            // 清除错误提示
             document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
         });
         document.getElementById('show-login').addEventListener('click', () => {
@@ -176,86 +175,66 @@
             document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
         });
 
-        // 注册逻辑
+        // 注册逻辑（成功后跳转到主页）
         const registerBtn = document.getElementById('register-btn');
         const regUsername = document.getElementById('register-username');
         const regPassword = document.getElementById('register-password');
         
         registerBtn.addEventListener('click', () => {
-            // 重置错误提示
             document.querySelectorAll('#register-panel .error-message').forEach(el => el.style.display = 'none');
             let isValid = true;
 
-            // 验证用户名
             if (regUsername.value.trim() === '') {
                 document.getElementById('register-user-error').style.display = 'block';
                 isValid = false;
             } else if (users.some(user => user.username === regUsername.value.trim())) {
-                // 检查用户名是否已存在
                 document.getElementById('register-user-exist-error').style.display = 'block';
                 isValid = false;
             }
 
-            // 验证密码
             if (regPassword.value.length < 6) {
                 document.getElementById('register-pwd-error').style.display = 'block';
                 isValid = false;
             }
 
-            // 注册成功
             if (isValid) {
-                // 保存用户信息到本地存储
                 users.push({
                     username: regUsername.value.trim(),
                     password: regPassword.value
                 });
                 localStorage.setItem('registeredUsers', JSON.stringify(users));
-                
-                alert('注册成功！请登录');
-                // 切换到登录面板并填充用户名
-                registerPanel.classList.remove('active');
-                loginPanel.classList.add('active');
-                document.getElementById('login-username').value = regUsername.value.trim();
-                // 清空注册表单
-                regUsername.value = '';
-                regPassword.value = '';
+                // 注册成功后跳转到主页
+                window.location.href = 'home.html';
             }
         });
 
-        // 登录逻辑
+        // 登录逻辑（成功后跳转到主页）
         const loginBtn = document.getElementById('login-btn');
         const loginUsername = document.getElementById('login-username');
         const loginPassword = document.getElementById('login-password');
         
         loginBtn.addEventListener('click', () => {
-            // 重置错误提示
             document.querySelectorAll('#login-panel .error-message').forEach(el => el.style.display = 'none');
             let isValid = true;
 
-            // 验证用户名
             if (loginUsername.value.trim() === '') {
                 document.getElementById('login-user-error').style.display = 'block';
                 isValid = false;
             }
 
-            // 验证密码
             if (loginPassword.value.length < 6) {
                 document.getElementById('login-pwd-error').style.display = 'block';
                 isValid = false;
             }
 
-            // 验证用户是否存在且密码正确
             if (isValid) {
-                const user = users.find(u => u.username === loginUsername.value.trim());
-                if (!user || user.password !== loginPassword.value) {
+                const user = users.find(u => u.username === loginUsername.value.trim() && u.password === loginPassword.value);
+                if (user) {
+                    // 登录成功后跳转到主页
+                    window.location.href = 'home.html';
+                } else {
                     document.getElementById('login-fail-error').style.display = 'block';
-                    return;
                 }
-
-                // 登录成功（实际项目中可跳转到主页）
-                alert(`欢迎回来，${user.username}！`);
-                // 示例：跳转到主页（需创建home.html）
-                // window.location.href = 'home.html';
             }
         });
     </script>
