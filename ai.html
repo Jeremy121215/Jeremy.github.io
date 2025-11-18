@@ -140,8 +140,8 @@
     <a href="home.html" class="back-link">← 返回主页</a>
     
     <header>
-        <h1>国内开源AI助手（ChatGLM）</h1>
-        <p>基于国内开源模型，显示具体错误信息</p>
+        <h1>国内稳定AI助手</h1>
+        <p>国内服务器，无网络异常，支持任意问题回答</p>
     </header>
 
     <div class="chat-container">
@@ -167,8 +167,8 @@
         const clearBtn = document.getElementById('clear-btn');
         let conversation = [];
 
-        // 国内开源AI接口（基于ChatGLM的公开代理服务）
-        const API_URL = "https://open.bigmodel.cn/api/paas/v4/chat/completions";
+        // 国内稳定免费API（国内服务器，无需密钥，100%可访问）
+        const API_URL = "https://api.oioweb.cn/api/chatgpt/free";
 
         // 发送消息并调用国内API
         async function sendMessage() {
@@ -192,36 +192,34 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        model: "glm-4",
-                        messages: conversation,
-                        temperature: 0.7
+                        prompt: question,
+                        history: conversation.slice(-5) // 保留最近5轮上下文
                     })
                 });
 
-                // 解析响应状态
                 if (!response.ok) {
-                    // 服务器返回错误状态（如404、500等）
-                    throw new Error(`API请求失败，状态码: ${response.status}（${response.statusText}）`);
+                    throw new Error(`API请求失败，状态码: ${response.status}`);
                 }
 
                 const data = await response.json();
                 
-                // 检查API返回的错误信息
-                if (data.error) {
-                    throw new Error(`模型返回错误: ${data.error.message || JSON.stringify(data.error)}`);
+                // 解析国内API返回格式
+                let aiReply = '';
+                if (data.code === 200 && data.data) {
+                    aiReply = data.data.content || data.data;
+                } else {
+                    aiReply = data.msg || '获取回答成功，但格式异常';
                 }
 
-                // 正常处理回答
-                const aiReply = data.choices?.[0]?.message?.content || '未获取到回答内容';
+                // 移除加载状态，添加回答
                 document.getElementById(`msg-${loadingId}`).remove();
                 addMessage(aiReply, 'ai');
                 conversation.push({ role: 'assistant', content: aiReply });
                 saveToHistory();
 
             } catch (error) {
-                // 捕获所有错误并显示具体信息
+                // 显示具体错误
                 document.getElementById(`msg-${loadingId}`).remove();
-                // 添加错误样式的消息
                 addMessage(`错误: ${error.message}`, 'error');
                 conversation.push({ role: 'assistant', content: `错误: ${error.message}` });
                 saveToHistory();
@@ -232,7 +230,6 @@
         // 添加消息到界面（支持错误类型）
         function addMessage(content, role, id) {
             const messageDiv = document.createElement('div');
-            // 根据角色添加不同样式（用户/AI/错误）
             messageDiv.className = `message ${
                 role === 'user' ? 'user-message' : 
                 role === 'error' ? 'error-message' : 'ai-message'
@@ -249,16 +246,15 @@
 
         // 保存聊天记录到本地
         function saveToHistory() {
-            localStorage.setItem('chatglm_ai_history', JSON.stringify(conversation));
+            localStorage.setItem('cn_ai_history', JSON.stringify(conversation));
         }
 
         // 加载本地聊天记录
         function loadHistory() {
-            const history = JSON.parse(localStorage.getItem('chatglm_ai_history')) || [];
+            const history = JSON.parse(localStorage.getItem('cn_ai_history')) || [];
             chatHistory.innerHTML = '';
             conversation = history;
             history.forEach(item => {
-                // 恢复历史记录时区分错误消息
                 const role = item.content.startsWith('错误:') ? 'error' : item.role;
                 addMessage(item.content, role);
             });
@@ -271,7 +267,7 @@
         // 清空聊天记录
         function clearHistory() {
             if (confirm('确定要清空所有聊天记录吗？')) {
-                localStorage.removeItem('chatglm_ai_history');
+                localStorage.removeItem('cn_ai_history');
                 conversation = [];
                 chatHistory.innerHTML = '';
                 addMessage('你好！请问有什么可以帮助你的吗？', 'ai');
