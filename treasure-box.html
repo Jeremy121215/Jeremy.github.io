@@ -394,6 +394,34 @@
             downloadForm.reset();
             alert(`下载已触发！文件将保存为：${fileName}`);
         });
+
+        // 4. 千万别点功能逻辑
+        const dontClickBtn = document.getElementById('dontClickBtn');
+        const warningModal = document.getElementById('warningModal');
+        const warningButtons = document.querySelectorAll('.warning-btn');
+
+        // 点击“千万别点我”显示警告弹窗
+        dontClickBtn.addEventListener('click', () => {
+            warningModal.style.display = 'flex';
+        });
+
+        // 点击警告弹窗的三个按钮，跳转对应B站链接
+        warningButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetUrl = btn.dataset.url;
+                // 新窗口打开链接
+                window.open(targetUrl, '_blank');
+                // 关闭警告弹窗
+                warningModal.style.display = 'none';
+            });
+        });
+
+        // 点击警告弹窗背景关闭弹窗
+        warningModal.addEventListener('click', (e) => {
+            if (e.target === warningModal) {
+                warningModal.style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>
