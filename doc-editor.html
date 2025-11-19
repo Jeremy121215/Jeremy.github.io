@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="logo.png" type="image/png" sizes="32x32">
     <title>文档编辑工具 - 星河为梦的网页</title>
-    <!-- 引入Markdown渲染库和防XSS库 -->
+    <!-- 引入Markdown渲染和防XSS库 -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
     <style>
@@ -109,11 +109,11 @@
             font-size: 1rem;
             min-width: 130px;
         }
-        /* 编辑区和预览区布局 */
+        /* 编辑区布局 */
         .edit-container {
             display: flex;
             gap: 20px;
-            height: 500px;
+            height: 550px;
             margin-bottom: 20px;
         }
         #editor {
@@ -136,7 +136,7 @@
             overflow-y: auto;
             background-color: #fafafa;
         }
-        /* Markdown渲染样式优化 */
+        /* Markdown渲染样式 */
         #preview h1 {
             font-size: 1.8rem;
             color: #2c3e50;
@@ -167,7 +167,6 @@
             padding: 2px 6px;
             border-radius: 4px;
             font-family: Consolas, monospace;
-            font-size: 0.95rem;
         }
         #preview pre {
             background-color: #f5f5f5;
@@ -183,14 +182,10 @@
             margin: 12px 0;
             color: #666;
             background-color: #f9f9f9;
-            border-radius: 0 4px 4px 0;
         }
         #preview ul, #preview ol {
             margin: 10px 0 10px 25px;
             line-height: 1.8;
-        }
-        #preview li {
-            margin: 4px 0;
         }
         #preview a {
             color: #3498db;
@@ -198,27 +193,13 @@
             border-bottom: 1px dotted #3498db;
         }
         #preview a:hover {
-            text-decoration: none;
             border-bottom: 1px solid #3498db;
         }
-        #preview table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 15px 0;
-        }
-        #preview th, #preview td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: left;
-        }
-        #preview th {
-            background-color: #f8f9fa;
-        }
-        /* 提示信息样式 */
+        /* 状态提示 */
         .status-message {
             text-align: center;
             margin: 10px 0;
-            padding: 8px;
+            padding: 10px;
             border-radius: 4px;
             display: none;
         }
@@ -252,3 +233,262 @@
             color: #666;
             font-size: 0.95rem;
             line-height: 1.6;
+        }
+        /* 小屏适配 */
+        @media (max-width: 992px) {
+            .edit-container {
+                flex-direction: column;
+                height: auto;
+            }
+            #editor, #preview {
+                height: 350px;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="home.html" class="back-link">← 返回主页</a>
+    
+    <div class="container">
+        <h1>📝 文档编辑工具</h1>
+        
+        <!-- 功能工具栏 -->
+        <div class="doc-toolbar">
+            <button type="button" class="btn open-btn" onclick="document.getElementById('doc-file-input').click()">打开本地文档</button>
+            <input type="file" id="doc-file-input" accept=".txt,.md,.markdown,.doc,.docx,.rtf,.json,.xml">
+            
+            <button id="clear-btn" class="btn clear-btn">清空内容</button>
+            <button id="toggle-btn" class="btn toggle-btn">切换单/双栏</button>
+            
+            <div class="tool-group" style="margin-left: auto;">
+                <label>保存格式：</label>
+                <select id="save-format">
+                    <option value="txt" selected>TXT纯文本</option>
+                    <option value="md">Markdown(.md)</option>
+                    <option value="html">HTML网页</option>
+                    <option value="json">JSON格式</option>
+                    <option value="rtf">RTF富文本</option>
+                </select>
+                <button id="save-btn" class="btn save-btn">保存文档</button>
+            </div>
+        </div>
+        
+        <!-- 支持格式标签 -->
+        <div class="format-list">
+            <span class="format-tag">支持打开：TXT</span>
+            <span class="format-tag">MD</span>
+            <span class="format-tag">DOC/DOCX(基础)</span>
+            <span class="format-tag">RTF</span>
+            <span class="format-tag">JSON</span>
+            <span class="format-tag">XML</span>
+        </div>
+        
+        <!-- 编辑区和预览区 -->
+        <div class="edit-container">
+            <textarea id="editor" placeholder="请输入或粘贴文档内容，支持Markdown语法（如：# 标题、**粗体**、[链接](url)）..."></textarea>
+            <div id="preview">
+                <h3>预览效果</h3>
+                <p>编辑区输入内容后，这里会实时显示渲染结果</p>
+                <p>支持Markdown语法示例：</p>
+                <ul>
+                    <li># 一级标题</li>
+                    <li>## 二级标题</li>
+                    <li>**粗体文本**</li>
+                    <li>*斜体文本*</li>
+                    <li>[链接名称](https://example.com)</li>
+                    <li>`代码片段`</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- 状态提示 -->
+        <div id="success-msg" class="status-message success">操作成功！</div>
+        <div id="error-msg" class="status-message error">操作失败，请重试！</div>
+        
+        <p class="tip">
+            提示：1. DOC/DOCX格式仅支持纯文本提取；2. 编辑内容仅保存在当前页面，刷新后丢失；3. 保存时可自定义存储位置；
+            4. 点击「切换单/双栏」可适配不同屏幕
+        </p>
+    </div>
+
+    <script>
+        // DOM元素
+        const editor = document.getElementById('editor');
+        const preview = document.getElementById('preview');
+        const docFileInput = document.getElementById('doc-file-input');
+        const clearBtn = document.getElementById('clear-btn');
+        const toggleBtn = document.getElementById('toggle-btn');
+        const saveBtn = document.getElementById('save-btn');
+        const saveFormat = document.getElementById('save-format');
+        const successMsg = document.getElementById('success-msg');
+        const errorMsg = document.getElementById('error-msg');
+
+        let isTwoColumn = true; // 默认双栏模式
+
+        // 1. Markdown实时渲染
+        editor.addEventListener('input', () => {
+            const content = editor.value;
+            // 渲染Markdown并防XSS
+            const html = DOMPurify.sanitize(marked.parse(content));
+            preview.innerHTML = html || '<h3>预览效果</h3><p>编辑区输入内容后，这里会实时显示渲染结果</p>';
+        });
+
+        // 2. 打开本地文档
+        docFileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const fileName = file.name.toLowerCase();
+            const fileExt = fileName.split('.').pop();
+            const validExts = ['txt', 'md', 'markdown', 'doc', 'docx', 'rtf', 'json', 'xml'];
+
+            if (!validExts.includes(fileExt)) {
+                showMessage('error', '不支持的文件格式！仅支持TXT/MD/DOC/DOCX/RTF/JSON/XML');
+                return;
+            }
+
+            try {
+                let content = await readFileAsText(file);
+
+                // 处理不同格式
+                if (fileExt === 'doc' || fileExt === 'docx') {
+                    // 过滤DOC/DOCX二进制乱码
+                    content = content.replace(/[\x00-\x1F\x7F-\x9F]/g, '').trim();
+                    if (!content) content = 'DOC/DOCX文件仅提取纯文本内容，未检测到可显示文本';
+                } else if (fileExt === 'json') {
+                    // 格式化JSON
+                    try {
+                        content = JSON.stringify(JSON.parse(content), null, 2);
+                    } catch (err) {
+                        // JSON格式错误则保留原内容
+                    }
+                }
+
+                // 填充到编辑区并渲染
+                editor.value = content;
+                editor.dispatchEvent(new Event('input')); // 触发渲染
+                showMessage('success', `成功打开文件：${file.name}`);
+            } catch (err) {
+                showMessage('error', '文件读取失败，请选择有效文档');
+            }
+
+            // 重置文件输入
+            docFileInput.value = '';
+        });
+
+        // 3. 清空内容
+        clearBtn.addEventListener('click', () => {
+            editor.value = '';
+            editor.dispatchEvent(new Event('input'));
+            showMessage('success', '已清空编辑区内容');
+        });
+
+        // 4. 切换单/双栏模式
+        toggleBtn.addEventListener('click', () => {
+            isTwoColumn = !isTwoColumn;
+            const editContainer = document.querySelector('.edit-container');
+            
+            if (isTwoColumn) {
+                // 双栏
+                editor.style.display = 'block';
+                preview.style.display = 'block';
+                toggleBtn.textContent = '切换单/双栏';
+            } else {
+                // 单栏（仅编辑区）
+                editor.style.display = 'block';
+                preview.style.display = 'none';
+                toggleBtn.textContent = '显示预览区';
+            }
+        });
+
+        // 5. 保存文档
+        saveBtn.addEventListener('click', () => {
+            const content = editor.value.trim();
+            if (!content) {
+                showMessage('error', '编辑区无内容，无法保存');
+                return;
+            }
+
+            const format = saveFormat.value;
+            let fileName = `文档_${new Date().toLocaleString().replace(/[/:\s]/g, '-')}`;
+            let mimeType = 'text/plain';
+            let saveContent = content;
+
+            // 处理不同保存格式
+            switch (format) {
+                case 'txt':
+                    fileName += '.txt';
+                    mimeType = 'text/plain';
+                    break;
+                case 'md':
+                    fileName += '.md';
+                    mimeType = 'text/markdown';
+                    break;
+                case 'html':
+                    fileName += '.html';
+                    mimeType = 'text/html';
+                    saveContent = `<html><head><meta charset="UTF-8"><title>文档</title></head><body>${DOMPurify.sanitize(marked.parse(content))}</body></html>`;
+                    break;
+                case 'json':
+                    fileName += '.json';
+                    mimeType = 'application/json';
+                    try {
+                        // 尝试转为标准JSON
+                        saveContent = JSON.stringify(JSON.parse(content), null, 2);
+                    } catch (err) {
+                        // 非JSON格式则包装为JSON对象
+                        saveContent = JSON.stringify({ content: content }, null, 2);
+                    }
+                    break;
+                case 'rtf':
+                    fileName += '.rtf';
+                    mimeType = 'application/rtf';
+                    saveContent = `{\\rtf1\\ansi\\deff0 ${content.replace(/\n/g, '\\par ')} }`;
+                    break;
+            }
+
+            // 下载文件
+            const blob = new Blob([saveContent], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            a.click();
+
+            // 释放资源
+            URL.revokeObjectURL(url);
+            showMessage('success', `文档已保存为：${fileName}`);
+        });
+
+        // 工具函数：显示状态消息
+        function showMessage(type, text) {
+            if (type === 'success') {
+                successMsg.textContent = text;
+                successMsg.style.display = 'block';
+                errorMsg.style.display = 'none';
+            } else {
+                errorMsg.textContent = text;
+                errorMsg.style.display = 'block';
+                successMsg.style.display = 'none';
+            }
+
+            // 3秒后隐藏
+            setTimeout(() => {
+                successMsg.style.display = 'none';
+                errorMsg.style.display = 'none';
+            }, 3000);
+        }
+
+        // 工具函数：读取文件为文本
+        function readFileAsText(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.onerror = () => reject(new Error('读取失败'));
+                reader.readAsText(file, 'UTF-8');
+            });
+        }
+    </script>
+</body>
+</html>
