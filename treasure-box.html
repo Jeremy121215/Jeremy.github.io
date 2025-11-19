@@ -14,12 +14,18 @@
             font-family: "微软雅黑", Arial, sans-serif;
             padding: 20px;
             background-color: #f9f9f9;
+            position: relative; /* 确保弹窗层级相对body生效 */
+            z-index: 1;
         }
         .treasure-container {
             width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
             height: 100%;
             display: flex;
             flex-direction: column;
+            position: relative;
+            z-index: 2;
         }
         h3 {
             color: #2c3e50;
@@ -48,6 +54,7 @@
             display: none;
             flex: 1;
             overflow-y: auto;
+            padding: 10px;
         }
         .treasure-content.active {
             display: block;
@@ -57,6 +64,10 @@
         .personality-result {
             text-align: center;
             margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         .personality-result h4 {
             font-size: 1.5rem;
@@ -107,6 +118,10 @@
             flex-direction: column;
             gap: 15px;
             margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         .download-form input {
             padding: 12px;
@@ -137,65 +152,79 @@
         .dont-click-option {
             text-align: center;
             margin: 30px 0;
+            position: relative;
+            z-index: 2;
         }
         .dont-click-btn {
             background: #e74c3c;
             color: white;
-            border: none;
+            border: 2px solid #c0392b;
             padding: 15px 30px;
             border-radius: 4px;
             cursor: pointer;
             font-size: 1.2rem;
             font-weight: bold;
-            transition: background 0.3s;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(231,76,60,0.3);
         }
         .dont-click-btn:hover {
             background: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(231,76,60,0.4);
         }
 
-        /* 警告弹窗样式（简化版） */
+        /* 警告弹窗样式（强制最高层级+居中） */
         .warning-modal {
-            position: fixed;
+            position: fixed; /* 固定定位，脱离文档流 */
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            display: none;
+            width: 100vw; /* 占满整个视口宽度 */
+            height: 100vh; /* 占满整个视口高度 */
+            background: rgba(0,0,0,0.85); /* 加深背景，突出弹窗 */
+            display: none; /* 默认隐藏 */
             justify-content: center;
             align-items: center;
-            z-index: 9999;
+            z-index: 999999; /* 强制最高层级，覆盖所有元素 */
+            backdrop-filter: blur(5px); /* 模糊背景，增强视觉层级 */
         }
         .warning-content {
             background: white;
-            padding: 30px;
-            border-radius: 8px;
+            padding: 40px 30px;
+            border-radius: 12px;
             width: 90%;
-            max-width: 400px;
+            max-width: 500px;
             text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 9999999;
         }
         .warning-content h4 {
             color: #e74c3c;
             margin-bottom: 20px;
-            font-size: 1.3rem;
+            font-size: 1.5rem;
+            font-weight: bold;
         }
         .warning-content p {
-            margin-bottom: 25px;
-            line-height: 1.6;
+            margin-bottom: 30px;
+            line-height: 1.8;
             color: #333;
+            font-size: 1.1rem;
         }
         .warning-confirm-btn {
             background: #3498db;
             color: white;
             border: none;
-            padding: 12px 30px;
+            padding: 15px 40px;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             transition: background 0.3s;
+            width: 80%;
+            margin: 0 auto;
         }
         .warning-confirm-btn:hover {
             background: #2980b9;
+            transform: translateY(-2px);
         }
     </style>
 </head>
@@ -233,147 +262,149 @@
         </div>
     </div>
 
-    <!-- 警告弹窗（仅保留确定按钮） -->
+    <!-- 警告弹窗（强制显示，仅确定按钮） -->
     <div class="warning-modal" id="warningModal">
         <div class="warning-content">
-            <h4>警告！你已触发隐藏功能</h4>
-            <p>这是点击"千万别点我"后的专属页面，确认后将跳转到指定链接~</p>
+            <h4>⚠️ 警告！已触发隐藏功能 ⚠️</h4>
+            <p>你无视提醒点击了隐藏按钮，确认后将跳转到专属页面，准备好探索惊喜了吗？</p>
             <button class="warning-confirm-btn" id="warningConfirmBtn" data-url="https://www.bilibili.com">确定进入</button>
         </div>
     </div>
 
     <script>
-        // 1. 标签页切换逻辑
-        const treasureTabs = document.querySelectorAll('.treasure-tab');
-        const treasureContents = document.querySelectorAll('.treasure-content');
+        // 确保DOM完全加载后再执行脚本
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. 标签页切换逻辑
+            const treasureTabs = document.querySelectorAll('.treasure-tab');
+            const treasureContents = document.querySelectorAll('.treasure-content');
 
-        treasureTabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                treasureTabs.forEach(t => t.classList.remove('active'));
-                treasureContents.forEach(c => c.classList.remove('active'));
-                tab.classList.add('active');
-                document.getElementById(`${tab.dataset.tab}Tab`).classList.add('active');
+            treasureTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    treasureTabs.forEach(t => t.classList.remove('active'));
+                    treasureContents.forEach(c => c.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById(`${tab.dataset.tab}Tab`).classList.add('active');
+                });
             });
-        });
 
-        // 2. 每日人品功能 - 1-100分专属描述
-        const generatePersonality = document.getElementById('generatePersonality');
-        const personalityResult = document.getElementById('personalityResult');
-        let hasGeneratedToday = false;
-        const today = new Date().toDateString();
+            // 2. 每日人品功能 - 1-100分专属描述
+            const generatePersonality = document.getElementById('generatePersonality');
+            const personalityResult = document.getElementById('personalityResult');
+            let hasGeneratedToday = false;
+            const today = new Date().toDateString();
 
-        // 1-100分每分唯一描述数组
-        const personalityDescriptions = [
-            // 1-10分（E级）
-            "┏┛墓┗┓...(((m -__-)m",
-            "非酋天花板！干啥都翻车，千万别做重要决策~",
-            "倒霉蛋本蛋！小意外不断，心态一定要稳住~",
-            "运气负分！出门忘带东西，做事总差一步~",
-            "黑暗笼罩！今天宜宅家，远离所有麻烦事~",
-            "倒霉透顶！喝水呛到，走路拌脚，太难了~",
-            "厄运缠身！想做的事全泡汤，佛系应对吧~",
-            "衰神附体！一点小事都能搞砸，别着急~",
-            "倒霉连连！今天干啥都不顺，先歇会儿~",
-            "低谷徘徊！运气差到极点，明天会更好~",
-            // 11-20分（E+级）
-            "有点小倒霉！小麻烦不断，慢慢解决就好~",
-            "运气欠佳！想办的事遇阻碍，多试一次~",
-            "时运不济！偶尔翻车，别影响好心情~",
-            "运气低迷！小事不顺心，别太在意细节~",
-            "倒霉预警！今天容易出错，做事多检查~",
-            "运气下滑！计划赶不上变化，灵活调整~",
-            "小霉运！买东西遇瑕疵，看淡就好~",
-            "运气一般偏下！出门遇堵车，耐心等待~",
-            "些许倒霉！沟通有误会，好好解释就行~",
-            "运气平平偏衰！想吃的店关门，换一家呗~",
-            // 21-30分（D级）
-            "运气普通偏下！做事有点卡，多些耐心~",
-            "小波折不断！但都能解决，问题不大~",
-            "运气稍差！预期没达到，下次再努力~",
-            "Man!What can I say!",
-            "运气低迷！想偷懒却被安排，无奈接受~",
-            "些许不顺！快递延迟，外卖超时，习惯就好~",
-            "运气一般！想买的东西没货，换个选择~",
-            "小倒霉不断！但不影响大局，别纠结~",
-            "运气欠佳！办事遇小阻碍，很快能过去~",
-            "平淡无奇！没好运也没坏运，平稳度过~",
-            // 31-40分（D+级）
-            "运气中等偏下！偶尔有小惊喜，别忽略~",
-            "平淡日常！没波澜没惊喜，安稳过一天~",
-            "运气一般！想做的事能成，就是费点劲~",
-            "小顺利夹杂小麻烦！整体还行，别较真~",
-            "运气平平！办事效率一般，慢慢推进~",
-            "平淡带点小顺！喝到喜欢的饮料，知足常乐~",
-            "运气普通！没遇到坏事，也算一种幸运~",
-            "小波折后有小顺！先苦后甜，别放弃~",
-            "运气中等！想买的东西降价，小开心~",
-            "平淡但安稳！没惊喜没意外，踏实过一天~",
-            // 41-50分（C级）
-            "运气平稳！日常小事都顺利，无惊无险~",
-            "普普通通！没好运没坏运，平常心对待~",
-            "小顺小逆！整体还行，重点事能办成~",
-            "运气中等！偶尔有小惊喜，比如捡到零钱~",
-            "平稳度过！做事按部就班，没什么波澜~",
-            "运气一般偏上！想吃的东西刚好有货~",
-            "平淡却安心！没遇到麻烦，也算圆满~",
-            "小惊喜不断！比如奶茶买一送一，开心~",
-            "运气平稳！办事顺利，心情也不错~",
-            "普普通通的好运！日常小事都顺心~",
-            // 51-60分（C+级）
-            "运气不错！想买的东西刚好打折，划算~",
-            "小幸运降临！出门遇熟人，聊天很开心~",
-            "运气中等偏上！办事效率高，没阻碍~",
-            "惊喜连连！比如抽中小奖品，心情愉悦~",
-            "运气在线！想做的事顺利推进，加油~",
-            "小确幸不断！喝到好喝的咖啡，满足~",
-            "运气不错！遇到乐于助人的人，顺利解决问题~",
-            "日常小好运！比如公交车刚好赶上，省心~",
-            "运气达标！重点事能成，小细节也顺心~",
-            "平稳且顺利！一天下来没烦恼，开心~",
-            // 61-70分（B级）
-            "好运加持！办事一路绿灯，效率超高~",
-            "运气在线！想办的事都能成，心情大好~",
-            "小幸运不断！比如下雨带伞，没被淋湿~",
-            "运气不错！遇到好天气，适合出门逛逛~",
-            "顺风顺水！做事没阻碍，还能摸鱼一会儿~",
-            "好运相伴！买东西刚好是喜欢的颜色~",
-            "运气爆棚！抽中优惠券，省钱小能手~",
-            "顺利加倍！工作学习效率高，收获满满~",
-            "小幸运降临！朋友请客，意外之喜~",
-            "运气在线！所有事都按计划来，完美~",
-            // 71-80分（B+级）
-            "好运爆棚！想啥来啥，心想事成的一天~",
-            "惊喜不断！比如中奖小礼品，开心一整天~",
-            "运气超棒！办事不仅顺利，还能提前完成~",
-            "小幸运扎堆！出门遇贵人，难题轻松解~",
-            "好运连连！买东西刚好降价，太划算啦~",
-            "运气绝佳！想做的事全成，还能摸鱼~",
-            "惊喜不断！比如收到意外祝福，暖心~",
-            "NB！这么暗广的数字你都能抽到~",
-            "小幸运不断！比如堵车刚好避开，省心~",
-            "运气在线！一整天都顺风顺水，愉悦~",
-            // 81-90分（A级）
-            "欧气附体！抽奖必中，好运挡都挡不住~",
-            "惊喜不断！意外之财找上门，太幸运啦~",
-            "运气爆棚！所有心愿都实现，幸福感满满~",
-            "欧皇潜质！办事超顺利，还能收获小惊喜~",
-            "好运连连！出门遇好事，心情美到飞起~",
-            "运气绝佳！想做的事全成，效率翻倍~",
-            "惊喜不断！比如被人夸奖，信心大增~",
-            "欧气满满！买东西抽中大奖，太开心~",
-            "好运加持！难题迎刃而解，轻松应对~",
-            "运气超棒！一整天都有好消息，圆满~",
-            // 91-100分（S级）
-            "天选之子！你就是91！",
-            "欧皇本皇！92分的你，好运爆棚，心想事成~",
-            "封神时刻！93分的你，所有好事都找上门~",
-            "幸运值拉满！94分的你，抽奖必中头奖~",
-            "人生赢家！95分的你，事业爱情双丰收~",
-            "好运天花板！96分的你，出门捡钱不是梦~",
-            "欧气冲天！97分的你，所有阻碍都让路~",
-            "幸运爆棚！98分的你，心想事成，万事顺意~
-            "神级好运！99分的你，人生开绿灯，无往不利~",
-            "666这入是桂"
+            // 1-100分每分唯一描述数组
+            const personalityDescriptions = [
+                // 1-10分（E级）
+                "┏┛墓┗┓...(((m -__-)m",
+                "非酋天花板！干啥都翻车，千万别做重要决策~",
+                "倒霉蛋本蛋！小意外不断，心态一定要稳住~",
+                "运气负分！出门忘带东西，做事总差一步~",
+                "黑暗笼罩！今天宜宅家，远离所有麻烦事~",
+                "倒霉透顶！喝水呛到，走路拌脚，太难了~",
+                "厄运缠身！想做的事全泡汤，佛系应对吧~",
+                "衰神附体！一点小事都能搞砸，别着急~",
+                "倒霉连连！今天干啥都不顺，先歇会儿~",
+                "低谷徘徊！运气差到极点，明天会更好~",
+                // 11-20分（E+级）
+                "有点小倒霉！小麻烦不断，慢慢解决就好~",
+                "运气欠佳！想办的事遇阻碍，多试一次~",
+                "时运不济！偶尔翻车，别影响好心情~",
+                "运气低迷！小事不顺心，别太在意细节~",
+                "倒霉预警！今天容易出错，做事多检查~",
+                "运气下滑！计划赶不上变化，灵活调整~",
+                "小霉运！买东西遇瑕疵，看淡就好~",
+                "运气一般偏下！出门遇堵车，耐心等待~",
+                "些许倒霉！沟通有误会，好好解释就行~",
+                "运气平平偏衰！想吃的店关门，换一家呗~",
+                // 21-30分（D级）
+                "运气普通偏下！做事有点卡，多些耐心~",
+                "小波折不断！但都能解决，问题不大~",
+                "运气稍差！预期没达到，下次再努力~",
+                "Man!What can I say!",
+                "运气低迷！想偷懒却被安排，无奈接受~",
+                "些许不顺！快递延迟，外卖超时，习惯就好~",
+                "运气一般！想买的东西没货，换个选择~",
+                "小倒霉不断！但不影响大局，别纠结~",
+                "运气欠佳！办事遇小阻碍，很快能过去~",
+                "平淡无奇！没好运也没坏运，平稳度过~",
+                // 31-40分（D+级）
+                "运气中等偏下！偶尔有小惊喜，别忽略~",
+                "平淡日常！没波澜没惊喜，安稳过一天~",
+                "运气一般！想做的事能成，就是费点劲~",
+                "小顺利夹杂小麻烦！整体还行，别较真~",
+                "运气平平！办事效率一般，慢慢推进~",
+                "平淡带点小顺！喝到喜欢的饮料，知足常乐~",
+                "运气普通！没遇到坏事，也算一种幸运~",
+                "小波折后有小顺！先苦后甜，别放弃~",
+                "运气中等！想买的东西降价，小开心~",
+                "平淡但安稳！没惊喜没意外，踏实过一天~",
+                // 41-50分（C级）
+                "运气平稳！日常小事都顺利，无惊无险~",
+                "普普通通！没好运没坏运，平常心对待~",
+                "小顺小逆！整体还行，重点事能办成~",
+                "运气中等！偶尔有小惊喜，比如捡到零钱~",
+                "平稳度过！做事按部就班，没什么波澜~",
+                "运气一般偏上！想吃的东西刚好有货~",
+                "平淡却安心！没遇到麻烦，也算圆满~",
+                "小惊喜不断！比如奶茶买一送一，开心~",
+                "运气平稳！办事顺利，心情也不错~",
+                "普普通通的好运！日常小事都顺心~",
+                // 51-60分（C+级）
+                "运气不错！想买的东西刚好打折，划算~",
+                "小幸运降临！出门遇熟人，聊天很开心~",
+                "运气中等偏上！办事效率高，没阻碍~",
+                "惊喜连连！比如抽中小奖品，心情愉悦~",
+                "运气在线！想做的事顺利推进，加油~",
+                "小确幸不断！喝到好喝的咖啡，满足~",
+                "运气不错！遇到乐于助人的人，顺利解决问题~",
+                "日常小好运！比如公交车刚好赶上，省心~",
+                "运气达标！重点事能成，小细节也顺心~",
+                "平稳且顺利！一天下来没烦恼，开心~",
+                // 61-70分（B级）
+                "好运加持！办事一路绿灯，效率超高~",
+                "运气在线！想办的事都能成，心情大好~",
+                "小幸运不断！比如下雨带伞，没被淋湿~",
+                "运气不错！遇到好天气，适合出门逛逛~",
+                "顺风顺水！做事没阻碍，还能摸鱼一会儿~",
+                "好运相伴！买东西刚好是喜欢的颜色~",
+                "运气爆棚！抽中优惠券，省钱小能手~",
+                "顺利加倍！工作学习效率高，收获满满~",
+                "小幸运降临！朋友请客，意外之喜~",
+                "运气在线！所有事都按计划来，完美~",
+                // 71-80分（B+级）
+                "好运爆棚！想啥来啥，心想事成的一天~",
+                "惊喜不断！比如中奖小礼品，开心一整天~",
+                "运气超棒！办事不仅顺利，还能提前完成~",
+                "小幸运扎堆！出门遇贵人，难题轻松解~",
+                "好运连连！买东西刚好降价，太划算啦~",
+                "运气绝佳！想做的事全成，还能摸鱼~",
+                "惊喜不断！比如收到意外祝福，暖心~",
+                "NB！这么暗广的数字你都能抽到~",
+                "小幸运不断！比如堵车刚好避开，省心~",
+                "运气在线！一整天都顺风顺水，愉悦~",
+                // 81-90分（A级）
+                "欧气附体！抽奖必中，好运挡都挡不住~",
+                "惊喜不断！意外之财找上门，太幸运啦~",
+                "运气爆棚！所有心愿都实现，幸福感满满~",
+                "欧皇潜质！办事超顺利，还能收获小惊喜~",
+                "好运连连！出门遇好事，心情美到飞起~",
+                "运气绝佳！想做的事全成，效率翻倍~",
+                "惊喜不断！比如被人夸奖，信心大增~",
+                "欧气满满！买东西抽中大奖，太开心~",
+                "好运加持！难题迎刃而解，轻松应对~",
+                "运气超棒！一整天都有好消息，圆满~",
+                // 91-100分（S级）
+                "天选之子！你就是91！",
+                "欧皇本皇！92分的你，好运爆棚，心想事成~",
+                "封神时刻！93分的你，所有好事都找上门~",
+                "幸运值拉满！94分的你，抽奖必中头奖~",
+                "人生赢家！95分的你，事业爱情双丰收~",
+                "好运天花板！96分的你，出门捡钱不是梦~",
+                "欧气冲天！97分的你，所有阻碍都让路~",
+                "幸运爆棚！98分的你，心想事成，万事顺意~",
+                "神级好运！99分的你，人生开绿灯，无往不利~",
+                "666这入是桂"
         ];
 
         // 分数对应等级判断函数
@@ -416,27 +447,25 @@
         });
 
         // 页面加载时恢复今日人品结果
-        window.addEventListener('load', () => {
-            const storedDate = localStorage.getItem('personalityGeneratedDate');
-            const storedScore = localStorage.getItem('todayPersonalityScore');
+        const storedDate = localStorage.getItem('personalityGeneratedDate');
+        const storedScore = localStorage.getItem('todayPersonalityScore');
+        
+        if (storedDate === today && storedScore) {
+            hasGeneratedToday = true;
+            const score = parseInt(storedScore);
+            const level = getLevel(score);
+            const description = personalityDescriptions[score - 1];
             
-            if (storedDate === today && storedScore) {
-                hasGeneratedToday = true;
-                const score = parseInt(storedScore);
-                const level = getLevel(score);
-                const description = personalityDescriptions[score - 1];
-                
-                personalityResult.innerHTML = `
-                    <h4>今日人品评分</h4>
-                    <p>人品：<span class="score">${score}分</span></p>
-                    <p>等级：<span class="level">${level}级</span></p>
-                    <p class="desc">描述：${description}</p>
-                    <button class="personality-btn" disabled>今日已生成（明日重置）</button>
-                `;
-                generatePersonality.disabled = true;
-                generatePersonality.textContent = '今日已生成';
-            }
-        });
+            personalityResult.innerHTML = `
+                <h4>今日人品评分</h4>
+                <p>人品：<span class="score">${score}分</span></p>
+                <p>等级：<span class="level">${level}级</span></p>
+                <p class="desc">描述：${description}</p>
+                <button class="personality-btn" disabled>今日已生成（明日重置）</button>
+            `;
+            generatePersonality.disabled = true;
+            generatePersonality.textContent = '今日已生成';
+        }
 
         // 3. 自定义下载功能（优化版）
         const downloadForm = document.getElementById('downloadForm');
@@ -474,29 +503,45 @@
             alert(`下载已触发！文件将保存为：${fileName}`);
         });
 
-        // 4. 千万别点功能逻辑（核心修复）
+        // 4. 千万别点功能逻辑（确保弹窗100%显示）
         const dontClickBtn = document.getElementById('dontClickBtn');
         const warningModal = document.getElementById('warningModal');
         const warningConfirmBtn = document.getElementById('warningConfirmBtn');
 
-        // 点击"千万别点我"显示弹窗
-        dontClickBtn.addEventListener('click', () => {
-            warningModal.style.display = 'flex';
-        });
+        // 强制绑定点击事件，避免事件丢失
+        if (dontClickBtn && warningModal) {
+            dontClickBtn.addEventListener('click', function() {
+                // 强制显示弹窗，解决层级和显示问题
+                warningModal.style.display = 'flex';
+                // 防止弹窗被其他元素遮挡
+                warningModal.style.zIndex = '999999';
+                warningModal.querySelector('.warning-content').style.zIndex = '9999999';
+                console.log('弹窗已触发显示'); // 调试用，可删除
+            });
+        }
 
-        // 点击确定按钮跳转链接
-        warningConfirmBtn.addEventListener('click', () => {
-            const targetUrl = warningConfirmBtn.dataset.url;
-            window.open(targetUrl, '_blank'); // 新窗口打开
-            warningModal.style.display = 'none'; // 关闭弹窗
-        });
-
-        // 点击弹窗背景关闭（可选保留，不影响"必须点确定"逻辑）
-        /*warningModal.addEventListener('click', (e) => {
-            if (e.target === warningModal) {
+        // 确定按钮跳转逻辑
+        if (warningConfirmBtn) {
+            warningConfirmBtn.addEventListener('click', function() {
+                const targetUrl = this.dataset.url || 'https://www.bilibili.com';
+                // 强制新窗口打开，避免被拦截
+                const newWindow = window.open(targetUrl, '_blank');
+                if (!newWindow) {
+                    alert('浏览器阻止了弹窗，请允许弹出窗口后重试~');
+                }
+                // 关闭弹窗
                 warningModal.style.display = 'none';
+            });
+        }
+
+        // 防止背景点击关闭（可选，若需强制必须点确定，保留以下代码）
+        warningModal.addEventListener('click', function(e) {
+            if (e.target === warningModal) {
+                // 点击背景不关闭，强制必须点确定
+                alert('请点击"确定进入"按钮继续~');
             }
-        });*/
+        });
+    });
     </script>
 </body>
 </html>
