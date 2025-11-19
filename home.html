@@ -49,7 +49,7 @@
         a:hover {
             text-decoration: underline;
         }
-        /* 功能按钮样式（统一下载和AI按钮风格） */
+        /* 功能按钮样式 */
         .function-btn {
             display: inline-block;
             margin: 20px 0;
@@ -65,7 +65,6 @@
             background-color: #2980b9;
             text-decoration: none;
         }
-        /* AI按钮可单独设置不同颜色（可选） */
         .ai-btn {
             background-color: #9b59b6;
         }
@@ -77,6 +76,12 @@
         }
         .draw-btn:hover {
             background-color: #16a085;
+        }
+        .doc-btn {
+            background-color: #e67e22;
+        }
+        .doc-btn:hover {
+            background-color: #d35400;
         }
         .version-info {
             text-align: center;
@@ -135,13 +140,22 @@
         </p>
     </div>
 
-    <!-- 新增：绘图功能区 -->
     <div class="section">
         <h2>🎨在线绘图工具</h2>
         <p>点击下方按钮进入绘图页面，支持多颜色画笔、自由绘制，可保存作品到本地（刷新不保留）：</p>
         <a href="draw.html" class="function-btn draw-btn">打开在线绘图</a>
         <p style="margin-top: 15px; color: #666;">
             支持功能：多颜色选择、调节画笔粗细、清空画布、本地保存（自定义保存位置）
+        </p>
+    </div>
+
+    <!-- 新增：独立文档编辑功能入口 -->
+    <div class="section">
+        <h2>📝文档编辑工具</h2>
+        <p>点击下方按钮进入文档编辑页面，支持多格式文本文档打开、编辑、保存及Markdown渲染：</p>
+        <a href="doc-editor.html" class="function-btn doc-btn">打开文档编辑</a>
+        <p style="margin-top: 15px; color: #666;">
+            支持格式：TXT/MD/DOC/DOCX/RTF/JSON/XML | 功能：Markdown实时渲染、多格式保存、视图切换
         </p>
     </div>
 
@@ -154,7 +168,7 @@
     </div>
 
     <div class="version-info">
-        网页版本：v1.5.1 | 最后更新：2025-11-19 12:30
+        网页版本：v1.5.0 | 最后更新：2025-11-19 13：56
     </div>
 </body>
 </html>
