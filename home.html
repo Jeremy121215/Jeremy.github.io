@@ -4,8 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="logo.png" type="image/png" sizes="32x32">
-    <title>星河为梦的网页</title>
+    <title>星河为梦的网页 - 首页</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
             font-family: "微软雅黑", Arial, sans-serif;
             max-width: 1000px;
@@ -17,78 +22,47 @@
         }
         header {
             text-align: center;
-            margin: 30px 0;
+            margin: 50px 0 30px;
         }
         h1 {
             color: #2c3e50;
-            font-size: 2.2rem;
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        header p {
+            font-size: 1.1rem;
+            color: #666;
         }
         .section {
             background: white;
-            padding: 25px;
+            padding: 30px;
             border-radius: 8px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            text-align: center;
         }
         h2 {
             color: #3498db;
             border-bottom: 2px solid #eee;
             padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-        ul {
-            margin-left: 20px;
-        }
-        li {
-            margin: 8px 0;
-        }
-        a {
-            color: #3498db;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-        /* 功能按钮样式 */
-        .function-btn {
+            margin-bottom: 25px;
             display: inline-block;
-            margin: 20px 0;
-            padding: 12px 25px;
-            background-color: #3498db;
-            color: white;
-            border-radius: 5px;
-            font-size: 1.1rem;
-            font-weight: 500;
-            transition: background 0.3s;
-        }
-        .function-btn:hover {
-            background-color: #2980b9;
-            text-decoration: none;
-        }
-        .ai-btn {
-            background-color: #9b59b6;
-        }
-        .ai-btn:hover {
-            background-color: #8e44ad;
-        }
-        .draw-btn {
-            background-color: #1abc9c;
-        }
-        .draw-btn:hover {
-            background-color: #16a085;
-        }
-        .doc-btn {
-            background-color: #e67e22;
-        }
-        .doc-btn:hover {
-            background-color: #d35400;
         }
         .treasure-btn {
             background-color: #f39c12;
-            margin-top: 30px;
+            padding: 15px 30px;
+            border-radius: 6px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(243,156,18,0.3);
         }
         .treasure-btn:hover {
             background-color: #d35400;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(243,156,18,0.4);
         }
         .version-info {
             text-align: center;
@@ -99,294 +73,97 @@
             border-top: 1px solid #eee;
         }
 
-        /* 百宝箱弹窗样式 */
-        .treasure-box {
+        /* 百宝箱弹窗样式（用于嵌入treasure-box.html） */
+        .treasure-modal {
             display: none;
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .treasure-modal-content {
             width: 90%;
             max-width: 500px;
+            height: 90%;
+            max-height: 600px;
             background: white;
             border-radius: 8px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            padding: 25px;
-            z-index: 1000;
+            overflow: hidden;
+            position: relative;
         }
-        .treasure-box h3 {
-            color: #2c3e50;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .treasure-tabs {
-            display: flex;
-            border-bottom: 1px solid #eee;
-            margin-bottom: 20px;
-        }
-        .treasure-tab {
-            padding: 10px 15px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        .treasure-tab.active {
-            background: #f39c12;
-            color: white;
-            border-radius: 4px 4px 0 0;
-        }
-        .treasure-content {
-            display: none;
-        }
-        .treasure-content.active {
-            display: block;
-        }
-        .personality-result {
-            text-align: center;
-            margin: 20px 0;
-        }
-        .personality-result h4 {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-        }
-        .personality-result p {
-            margin: 5px 0;
-        }
-        .personality-btn {
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1rem;
-            margin-top: 10px;
-        }
-        .download-form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .download-form input {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 1rem;
-        }
-        .download-btn {
-            background: #2ecc71;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-        .close-btn {
+        .close-modal {
             position: absolute;
-            top: 15px;
-            right: 15px;
+            top: 10px;
+            right: 10px;
             font-size: 1.5rem;
-            cursor: pointer;
             color: #666;
+            cursor: pointer;
+            z-index: 1001;
+            background: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .close-modal:hover {
+            color: #e74c3c;
+        }
+        #treasure-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>星河为梦的网页</h1>
-        <p>欢迎访问星河为梦的 GitHub Pages 个人网页！这里会分享我的项目成果等（可以下载）～</p>
+        <h1>百宝箱</h1>
+        <p>趣味功能集合地~</p>
     </header>
 
     <div class="section">
-        <h2>关于网页</h2>
-        <ul>
-            <li>搭建工具：GitHub Pages</li>
-            <li>网页地址：<a href="https://jeremy121215.github.io/Jeremy.github.io/home.html" target="_blank">https://jeremy121215.github.io/Jeremy.github.io/home.html</a></li>
-        </ul>
-    </div>
-
-    <div class="section">
-        <h2>如何访问</h2>
-        <ol>
-            <li>直接点击上方网页地址即可打开</li>
-            <li>若配置了自定义域名，输入域名也可快速访问</li>
-            <li>网页支持 HTTPS 安全访问，无需担心隐私问题</li>
-        </ol>
-    </div>
-    
-    <div class="section">
-        <h2>📁文件下载区</h2>
-        <p>点击下方按钮进入文件下载页面，可搜索并下载所需文件：</p>
-        <a href="downloads.html" class="function-btn">进入文件下载页</a>
-    </div>
-
-    <div class="section">
-        <h2>🤖AI助手</h2>
-        <p>点击下方按钮进入AI助手页面，支持多种AI工具调用及历史记录管理：</p>
-        <a href="ai.html" class="function-btn ai-btn">打开AI助手</a>
-        <p style="margin-top: 15px; color: #666;">
-            支持功能：AI问答、历史记录查看、记录删除等
-        </p>
-    </div>
-
-    <div class="section">
-        <h2>💻C++编译器</h2>
-        <p>点击下方按钮进入C++编译器页面，支持多版本切换、代码编辑、运行输入及结果查看：</p>
-        <a href="cpp-compiler.html" class="function-btn" style="background-color: #e67e22;">打开C++编译器</a>
-        <p style="margin-top: 15px; color: #666;">
-            支持版本：C++98、C++11、C++14、C++17 | 功能：代码编辑、程序输入、实时输出
-        </p>
-    </div>
-
-    <div class="section">
-        <h2>🎨在线绘图工具</h2>
-        <p>点击下方按钮进入绘图页面，支持多颜色画笔、自由绘制，可保存作品到本地（刷新不保留）：</p>
-        <a href="draw.html" class="function-btn draw-btn">打开在线绘图</a>
-        <p style="margin-top: 15px; color: #666;">
-            支持功能：多颜色选择、调节画笔粗细、清空画布、本地保存（自定义保存位置）
-        </p>
-    </div>
-
-    <div class="section">
-        <h2>📝文档编辑工具</h2>
-        <p>点击下方按钮进入文档编辑页面，支持多格式文本文档打开、编辑、保存及Markdown渲染：</p>
-        <a href="doc-editor.html" class="function-btn doc-btn">打开文档编辑</a>
-        <p style="margin-top: 15px; color: #666;">
-            支持格式：TXT/MD/DOC/DOCX/RTF/JSON/XML | 功能：Markdown实时渲染、多格式保存、视图切换
-        </p>
-    </div>
-
-    <div class="section">
-        <h2>联系方式</h2>
-        <ul>
-            <li>GitHub：<a href="https://github.com/jeremy121215" target="_blank">jeremy121215</a></li>
-            <li>邮箱：<a href="mailto:xhwm121215@qq.com">xhwm121215@qq.com</a></li>
-        </ul>
-    </div>
-
-    <!-- 百宝箱模块 -->
-    <div class="section">
-        <h2>🔮百宝箱</h2>
-        <p>点击下方按钮打开百宝箱，探索更多趣味功能：</p>
-        <button class="function-btn treasure-btn" id="treasureBtn">打开百宝箱</button>
-    </div>
-
-    <!-- 百宝箱弹窗 -->
-    <div class="treasure-box" id="treasureBox">
-        <div class="close-btn" id="closeBtn">×</div>
-        <h3>百宝箱功能</h3>
-        <div class="treasure-tabs">
-            <div class="treasure-tab active" data-tab="personality">每日人品</div>
-            <div class="treasure-tab" data-tab="download">自定义下载</div>
-        </div>
-        <div class="treasure-content active" id="personalityTab">
-            <div class="personality-result" id="personalityResult">
-                <h4>点击生成今日人品</h4>
-                <p>人品：-</p>
-                <p>等级：-</p>
-                <p>描述：-</p>
-                <button class="personality-btn" id="generatePersonality">生成今日人品</button>
-            </div>
-        </div>
-        <div class="treasure-content" id="downloadTab">
-            <form class="download-form" id="downloadForm">
-                <input type="text" id="downloadUrl" placeholder="输入下载链接（如：https://example.com/file.zip）" required>
-                <input type="text" id="fileName" placeholder="输入文件名称（自动识别后缀）" required>
-                <button class="download-btn" type="submit">开始下载</button>
-            </form>
-        </div>
+        <h2>🔮 百宝箱</h2>
+        <button class="treasure-btn" id="openTreasureBtn">打开百宝箱</button>
     </div>
 
     <div class="version-info">
-        网页版本：v1.6.0 | 最后更新：2025-11-19 17：30
+        网页版本：v2.0.0 | 最后更新：2025-11-20
+    </div>
+
+    <!-- 百宝箱弹窗（嵌入独立的treasure-box.html） -->
+    <div class="treasure-modal" id="treasureModal">
+        <div class="close-modal" id="closeModal">×</div>
+        <div class="treasure-modal-content">
+            <iframe id="treasure-iframe" src="treasure-box.html"></iframe>
+        </div>
     </div>
 
     <script>
-        // 百宝箱弹窗控制
-        const treasureBtn = document.getElementById('treasureBtn');
-        const treasureBox = document.getElementById('treasureBox');
-        const closeBtn = document.getElementById('closeBtn');
-        const treasureTabs = document.querySelectorAll('.treasure-tab');
-        const treasureContents = document.querySelectorAll('.treasure-content');
+        // 弹窗控制：打开/关闭百宝箱
+        const openTreasureBtn = document.getElementById('openTreasureBtn');
+        const treasureModal = document.getElementById('treasureModal');
+        const closeModal = document.getElementById('closeModal');
 
-        treasureBtn.addEventListener('click', () => {
-            treasureBox.style.display = 'block';
+        openTreasureBtn.addEventListener('click', () => {
+            treasureModal.style.display = 'flex';
         });
 
-        closeBtn.addEventListener('click', () => {
-            treasureBox.style.display = 'none';
+        closeModal.addEventListener('click', () => {
+            treasureModal.style.display = 'none';
         });
 
-        treasureTabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                treasureTabs.forEach(t => t.classList.remove('active'));
-                treasureContents.forEach(c => c.classList.remove('active'));
-                tab.classList.add('active');
-                document.getElementById(`${tab.dataset.tab}Tab`).classList.add('active');
-            });
-        });
-
-        // 每日人品功能
-        const generatePersonality = document.getElementById('generatePersonality');
-        const personalityResult = document.getElementById('personalityResult');
-        let hasGeneratedToday = false;
-        const today = new Date().toDateString();
-        const personalityDescriptions = {
-            A: '欧皇附体！今天干啥都顺，抽奖必中！',
-            B: '运气不错~ 日常小事都能有小惊喜！',
-            C: '普普通通~ 平稳度过一天，无惊无险。',
-            D: '有点背… 小麻烦不断，心态稳住！',
-            E: '非酋本酋！今天宜躺平，不宜搞大事…'
-        };
-
-        generatePersonality.addEventListener('click', () => {
-            if (hasGeneratedToday) {
-                alert('今日人品已生成，明天再来吧~');
-                return;
+        // 点击弹窗背景关闭
+        treasureModal.addEventListener('click', (e) => {
+            if (e.target === treasureModal) {
+                treasureModal.style.display = 'none';
             }
-            const score = Math.floor(Math.random() * 100) + 1;
-            let level = '';
-            if (score > 80) level = 'A';
-            else if (score > 60) level = 'B';
-            else if (score > 40) level = 'C';
-            else if (score > 20) level = 'D';
-            else level = 'E';
-            personalityResult.innerHTML = `
-                <h4>今日人品</h4>
-                <p>人品：${score}</p>
-                <p>等级：${level}</p>
-                <p>描述：${personalityDescriptions[level]}</p>
-                <button class="personality-btn" disabled>今日已生成</button>
-            `;
-            hasGeneratedToday = true;
-            // 存储今日生成状态到localStorage
-            localStorage.setItem('personalityGeneratedDate', today);
-        });
-
-        // 页面加载时检查是否已生成今日人品
-        window.addEventListener('load', () => {
-            const storedDate = localStorage.getItem('personalityGeneratedDate');
-            if (storedDate === today) {
-                hasGeneratedToday = true;
-                generatePersonality.disabled = true;
-                generatePersonality.textContent = '今日已生成';
-            }
-        });
-
-        // 自定义下载功能
-        const downloadForm = document.getElementById('downloadForm');
-        downloadForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const url = document.getElementById('downloadUrl').value;
-            const fileName = document.getElementById('fileName').value;
-            // 创建下载链接
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = fileName;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            alert('开始下载，请等待浏览器响应~');
         });
     </script>
 </body>
