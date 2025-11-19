@@ -5,9 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="logo.png" type="image/png" sizes="32x32">
     <title>文档编辑工具 - 星河为梦的网页</title>
-    <!-- 引入Markdown渲染和防XSS库 -->
+    <!-- 引入核心依赖库 -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -195,6 +198,16 @@
         #preview a:hover {
             border-bottom: 1px solid #3498db;
         }
+        /* 数学公式样式优化 */
+        #preview .katex {
+            font-size: 1.1em !important;
+            margin: 0.3em 0;
+        }
+        #preview .katex-display {
+            overflow-x: auto;
+            padding: 0.5em 0;
+            margin: 1em 0;
+        }
         /* 状态提示 */
         .status-message {
             text-align: center;
@@ -227,6 +240,29 @@
             border-radius: 20px;
             font-size: 0.9rem;
         }
+        .math-tip {
+            background-color: #f0f7ff;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            border-left: 4px solid #4299e1;
+        }
+        .math-tip h4 {
+            color: #2d3748;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+        .math-tip p {
+            color: #4a5568;
+            margin: 4px 0;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .math-tip code {
+            background-color: #e8f4f8;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
         .tip {
             text-align: center;
             margin-top: 15px;
@@ -251,7 +287,7 @@
     <a href="home.html" class="back-link">← 返回主页</a>
     
     <div class="container">
-        <h1>📝 文档编辑工具</h1>
+        <h1>📝 文档编辑工具（支持数学公式）</h1>
         
         <!-- 功能工具栏 -->
         <div class="doc-toolbar">
@@ -282,23 +318,34 @@
             <span class="format-tag">RTF</span>
             <span class="format-tag">JSON</span>
             <span class="format-tag">XML</span>
+            <span class="format-tag" style="background-color: #fef7fb; color: #9f7aea;">支持LaTeX数学公式</span>
+        </div>
+        
+        <!-- 数学公式使用提示 -->
+        <div class="math-tip">
+            <h4>📐 数学公式使用说明（LaTeX语法）</h4>
+            <p>1. 行内公式：用单个美元符号包裹 → <code>$公式内容$</code>（例：$E=mc^2$）</p>
+            <p>2. 块级公式：用两个美元符号包裹 → <code>$$公式内容$$</code>（例：$$\sum_{i=1}^n i = \frac{n(n+1)}{2}$$）</p>
+            <p>3. 支持常用公式：微积分、矩阵、方程组、希腊字母等（保存为HTML时公式正常渲染）</p>
         </div>
         
         <!-- 编辑区和预览区 -->
         <div class="edit-container">
-            <textarea id="editor" placeholder="请输入或粘贴文档内容，支持Markdown语法（如：# 标题、**粗体**、[链接](url)）..."></textarea>
+            <textarea id="editor" placeholder="请输入或粘贴文档内容，支持Markdown+LaTeX数学公式：
+- 行内公式：$E=mc^2$
+- 块级公式：$$\sum_{i=1}^n i = \frac{n(n+1)}{2}$$
+- 矩阵：$$\begin{pmatrix} 1 & 2 \\ 3 & 4 \end{pmatrix}$$
+- 微积分：$$\int_0^1 x^2 dx = \frac{1}{3}$$
+- 希腊字母：$\alpha + \beta = \gamma$"></textarea>
             <div id="preview">
                 <h3>预览效果</h3>
-                <p>编辑区输入内容后，这里会实时显示渲染结果</p>
-                <p>支持Markdown语法示例：</p>
-                <ul>
-                    <li># 一级标题</li>
-                    <li>## 二级标题</li>
-                    <li>**粗体文本**</li>
-                    <li>*斜体文本*</li>
-                    <li>[链接名称](https://example.com)</li>
-                    <li>`代码片段`</li>
-                </ul>
+                <p>编辑区输入内容后，这里会实时显示渲染结果（含数学公式）</p>
+                <p>示例公式渲染效果：</p>
+                <p>行内公式：$E=mc^2$（爱因斯坦质能方程）</p>
+                <p>块级公式：$$\sum_{i=1}^n i = \frac{n(n+1)}{2}$$（等差数列求和）</p>
+                <p>矩阵：$$\begin{pmatrix} 1 & 2 \\ 3 & 4 \end{pmatrix}$$</p>
+                <p>微积分：$$\int_0^1 x^2 dx = \frac{1}{3}$$</p>
+                <p>希腊字母：$\alpha + \beta = \gamma$</p>
             </div>
         </div>
         
@@ -307,13 +354,13 @@
         <div id="error-msg" class="status-message error">操作失败，请重试！</div>
         
         <p class="tip">
-            提示：1. DOC/DOCX格式仅支持纯文本提取；2. 编辑内容仅保存在当前页面，刷新后丢失；3. 保存时可自定义存储位置；
-            4. 点击「切换单/双栏」可适配不同屏幕
+            提示：1. DOC/DOCX格式仅支持纯文本提取；2. 数学公式仅在Markdown/HTML格式中保留渲染效果，TXT格式保存为原始LaTeX代码；
+            3. 编辑内容仅保存在当前页面，刷新后丢失；4. 保存时可自定义存储位置
         </p>
     </div>
 
     <script>
-        // DOM元素
+        // DOM元素获取
         const editor = document.getElementById('editor');
         const preview = document.getElementById('preview');
         const docFileInput = document.getElementById('doc-file-input');
@@ -326,12 +373,71 @@
 
         let isTwoColumn = true; // 默认双栏模式
 
-        // 1. Markdown实时渲染
+        // 配置marked支持数学公式（行内+块级）
+        marked.use({
+            extensions: [{
+                name: 'katex-math',
+                level: 'inline',
+                start(src) {
+                    return src.match(/\$/)?.index;
+                },
+                tokenizer(src) {
+                    // 匹配行内公式：$...$
+                    const inlineMatch = src.match(/^\$(.*?)\$$/);
+                    if (inlineMatch) {
+                        return {
+                            type: 'katex-inline',
+                            raw: inlineMatch[0],
+                            text: inlineMatch[1].trim()
+                        };
+                    }
+                    // 匹配块级公式：$$...$$（支持换行）
+                    const blockMatch = src.match(/^\$\$(.*?)\$\$$/s);
+                    if (blockMatch) {
+                        return {
+                            type: 'katex-block',
+                            raw: blockMatch[0],
+                            text: blockMatch[1].trim()
+                        };
+                    }
+                    return null;
+                },
+                renderer: {
+                    // 渲染行内数学公式
+                    'katex-inline'(token) {
+                        try {
+                            return katex.renderToString(token.text, {
+                                throwOnError: false,
+                                errorColor: '#e74c3c',
+                                displayMode: false
+                            });
+                        } catch (err) {
+                            return `<span style="color: #e74c3c;">公式错误：${token.text}</span>`;
+                        }
+                    },
+                    // 渲染块级数学公式
+                    'katex-block'(token) {
+                        try {
+                            return katex.renderToString(token.text, {
+                                throwOnError: false,
+                                errorColor: '#e74c3c',
+                                displayMode: true
+                            });
+                        } catch (err) {
+                            return `<div style="color: #e74c3c;">公式错误：${token.text}</div>`;
+                        }
+                    }
+                }
+            }]
+        });
+
+        // 1. Markdown+数学公式实时渲染
         editor.addEventListener('input', () => {
             const content = editor.value;
-            // 渲染Markdown并防XSS
-            const html = DOMPurify.sanitize(marked.parse(content));
-            preview.innerHTML = html || '<h3>预览效果</h3><p>编辑区输入内容后，这里会实时显示渲染结果</p>';
+            // 先通过marked渲染，再用DOMPurify防XSS
+            const renderedHtml = marked.parse(content);
+            const safeHtml = DOMPurify.sanitize(renderedHtml);
+            preview.innerHTML = safeHtml || '<h3>预览效果</h3><p>编辑区输入内容后，这里会实时显示渲染结果（含数学公式）</p>';
         });
 
         // 2. 打开本地文档
@@ -351,33 +457,30 @@
             try {
                 let content = await readFileAsText(file);
 
-                // 处理不同格式
+                // 针对不同格式做预处理
                 if (fileExt === 'doc' || fileExt === 'docx') {
                     // 过滤DOC/DOCX二进制乱码
                     content = content.replace(/[\x00-\x1F\x7F-\x9F]/g, '').trim();
                     if (!content) content = 'DOC/DOCX文件仅提取纯文本内容，未检测到可显示文本';
                 } else if (fileExt === 'json') {
-                    // 格式化JSON
+                    // JSON格式化
                     try {
                         content = JSON.stringify(JSON.parse(content), null, 2);
-                    } catch (err) {
-                        // JSON格式错误则保留原内容
-                    }
+                    } catch (err) { /* 保留原内容 */ }
                 }
 
-                // 填充到编辑区并渲染
+                // 填充到编辑区并触发渲染
                 editor.value = content;
-                editor.dispatchEvent(new Event('input')); // 触发渲染
+                editor.dispatchEvent(new Event('input'));
                 showMessage('success', `成功打开文件：${file.name}`);
             } catch (err) {
                 showMessage('error', '文件读取失败，请选择有效文档');
             }
 
-            // 重置文件输入
-            docFileInput.value = '';
+            docFileInput.value = ''; // 重置文件输入
         });
 
-        // 3. 清空内容
+        // 3. 清空编辑区
         clearBtn.addEventListener('click', () => {
             editor.value = '';
             editor.dispatchEvent(new Event('input'));
@@ -387,18 +490,14 @@
         // 4. 切换单/双栏模式
         toggleBtn.addEventListener('click', () => {
             isTwoColumn = !isTwoColumn;
-            const editContainer = document.querySelector('.edit-container');
-            
             if (isTwoColumn) {
-                // 双栏
                 editor.style.display = 'block';
                 preview.style.display = 'block';
                 toggleBtn.textContent = '切换单/双栏';
             } else {
-                // 单栏（仅编辑区）
-                editor.style.display = 'block';
-                preview.style.display = 'none';
-                toggleBtn.textContent = '显示预览区';
+                editor.style.display = 'none';
+                preview.style.display = 'block';
+                toggleBtn.textContent = '显示编辑区';
             }
         });
 
@@ -415,7 +514,7 @@
             let mimeType = 'text/plain';
             let saveContent = content;
 
-            // 处理不同保存格式
+            // 根据保存格式处理内容
             switch (format) {
                 case 'txt':
                     fileName += '.txt';
@@ -428,17 +527,32 @@
                 case 'html':
                     fileName += '.html';
                     mimeType = 'text/html';
-                    saveContent = `<html><head><meta charset="UTF-8"><title>文档</title></head><body>${DOMPurify.sanitize(marked.parse(content))}</body></html>`;
+                    // HTML格式包含数学公式渲染的依赖
+                    saveContent = `
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>${fileName}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <style>body{padding:20px;max-width:1200px;margin:0 auto;}</style>
+</head>
+<body>
+${DOMPurify.sanitize(marked.parse(content))}
+<script>renderMathInElement(document.body);</script>
+</body>
+</html>
+                    `.trim();
                     break;
                 case 'json':
                     fileName += '.json';
                     mimeType = 'application/json';
                     try {
-                        // 尝试转为标准JSON
                         saveContent = JSON.stringify(JSON.parse(content), null, 2);
                     } catch (err) {
-                        // 非JSON格式则包装为JSON对象
-                        saveContent = JSON.stringify({ content: content }, null, 2);
+                        saveContent = JSON.stringify({ content: content, note: '非标准JSON格式' }, null, 2);
                     }
                     break;
                 case 'rtf':
@@ -448,7 +562,7 @@
                     break;
             }
 
-            // 下载文件
+            // 生成文件并下载
             const blob = new Blob([saveContent], { type: mimeType });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -461,7 +575,7 @@
             showMessage('success', `文档已保存为：${fileName}`);
         });
 
-        // 工具函数：显示状态消息
+        // 工具函数：显示状态提示
         function showMessage(type, text) {
             if (type === 'success') {
                 successMsg.textContent = text;
@@ -472,8 +586,7 @@
                 errorMsg.style.display = 'block';
                 successMsg.style.display = 'none';
             }
-
-            // 3秒后隐藏
+            // 3秒后隐藏提示
             setTimeout(() => {
                 successMsg.style.display = 'none';
                 errorMsg.style.display = 'none';
@@ -489,6 +602,16 @@
                 reader.readAsText(file, 'UTF-8');
             });
         }
+
+        // 初始化：渲染默认预览区的数学公式
+        window.addEventListener('load', () => {
+            renderMathInElement(preview, {
+                delimiters: [
+                    { left: '$', right: '$', display: false },
+                    { left: '$$', right: '$$', display: true }
+                ]
+            });
+        });
     </script>
 </body>
 </html>
