@@ -132,6 +132,71 @@
         .download-btn:hover {
             background: #27ae60;
         }
+
+        /* 千万别点按钮样式 */
+        .dont-click-option {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .dont-click-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .dont-click-btn:hover {
+            background: #c0392b;
+        }
+
+        /* 警告弹窗样式（简化版） */
+        .warning-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .warning-content {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .warning-content h4 {
+            color: #e74c3c;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+        .warning-content p {
+            margin-bottom: 25px;
+            line-height: 1.6;
+            color: #333;
+        }
+        .warning-confirm-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: background 0.3s;
+        }
+        .warning-confirm-btn:hover {
+            background: #2980b9;
+        }
     </style>
 </head>
 <body>
@@ -153,10 +218,10 @@
             </div>
         </div>
 
+        <!-- 千万别点按钮 -->
         <div class="dont-click-option">
             <button class="dont-click-btn" id="dontClickBtn">⚠️ 千万别点我 ⚠️</button>
         </div>
-    </div>
 
         <!-- 自定义下载功能区 -->
         <div class="treasure-content" id="downloadTab">
@@ -165,6 +230,15 @@
                 <input type="text" id="fileName" placeholder="输入文件名称（自动补全常见后缀）" required>
                 <button class="download-btn" type="submit">开始下载</button>
             </form>
+        </div>
+    </div>
+
+    <!-- 警告弹窗（仅保留确定按钮） -->
+    <div class="warning-modal" id="warningModal">
+        <div class="warning-content">
+            <h4>警告！你已触发隐藏功能</h4>
+            <p>这是点击"千万别点我"后的专属页面，确认后将跳转到指定链接~</p>
+            <button class="warning-confirm-btn" id="warningConfirmBtn" data-url="https://www.bilibili.com">确定进入</button>
         </div>
     </div>
 
@@ -297,7 +371,7 @@
             "人生赢家！95分的你，事业爱情双丰收~",
             "好运天花板！96分的你，出门捡钱不是梦~",
             "欧气冲天！97分的你，所有阻碍都让路~",
-            "幸运爆棚！98分的你，心想事成，万事顺意~",
+            "幸运爆棚！98分的你，心想事成，万事顺意~
             "神级好运！99分的你，人生开绿灯，无往不利~",
             "666这入是桂"
         ];
@@ -400,33 +474,29 @@
             alert(`下载已触发！文件将保存为：${fileName}`);
         });
 
-        // 4. 千万别点功能逻辑
+        // 4. 千万别点功能逻辑（核心修复）
         const dontClickBtn = document.getElementById('dontClickBtn');
         const warningModal = document.getElementById('warningModal');
-        const warningButtons = document.querySelectorAll('.warning-btn');
+        const warningConfirmBtn = document.getElementById('warningConfirmBtn');
 
-        // 点击“千万别点我”显示警告弹窗
+        // 点击"千万别点我"显示弹窗
         dontClickBtn.addEventListener('click', () => {
             warningModal.style.display = 'flex';
         });
 
-        // 点击警告弹窗的三个按钮，跳转对应B站链接
-        warningButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const targetUrl = btn.dataset.url;
-                // 新窗口打开链接
-                window.open(targetUrl, '_blank');
-                // 关闭警告弹窗
-                warningModal.style.display = 'none';
-            });
+        // 点击确定按钮跳转链接
+        warningConfirmBtn.addEventListener('click', () => {
+            const targetUrl = warningConfirmBtn.dataset.url;
+            window.open(targetUrl, '_blank'); // 新窗口打开
+            warningModal.style.display = 'none'; // 关闭弹窗
         });
 
-        // 点击警告弹窗背景关闭弹窗
-        warningModal.addEventListener('click', (e) => {
+        // 点击弹窗背景关闭（可选保留，不影响"必须点确定"逻辑）
+        /*warningModal.addEventListener('click', (e) => {
             if (e.target === warningModal) {
                 warningModal.style.display = 'none';
             }
-        });
+        });*/
     </script>
 </body>
 </html>
