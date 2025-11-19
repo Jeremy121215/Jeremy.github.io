@@ -278,7 +278,6 @@
         <div class="format-list">
             <span class="format-tag">支持打开：TXT</span>
             <span class="format-tag">MD</span>
-            <span class="format-tag">DOC/DOCX(基础)</span>
             <span class="format-tag">RTF</span>
             <span class="format-tag">JSON</span>
             <span class="format-tag">XML</span>
@@ -307,7 +306,7 @@
         <div id="error-msg" class="status-message error">操作失败，请重试！</div>
         
         <p class="tip">
-            提示：1. DOC/DOCX格式仅支持纯文本提取；2. 编辑内容仅保存在当前页面，刷新后丢失；3. 保存时可自定义存储位置；
+            提示：1. DOC/DOCX格式不支持提取（因为会乱码），建议复制；2. 编辑内容仅保存在当前页面，刷新后丢失；3. 保存时可自定义存储位置；
             4. 点击「切换单/双栏」可适配不同屏幕
         </p>
     </div>
@@ -341,7 +340,7 @@
 
             const fileName = file.name.toLowerCase();
             const fileExt = fileName.split('.').pop();
-            const validExts = ['txt', 'md', 'markdown', 'doc', 'docx', 'rtf', 'json', 'xml'];
+            const validExts = ['txt', 'md', 'markdown', 'rtf', 'json', 'xml'];
 
             if (!validExts.includes(fileExt)) {
                 showMessage('error', '不支持的文件格式！仅支持TXT/MD/DOC/DOCX/RTF/JSON/XML');
