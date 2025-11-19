@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="logo.png" type="image/png" sizes="32x32">
+    <title>注册 - 星河为梦的网页</title>
+    <style>
+        body {
+            font-family: "微软雅黑", Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .back-link {
+            display: inline-block;
+            margin: 10px 0 25px;
+            color: #3498db;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .register-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
+        }
+        .hint {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        .error {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none;
+        }
+        .code-display {
+            background-color: #f8f9fa;
+            padding: 12px;
+            border-radius: 4px;
+            font-family: Consolas, monospace;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        .key-link {
+            color: #3498db;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px 0 15px;
+        }
+        .key-link:hover {
+            text-decoration: underline;
+        }
+        .captcha-box {
+            background-color: #f1f1f1;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <a href="home.html" class="back-link">← 返回主页</a>
+    
+    <div class="register-container">
+        <h1>用户注册</h1>
+        <form id="register-form">
+            <!-- 用户名 -->
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <input type="text" id="username" required>
+                <div class="hint">只能包含大小写字母、下划线，至少1位</div>
+                <div class="error" id="username-error">用户名格式错误或已存在</div>
+            </div>
+
+            <!-- 随机代码（8位） -->
+            <div class="form-group">
+                <label>验证代码（请勿修改）</label>
+                <div class="code-display" id="verify-code"></div>
+                <div class="hint">由系统随机生成，一个用户名仅能获取一次</div>
+            </div>
+
+            <!-- 验证密钥 -->
+            <div class="form-group">
+                <label for="verify-key">验证密钥</label>
+                <input type="text" id="verify-key" placeholder="请获取并输入密钥" required>
+                <a href="#" class="key-link" id="get-key-link">获取密钥</a>
+                <div class="hint">密钥必须当天使用（每日更新）</div>
+                <div class="error" id="key-error">密钥无效或已过期</div>
+            </div>
+
+            <!-- 密码 -->
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" id="password" required>
+                <div class="hint">只能包含大小写字母、下划线，至少4位</div>
+                <div class="error" id="password-error">密码格式错误</div>
+            </div>
+
+            <!-- 确认密码 -->
+            <div class="form-group">
+                <label for="confirm-password">确认密码</label>
+                <input type="password" id="confirm-password" required>
+                <div class="error" id="confirm-error">两次密码不一致</div>
+            </div>
+
+            <!-- 注册按钮 -->
+            <button type="submit" class="btn">注册</button>
+        </form>
+    </div>
+
+    <!-- 验证码弹窗（自动验证） -->
+    <div id="captcha-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 20px; border-radius: 8px; width: 300px;">
+            <h3 style="text-align: center; margin-bottom: 20px;">验证您是真人</h3>
+            <div class="captcha-box">
+                <p>正在自动验证...</p>
+                <div style="width: 100%; height: 3px; background: #eee; margin: 15px 0;">
+                    <div id="captcha-progress" style="width: 0; height: 100%; background: #3498db; transition: width 2s;"></div>
+                </div>
+            </div>
+            <button id="captcha-confirm" class="btn" style="display: none;">完成验证</button>
+        </div>
+    </div>
+
+    <script>
+        // DOM元素
+        const usernameInput = document.getElementById('username');
+        const verifyCodeEl = document.getElementById('verify-code');
+        const verifyKeyInput = document.getElementById('verify-key');
+        const getKeyLink = document.getElementById('get-key-link');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirm-password');
+        const registerForm = document.getElementById('register-form');
+        const captchaModal = document.getElementById('captcha-modal');
+        const captchaProgress = document.getElementById('captcha-progress');
+        const captchaConfirm = document.getElementById('captcha-confirm');
+
+        // 错误提示元素
+        const errors = {
+            username: document.getElementById('username-error'),
+            key: document.getElementById('key-error'),
+            password: document.getElementById('password-error'),
+            confirm: document.getElementById('confirm-error')
+        };
+
+        // 从localStorage获取已注册用户
+        function getRegisteredUsers() {
+            return JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+        }
+
+        // 生成8位随机代码（大小写字母+数字）
+        function generateVerifyCode() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let code = '';
+            for (let i = 0; i < 8; i++) {
+                code += chars[Math.floor(Math.random() * chars.length)];
+            }
+            return code;
+        }
+
+        // 初始化：生成验证代码（一个用户名仅生成一次）
+        let currentVerifyCode = '';
+        usernameInput.addEventListener('blur', () => {
+            const username = usernameInput.value.trim();
+            if (username) {
+                // 检查用户名是否已存在
+                const users = getRegisteredUsers();
+                const exists = users.some(user => user.username === username);
+                if (exists) {
+                    showError('username', true);
+                    return;
+                }
+                // 生成新代码
+                currentVerifyCode = generateVerifyCode();
+                verifyCodeEl.textContent = currentVerifyCode;
+                showError('username', false);
+            }
+        });
+
+        // 验证用户名格式
+        function validateUsername(username) {
+            const regex = /^[A-Za-z_]+$/;
+            return regex.test(username) && username.length >= 1;
+        }
+
+        // 验证密码格式
+        function validatePassword(password) {
+            const regex = /^[A-Za-z_]+$/;
+            return regex.test(password) && password.length >= 4;
+        }
+
+        // 生成密钥（按规则计算）
+        function generateKey(code) {
+            // 1. 计算代码的ASCII码拼接
+            let asciiStr = '';
+            for (let char of code) {
+                asciiStr += char.charCodeAt(0);
+            }
+            // 2. 获取当前日期（年+月+日）
+            const today = new Date();
+            const dateStr = `${today.getFullYear()}${(today.getMonth() + 1).toString().padStart(2, '0')}${today.getDate().toString().padStart(2, '0')}`;
+            // 3. 拼接ASCII和日期（无符号大整数处理）
+            const combined = asciiStr + dateStr;
+            // 4. 转换为16进制（取前16位，不足补0）
+            let hex = BigInt(combined).toString(16).toUpperCase();
+            if (hex.length < 16) {
+                hex = hex.padStart(16, '0');
+            } else {
+                hex = hex.substring(0, 16);
+            }
+            return hex;
+        }
+
+        // 验证密钥是否有效
+        function validateKey(code, key) {
+            // 1. 检查密钥是否为当天生成
+            const generatedKey = generateKey(code);
+            // 2. 对比密钥（忽略大小写）
+            return key.toUpperCase() === generatedKey;
+        }
+
+        // 自动验证真人（模拟）
+        function startCaptcha() {
+            captchaModal.style.display = 'flex';
+            // 模拟进度条
+            setTimeout(() => {
+                captchaProgress.style.width = '100%';
+                setTimeout(() => {
+                    captchaConfirm.style.display = 'block';
+                }, 500);
+            }, 500);
+        }
+
+        // 获取密钥流程
+        getKeyLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            const username = usernameInput.value.trim();
+            if (!username || !validateUsername(username)) {
+                showError('username', true);
+                return;
+            }
+            if (!currentVerifyCode) {
+                alert('请先输入用户名并失去焦点生成验证代码');
+                return;
+            }
+            // 启动真人验证
+            startCaptcha();
+        });
+
+        // 完成验证后生成密钥
+        captchaConfirm.addEventListener('click', () => {
+            captchaModal.style.display = 'none';
+            captchaProgress.style.width = '0';
+            captchaConfirm.style.display = 'none';
+            // 生成密钥并填充
+            const key = generateKey(currentVerifyCode);
+            verifyKeyInput.value = key;
+        });
+
+        // 显示错误提示
+        function showError(type, show) {
+            errors[type].style.display = show ? 'block' : 'none';
+        }
+
+        // 表单提交验证
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            let isValid = true;
+
+            // 验证用户名
+            const username = usernameInput.value.trim();
+            const users = getRegisteredUsers();
+            const userExists = users.some(user => user.username === username);
+            if (!validateUsername(username) || userExists) {
+                showError('username', true);
+                isValid = false;
+            } else {
+                showError('username', false);
+            }
+
+            // 验证密钥
+            const key = verifyKeyInput.value.trim();
+            if (!validateKey(currentVerifyCode, key)) {
+                showError('key', true);
+                isValid = false;
+            } else {
+                showError('key', false);
+            }
+
+            // 验证密码
+            const password = passwordInput.value;
+            if (!validatePassword(password)) {
+                showError('password', true);
+                isValid = false;
+            } else {
+                showError('password', false);
+            }
+
+            // 验证确认密码
+            if (password !== confirmPasswordInput.value) {
+                showError('confirm', true);
+                isValid = false;
+            } else {
+                showError('confirm', false);
+            }
+
+            // 所有验证通过，保存用户
+            if (isValid) {
+                const newUser = {
+                    username,
+                    password, // 实际项目中应加密存储，这里简化处理
+                    key
+                };
+                users.push(newUser);
+                localStorage.setItem('registeredUsers', JSON.stringify(users));
+                alert('注册成功！请登录');
+                window.location.href = 'login.html';
+            }
+        });
+    </script>
+</body>
+</html>
