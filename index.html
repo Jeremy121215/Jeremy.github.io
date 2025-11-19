@@ -205,7 +205,7 @@
             <div class="input-group">
                 <label for="login-password">密码</label>
                 <input type="password" id="login-password" required>
-                <div class="error-message" id="login-pwd-error">密码长度至少4位（仅支持大小写字母/下划线）</div>
+                <div class="error-message" id="login-pwd-error">密码长度至少4位（支持大小写字母、数字、下划线）</div>
             </div>
             <div class="error-message" id="login-fail-error" style="margin-top: 1rem;">用户名或密码错误</div>
             <button class="btn" id="login-btn">登录</button>
@@ -219,8 +219,8 @@
             <h2 class="form-title">注册</h2>
             <div class="input-group">
                 <label for="register-username">用户名</label>
-                <input type="text" id="register-username" required placeholder="仅支持大小写字母/下划线，至少1位">
-                <div class="error-message" id="register-user-error">用户名格式错误（仅支持大小写字母/下划线）</div>
+                <input type="text" id="register-username" required placeholder="支持大小写字母、数字、下划线，至少1位">
+                <div class="error-message" id="register-user-error">用户名格式错误（仅支持大小写字母、数字、下划线）</div>
                 <div class="error-message" id="register-user-exist-error">该用户名已被注册</div>
             </div>
 
@@ -243,8 +243,8 @@
             <!-- 密码和确认密码 -->
             <div class="input-group">
                 <label for="register-password">密码</label>
-                <input type="password" id="register-password" required placeholder="仅支持大小写字母/下划线，至少4位">
-                <div class="error-message" id="register-pwd-error">密码格式错误（仅支持大小写字母/下划线，至少4位）</div>
+                <input type="password" id="register-password" required placeholder="支持大小写字母、数字、下划线，至少4位">
+                <div class="error-message" id="register-pwd-error">密码格式错误（仅支持大小写字母、数字、下划线，至少4位）</div>
             </div>
             <div class="input-group">
                 <label for="confirm-password">确认密码</label>
@@ -304,7 +304,7 @@
             document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
         });
 
-        // 1. 用户名失去焦点生成验证代码
+        // 1. 用户名失去焦点生成验证代码（允许数字）
         regUsername.addEventListener('blur', () => {
             const username = regUsername.value.trim();
             if (!username) {
@@ -313,8 +313,8 @@
                 return;
             }
 
-            // 验证用户名格式
-            const usernameRegex = /^[A-Za-z_]+$/;
+            // 验证用户名格式：支持大小写字母、数字、下划线（新增数字支持）
+            const usernameRegex = /^[A-Za-z0-9_]+$/;
             if (!usernameRegex.test(username)) {
                 document.getElementById('register-user-error').style.display = 'block';
                 verifyCodeEl.textContent = '-- 用户名格式错误 --';
@@ -395,7 +395,7 @@
             }, 300);
         });
 
-        // 5. 注册逻辑
+        // 5. 注册逻辑（用户名允许数字）
         document.getElementById('register-btn').addEventListener('click', () => {
             // 隐藏所有错误提示
             document.querySelectorAll('#register-panel .error-message').forEach(el => el.style.display = 'none');
@@ -405,8 +405,8 @@
             const confirmPwd = confirmPassword.value;
             const inputKey = verifyKeyInput.value.trim();
 
-            // 验证用户名
-            if (!/^[A-Za-z_]+$/.test(username) || !username) {
+            // 验证用户名（允许数字）
+            if (!/^[A-Za-z0-9_]+$/.test(username) || !username) {
                 document.getElementById('register-user-error').style.display = 'block';
                 isValid = false;
             } else if (users.some(user => user.username === username)) {
@@ -421,8 +421,8 @@
                 isValid = false;
             }
 
-            // 验证密码
-            if (!/^[A-Za-z_]+$/.test(password) || password.length < 4) {
+            // 验证密码（允许数字）
+            if (!/^[A-Za-z0-9_]+$/.test(password) || password.length < 4) {
                 document.getElementById('register-pwd-error').style.display = 'block';
                 isValid = false;
             }
