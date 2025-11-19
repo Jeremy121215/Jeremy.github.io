@@ -165,7 +165,7 @@
             <!-- 1. 用户名 -->
             <div class="form-group">
                 <label for="username">用户名</label>
-                <input type="text" id="username" required placeholder="请输入用户名（大小写字母/下划线）">
+                <input type="text" id="username" required placeholder="请输入用户名">
                 <div class="hint">只能包含大小写字母、下划线，至少1位</div>
                 <div class="error" id="username-error">用户名格式错误或已存在</div>
             </div>
@@ -181,8 +181,8 @@
             <div class="form-group">
                 <label for="verify-key">验证密钥</label>
                 <input type="text" id="verify-key" placeholder="点击下方获取密钥" required>
-                <span class="key-link" id="get-key-link">👉 立即获取密钥（必触发验证）</span>
-                <div class="hint">密钥必须当天使用（每日更新）</div>
+                <span class="key-link" id="get-key-link">👉 立即获取密钥</span>
+                <div class="hint">密钥当天有效</div>
                 <div class="error" id="key-error">密钥无效或已过期</div>
             </div>
 
@@ -216,7 +216,7 @@
                     <div class="progress-bar" id="progress-bar"></div>
                 </div>
                 <p style="margin-top: 15px; font-size: 0.9rem; color: #666;">
-                    验证完成后自动填充密钥（无需手动操作）
+                    验证完成后自动填充密钥
                 </p>
             </div>
         </div>
