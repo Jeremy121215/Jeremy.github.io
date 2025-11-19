@@ -39,15 +39,31 @@
             color: #2c3e50;
             margin-bottom: 20px;
         }
+        /* 工具栏布局重构：优先显示撤回按钮，适配小屏 */
         .toolbar {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             align-items: center;
             margin-bottom: 20px;
             flex-wrap: wrap;
             padding: 15px;
             background-color: #f8f9fa;
             border-radius: 6px;
+        }
+        /* 左侧工具组：换行时整体占满 */
+        .toolbar-left {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            flex: 1;
+        }
+        /* 右侧工具组：固定在右侧，撤回按钮最优先 */
+        .toolbar-right {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: nowrap;
         }
         .tool-group {
             display: flex;
@@ -82,12 +98,13 @@
             border-radius: 4px;
             outline: none;
             font-size: 1rem;
+            min-width: 120px;
         }
         #file-input {
             display: none;
         }
-        .file-btn {
-            padding: 10px 20px;
+        .file-btn, .btn {
+            padding: 10px 18px;
             border: none;
             border-radius: 4px;
             font-size: 1rem;
@@ -95,20 +112,27 @@
             cursor: pointer;
             transition: background 0.3s;
             color: white;
+            white-space: nowrap; /* 按钮文字不换行 */
+        }
+        .file-btn {
             background-color: #3498db;
         }
         .file-btn:hover {
             background-color: #2980b9;
         }
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background 0.3s;
-            color: white;
+        /* 撤回按钮：视觉突出，优先级最高 */
+        .undo-btn {
+            background-color: #f39c12 !important;
+            border: 2px solid #e67e22 !important; /* 增加边框突出 */
+        }
+        .undo-btn:hover {
+            background-color: #d35400 !important;
+        }
+        .undo-btn:disabled {
+            background-color: #bdc3c7 !important;
+            border-color: #95a5a6 !important;
+            cursor: not-allowed;
+            opacity: 0.7;
         }
         .clear-btn {
             background-color: #e74c3c;
@@ -122,25 +146,13 @@
         .save-btn:hover {
             background-color: #27ae60;
         }
-        /* 撤回按钮样式 */
-        .undo-btn {
-            background-color: #f39c12;
-        }
-        .undo-btn:hover {
-            background-color: #d35400;
-        }
-        .undo-btn:disabled {
-            background-color: #bdc3c7;
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
         #save-format {
             padding: 8px 12px;
             border: 1px solid #ddd;
             border-radius: 4px;
             outline: none;
             font-size: 1rem;
-            margin-left: 8px;
+            min-width: 110px;
         }
         .canvas-container {
             width: 100%;
@@ -176,6 +188,18 @@
             font-size: 0.9rem;
             display: none;
         }
+        /* 小屏适配：工具栏垂直排列 */
+        @media (max-width: 768px) {
+            .toolbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .toolbar-left, .toolbar-right {
+                width: 100%;
+                justify-content: flex-start;
+                margin-bottom: 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -184,33 +208,36 @@
     <div class="container">
         <h1>在线绘图工具</h1>
         
-        <!-- 工具栏：新增撤回按钮 -->
+        <!-- 工具栏：重构布局，撤回按钮单独突出显示 -->
         <div class="toolbar">
-            <div class="tool-group">
-                <label>画笔颜色：</label>
-                <input type="color" id="color-picker" value="#000000">
-            </div>
-            <div class="tool-group">
-                <label>画笔粗细：</label>
-                <select id="brush-size">
-                    <option value="2">2px（细）</option>
-                    <option value="5" selected>5px（中等）</option>
-                    <option value="8">8px（粗）</option>
-                    <option value="12">12px（极粗）</option>
-                    <option value="20">20px（画笔）</option>
-                </select>
-            </div>
-            <div class="tool-group">
-                <label>打开图片：</label>
-                <button type="button" class="file-btn" onclick="document.getElementById('file-input').click()">选择本地图片</button>
-                <input type="file" id="file-input" accept="image/png,image/jpeg,image/jpg">
-            </div>
-            <div class="tool-group" style="margin-left: auto;">
-                <!-- 撤回按钮 -->
-                <button class="btn undo-btn" id="undo-btn" disabled>撤回上一步</button>
-                <button class="btn clear-btn" id="clear-btn">清空画布</button>
+            <div class="toolbar-left">
                 <div class="tool-group">
-                    <button class="btn save-btn" id="save-btn">保存图片</button>
+                    <label>画笔颜色：</label>
+                    <input type="color" id="color-picker" value="#000000">
+                </div>
+                <div class="tool-group">
+                    <label>画笔粗细：</label>
+                    <select id="brush-size">
+                        <option value="2">2px（细）</option>
+                        <option value="5" selected>5px（中等）</option>
+                        <option value="8">8px（粗）</option>
+                        <option value="12">12px（极粗）</option>
+                        <option value="20">20px（画笔）</option>
+                    </select>
+                </div>
+                <div class="tool-group">
+                    <label>打开图片：</label>
+                    <button type="button" class="file-btn" onclick="document.getElementById('file-input').click()">选择本地图片</button>
+                    <input type="file" id="file-input" accept="image/png,image/jpeg,image/jpg">
+                </div>
+            </div>
+            <!-- 右侧工具组：撤回按钮最靠前，强制显示 -->
+            <div class="toolbar-right">
+                <!-- 撤回按钮：增加ID和类名，确保唯一标识 -->
+                <button id="undo-btn" class="btn undo-btn" disabled>撤回上一步</button>
+                <button id="clear-btn" class="btn clear-btn">清空画布</button>
+                <div class="tool-group">
+                    <button id="save-btn" class="btn save-btn">保存图片</button>
                     <select id="save-format">
                         <option value="png" selected>PNG格式</option>
                         <option value="jpeg">JPEG格式</option>
@@ -227,11 +254,11 @@
         
         <p class="error-message" id="error-message">支持的图片格式：PNG、JPEG、JPG，请选择正确格式的图片文件</p>
         <p class="success-message" id="success-message">图片加载成功！可在图片上直接绘图</p>
-        <p class="tip">提示：1. 支持打开PNG/JPEG/JPG格式图片，打开后可绘图；2. 支持多步撤回（最多20步），无操作时撤回按钮禁用；3. 保存可选择格式，自定义保存位置；4. 按住鼠标拖动绘制，刷新不保留内容</p>
+        <p class="tip">提示：1. 支持打开PNG/JPEG/JPG格式图片，打开后可绘图；2. 撤回按钮为橙色带边框，无操作时变灰；3. 支持多步撤回（最多20步）；4. 保存可选择格式，自定义保存位置；5. 按住鼠标拖动绘制，刷新不保留内容</p>
     </div>
 
     <script>
-        // DOM元素获取
+        // DOM元素获取（确保所有元素ID正确匹配）
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         const colorPicker = document.getElementById('color-picker');
@@ -243,7 +270,7 @@
         const canvasContainer = document.querySelector('.canvas-container');
         const errorMessage = document.getElementById('error-message');
         const successMessage = document.getElementById('success-message');
-        const undoBtn = document.getElementById('undo-btn');
+        const undoBtn = document.getElementById('undo-btn'); // 确保撤回按钮ID正确获取
 
         // 撤回功能核心：历史记录栈（最多保存20步画布状态）
         const historyStack = [];
@@ -270,6 +297,7 @@
             }
             // 更新撤回按钮状态：有记录则启用，无则禁用
             undoBtn.disabled = historyStack.length <= 1;
+            console.log('历史记录数：', historyStack.length); // 控制台打印，便于调试
         }
 
         // 撤回上一步操作
@@ -300,6 +328,8 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             // 保存初始状态到历史栈
             saveHistory();
+            // 强制检查撤回按钮状态
+            console.log('撤回按钮元素：', undoBtn); // 控制台打印按钮元素，确认是否获取到
         });
 
         // 窗口缩放时适配Canvas并保留内容
@@ -472,8 +502,9 @@
             setTimeout(() => URL.revokeObjectURL(link.href), 100);
         });
 
-        // 绑定撤回按钮点击事件
+        // 绑定撤回按钮点击事件（确保事件正确绑定）
         undoBtn.addEventListener('click', undoLastStep);
+        console.log('撤回按钮事件绑定完成'); // 控制台打印，确认事件绑定
     </script>
 </body>
 </html>
