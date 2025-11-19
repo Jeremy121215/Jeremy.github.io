@@ -83,6 +83,23 @@
             outline: none;
             font-size: 1rem;
         }
+        #file-input {
+            display: none;
+        }
+        .file-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+            color: white;
+            background-color: #3498db;
+        }
+        .file-btn:hover {
+            background-color: #2980b9;
+        }
         .btn {
             padding: 10px 20px;
             border: none;
@@ -105,6 +122,14 @@
         .save-btn:hover {
             background-color: #27ae60;
         }
+        #save-format {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            outline: none;
+            font-size: 1rem;
+            margin-left: 8px;
+        }
         .canvas-container {
             width: 100%;
             height: 600px;
@@ -125,6 +150,13 @@
             color: #666;
             font-size: 0.95rem;
         }
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -133,7 +165,7 @@
     <div class="container">
         <h1>在线绘图工具</h1>
         
-        <!-- 工具栏 -->
+        <!-- 工具栏（新增打开图片和保存格式选择） -->
         <div class="toolbar">
             <div class="tool-group">
                 <label>画笔颜色：</label>
@@ -149,9 +181,21 @@
                     <option value="20">20px（画笔）</option>
                 </select>
             </div>
+            <div class="tool-group">
+                <label>打开图片：</label>
+                <label for="file-input" class="file-btn">选择本地图片</label>
+                <input type="file" id="file-input" accept="image/png,image/jpeg,image/jpg">
+            </div>
             <div class="tool-group" style="margin-left: auto;">
                 <button class="btn clear-btn" id="clear-btn">清空画布</button>
-                <button class="btn save-btn" id="save-btn">保存到本地</button>
+                <div class="tool-group">
+                    <button class="btn save-btn" id="save-btn">保存图片</button>
+                    <select id="save-format">
+                        <option value="png" selected>PNG格式</option>
+                        <option value="jpeg">JPEG格式</option>
+                        <option value="jpg">JPG格式</option>
+                    </select>
+                </div>
             </div>
         </div>
         
@@ -160,7 +204,8 @@
             <canvas id="canvas"></canvas>
         </div>
         
-        <p class="tip">提示：按住鼠标拖动即可绘制，刷新页面后绘图内容不保留，保存后可自定义文件存储位置</p>
+        <p class="error-message" id="error-message">支持的图片格式：PNG、JPEG、JPG，请选择正确格式的图片文件</p>
+        <p class="tip">提示：1. 支持打开PNG/JPEG/JPG格式图片，打开后可在图片上绘图；2. 保存时可选择格式，刷新页面不保留内容；3. 按住鼠标拖动即可绘制</p>
     </div>
 
     <script>
@@ -171,7 +216,10 @@
         const brushSize = document.getElementById('brush-size');
         const clearBtn = document.getElementById('clear-btn');
         const saveBtn = document.getElementById('save-btn');
+        const saveFormat = document.getElementById('save-format');
+        const fileInput = document.getElementById('file-input');
         const canvasContainer = document.querySelector('.canvas-container');
+        const errorMessage = document.getElementById('error-message');
 
         // 设置canvas实际尺寸（与显示尺寸一致）
         function resizeCanvas() {
@@ -182,7 +230,18 @@
 
         // 初始化时调整尺寸，窗口 resize 时重新调整
         window.addEventListener('load', resizeCanvas);
-        window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('resize', () => {
+            // 保存当前画布内容
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCanvas.width = canvas.width;
+            tempCanvas.height = canvas.height;
+            tempCtx.drawImage(canvas, 0, 0);
+
+            // 调整尺寸后恢复内容
+            resizeCanvas();
+            ctx.drawImage(tempCanvas, 0, 0, canvas.width, canvas.height);
+        });
 
         // 绘图状态变量
         let isDrawing = false;
@@ -232,17 +291,84 @@
         // 清空画布
         clearBtn.addEventListener('click', () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            errorMessage.style.display = 'none';
         });
 
-        // 保存到本地
+        // 打开本地图片（新增功能）
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // 验证文件格式
+            const validFormats = ['image/png', 'image/jpeg', 'image/jpg'];
+            if (!validFormats.includes(file.type)) {
+                errorMessage.style.display = 'block';
+                return;
+            }
+            errorMessage.style.display = 'none';
+
+            // 读取图片文件
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    // 清空画布并绘制图片（自适应画布尺寸，保持比例）
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    const canvasRatio = canvas.width / canvas.height;
+                    const imgRatio = img.width / img.height;
+
+                    let drawWidth, drawHeight, offsetX, offsetY;
+                    if (imgRatio > canvasRatio) {
+                        // 图片宽于画布，按宽度适配
+                        drawWidth = canvas.width;
+                        drawHeight = canvas.width / imgRatio;
+                        offsetX = 0;
+                        offsetY = (canvas.height - drawHeight) / 2;
+                    } else {
+                        // 图片高于画布，按高度适配
+                        drawHeight = canvas.height;
+                        drawWidth = canvas.height * imgRatio;
+                        offsetX = (canvas.width - drawWidth) / 2;
+                        offsetY = 0;
+                    }
+
+                    // 绘制图片到画布中央
+                    ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+
+            // 重置文件输入，允许重复选择同一文件
+            fileInput.value = '';
+        });
+
+        // 保存图片（支持多格式，新增功能）
         saveBtn.addEventListener('click', () => {
+            const format = saveFormat.value.toLowerCase();
+            let mimeType = 'image/png';
+            let quality = 1.0;
+
+            // 设置MIME类型和质量（JPEG/JPG支持质量调整）
+            if (format === 'jpeg' || format === 'jpg') {
+                mimeType = 'image/jpeg';
+                quality = 0.9; // 0.0-1.0，1.0为最高质量
+            }
+
             // 创建下载链接
             const link = document.createElement('a');
-            // 将canvas内容转为图片数据URL
-            link.href = canvas.toDataURL('image/png');
-            // 设置默认文件名
-            link.download = `绘图作品_${new Date().toLocaleString().replace(/[/:\s]/g, '-')}.png`;
-            // 触发下载（浏览器会弹出保存对话框，可选择保存位置）
+            // 转换canvas内容为对应格式的数据流
+            if (format === 'png') {
+                link.href = canvas.toDataURL(mimeType);
+            } else {
+                link.href = canvas.toDataURL(mimeType, quality);
+            }
+
+            // 设置默认文件名（包含格式后缀）
+            const timestamp = new Date().toLocaleString().replace(/[/:\s]/g, '-');
+            link.download = `绘图作品_${timestamp}.${format}`;
+
+            // 触发下载（浏览器弹出保存对话框）
             link.click();
         });
     </script>
