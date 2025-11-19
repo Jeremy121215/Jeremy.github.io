@@ -4,13 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="logo.png" type="image/png" sizes="32x32">
-    <title>星河为梦的网页 - 首页</title>
+    <title>星河为梦的网页</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
         body {
             font-family: "微软雅黑", Arial, sans-serif;
             max-width: 1000px;
@@ -22,47 +17,79 @@
         }
         header {
             text-align: center;
-            margin: 50px 0 30px;
+            margin: 30px 0;
         }
         h1 {
             color: #2c3e50;
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-        }
-        header p {
-            font-size: 1.1rem;
-            color: #666;
+            font-size: 2.2rem;
         }
         .section {
             background: white;
-            padding: 30px;
+            padding: 25px;
             border-radius: 8px;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         h2 {
             color: #3498db;
             border-bottom: 2px solid #eee;
             padding-bottom: 10px;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
+        }
+        ul {
+            margin-left: 20px;
+        }
+        li {
+            margin: 8px 0;
+        }
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        /* 功能按钮样式 */
+        .function-btn {
             display: inline-block;
+            margin: 20px 0;
+            padding: 12px 25px;
+            background-color: #3498db;
+            color: white;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: background 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        .function-btn:hover {
+            background-color: #2980b9;
+            text-decoration: none;
+        }
+        .ai-btn {
+            background-color: #9b59b6;
+        }
+        .ai-btn:hover {
+            background-color: #8e44ad;
+        }
+        .draw-btn {
+            background-color: #1abc9c;
+        }
+        .draw-btn:hover {
+            background-color: #16a085;
+        }
+        .doc-btn {
+            background-color: #e67e22;
+        }
+        .doc-btn:hover {
+            background-color: #d35400;
         }
         .treasure-btn {
             background-color: #f39c12;
-            padding: 15px 30px;
-            border-radius: 6px;
-            font-size: 1.2rem;
-            font-weight: 500;
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 8px rgba(243,156,18,0.3);
         }
         .treasure-btn:hover {
-            background-color: #d35400;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(243,156,18,0.4);
+            background-color: #e67e22;
         }
         .version-info {
             text-align: center;
@@ -73,7 +100,7 @@
             border-top: 1px solid #eee;
         }
 
-        /* 百宝箱弹窗样式（用于嵌入treasure-box.html） */
+        /* 百宝箱弹窗样式（嵌入treasure-box.html） */
         .treasure-modal {
             display: none;
             position: fixed;
@@ -124,17 +151,86 @@
 </head>
 <body>
     <header>
-        <h1>百宝箱</h1>
-        <p>趣味功能集合地~</p>
+        <h1>星河为梦的网页</h1>
+        <p>欢迎访问星河为梦的 GitHub Pages 个人网页！这里会分享我的项目成果等（可以下载）～</p>
     </header>
 
     <div class="section">
-        <h2>🔮 百宝箱</h2>
-        <button class="treasure-btn" id="openTreasureBtn">打开百宝箱</button>
+        <h2>关于网页</h2>
+        <ul>
+            <li>搭建工具：GitHub Pages</li>
+            <li>网页地址：<a href="https://jeremy121215.github.io/Jeremy.github.io/home.html" target="_blank">https://jeremy121215.github.io/Jeremy.github.io/home.html</a></li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>如何访问</h2>
+        <ol>
+            <li>直接点击上方网页地址即可打开</li>
+            <li>若配置了自定义域名，输入域名也可快速访问</li>
+            <li>网页支持 HTTPS 安全访问，无需担心隐私问题</li>
+        </ol>
+    </div>
+    
+    <div class="section">
+        <h2>📁文件下载区</h2>
+        <p>点击下方按钮进入文件下载页面，可搜索并下载所需文件：</p>
+        <a href="downloads.html" class="function-btn">进入文件下载页</a>
+    </div>
+
+    <div class="section">
+        <h2>🤖AI助手</h2>
+        <p>点击下方按钮进入AI助手页面，支持多种AI工具调用及历史记录管理：</p>
+        <a href="ai.html" class="function-btn ai-btn">打开AI助手</a>
+        <p style="margin-top: 15px; color: #666;">
+            支持功能：AI问答、历史记录查看、记录删除等
+        </p>
+    </div>
+
+    <div class="section">
+        <h2>💻C++编译器</h2>
+        <p>点击下方按钮进入C++编译器页面，支持多版本切换、代码编辑、运行输入及结果查看：</p>
+        <a href="cpp-compiler.html" class="function-btn" style="background-color: #e67e22;">打开C++编译器</a>
+        <p style="margin-top: 15px; color: #666;">
+            支持版本：C++98、C++11、C++14、C++17 | 功能：代码编辑、程序输入、实时输出
+        </p>
+    </div>
+
+    <div class="section">
+        <h2>🎨在线绘图工具</h2>
+        <p>点击下方按钮进入绘图页面，支持多颜色画笔、自由绘制，可保存作品到本地（刷新不保留）：</p>
+        <a href="draw.html" class="function-btn draw-btn">打开在线绘图</a>
+        <p style="margin-top: 15px; color: #666;">
+            支持功能：多颜色选择、调节画笔粗细、清空画布、本地保存（自定义保存位置）
+        </p>
+    </div>
+
+    <div class="section">
+        <h2>📝文档编辑工具</h2>
+        <p>点击下方按钮进入文档编辑页面，支持多格式文本文档打开、编辑、保存及Markdown渲染：</p>
+        <a href="doc-editor.html" class="function-btn doc-btn">打开文档编辑</a>
+        <p style="margin-top: 15px; color: #666;">
+            支持格式：TXT/MD/DOC/DOCX/RTF/JSON/XML | 功能：Markdown实时渲染、多格式保存、视图切换
+        </p>
+    </div>
+
+    <!-- 新增：百宝箱功能入口 -->
+    <div class="section">
+        <h2>🔮百宝箱</h2>
+        <p>点击下方按钮打开百宝箱，体验每日人品、自定义下载趣味功能：</p>
+        <button class="function-btn treasure-btn" id="openTreasureBtn">打开百宝箱</button>
+    </div>
+
+    <div class="section">
+        <h2>联系方式</h2>
+        <ul>
+            <li>GitHub：<a href="https://github.com/jeremy121215" target="_blank">jeremy121215</a></li>
+            <li>邮箱：<a href="mailto:xhwm121215@qq.com">xhwm121215@qq.com</a></li>
+        </ul>
     </div>
 
     <div class="version-info">
-        网页版本：v2.0.0 | 最后更新：2025-11-20
+        网页版本：v2.1.0 | 最后更新：2025-11-20
     </div>
 
     <!-- 百宝箱弹窗（嵌入独立的treasure-box.html） -->
