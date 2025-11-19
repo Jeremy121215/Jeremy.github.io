@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="logo.png" type="image/png" sizes="32x32">
+    <title>在线绘图工具 - 星河为梦的网页</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "微软雅黑", Arial, sans-serif;
+        }
+        body {
+            background-color: #f9f9f9;
+            padding: 20px;
+        }
+        .back-link {
+            display: inline-block;
+            margin: 10px 0 25px;
+            color: #3498db;
+            text-decoration: none;
+            font-size: 1.1rem;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            padding: 25px;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .toolbar {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+        }
+        .tool-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        label {
+            color: #555;
+            font-weight: 500;
+        }
+        #color-picker {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            padding: 3px;
+            background: transparent;
+        }
+        #color-picker::-webkit-color-swatch-wrapper {
+            padding: 0;
+            border-radius: 50%;
+        }
+        #color-picker::-webkit-color-swatch {
+            border: none;
+            border-radius: 50%;
+            box-shadow: 0 0 0 1px #ddd;
+        }
+        #brush-size {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            outline: none;
+            font-size: 1rem;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+            color: white;
+        }
+        .clear-btn {
+            background-color: #e74c3c;
+        }
+        .clear-btn:hover {
+            background-color: #c0392b;
+        }
+        .save-btn {
+            background-color: #2ecc71;
+        }
+        .save-btn:hover {
+            background-color: #27ae60;
+        }
+        .canvas-container {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            overflow: hidden;
+            background-color: white;
+            position: relative;
+        }
+        #canvas {
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+        }
+        .tip {
+            text-align: center;
+            margin-top: 15px;
+            color: #666;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+    <a href="home.html" class="back-link">← 返回主页</a>
+    
+    <div class="container">
+        <h1>在线绘图工具</h1>
+        
+        <!-- 工具栏 -->
+        <div class="toolbar">
+            <div class="tool-group">
+                <label>画笔颜色：</label>
+                <input type="color" id="color-picker" value="#000000">
+            </div>
+            <div class="tool-group">
+                <label>画笔粗细：</label>
+                <select id="brush-size">
+                    <option value="2">2px（细）</option>
+                    <option value="5" selected>5px（中等）</option>
+                    <option value="8">8px（粗）</option>
+                    <option value="12">12px（极粗）</option>
+                    <option value="20">20px（画笔）</option>
+                </select>
+            </div>
+            <div class="tool-group" style="margin-left: auto;">
+                <button class="btn clear-btn" id="clear-btn">清空画布</button>
+                <button class="btn save-btn" id="save-btn">保存到本地</button>
+            </div>
+        </div>
+        
+        <!-- 绘图区域 -->
+        <div class="canvas-container">
+            <canvas id="canvas"></canvas>
+        </div>
+        
+        <p class="tip">提示：按住鼠标拖动即可绘制，刷新页面后绘图内容不保留，保存后可自定义文件存储位置</p>
+    </div>
+
+    <script>
+        // DOM元素
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const colorPicker = document.getElementById('color-picker');
+        const brushSize = document.getElementById('brush-size');
+        const clearBtn = document.getElementById('clear-btn');
+        const saveBtn = document.getElementById('save-btn');
+        const canvasContainer = document.querySelector('.canvas-container');
+
+        // 设置canvas实际尺寸（与显示尺寸一致）
+        function resizeCanvas() {
+            const { width, height } = canvasContainer.getBoundingClientRect();
+            canvas.width = width;
+            canvas.height = height;
+        }
+
+        // 初始化时调整尺寸，窗口 resize 时重新调整
+        window.addEventListener('load', resizeCanvas);
+        window.addEventListener('resize', resizeCanvas);
+
+        // 绘图状态变量
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        // 开始绘图（鼠标按下）
+        canvas.addEventListener('mousedown', (e) => {
+            isDrawing = true;
+            // 获取鼠标在canvas内的坐标
+            const rect = canvas.getBoundingClientRect();
+            lastX = e.clientX - rect.left;
+            lastY = e.clientY - rect.top;
+        });
+
+        // 绘制过程（鼠标移动）
+        canvas.addEventListener('mousemove', draw);
+
+        // 结束绘图（鼠标抬起/离开）
+        canvas.addEventListener('mouseup', () => isDrawing = false);
+        canvas.addEventListener('mouseout', () => isDrawing = false);
+
+        // 绘制函数
+        function draw(e) {
+            if (!isDrawing) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const currentX = e.clientX - rect.left;
+            const currentY = e.clientY - rect.top;
+
+            // 设置画笔样式
+            ctx.strokeStyle = colorPicker.value;
+            ctx.lineWidth = brushSize.value;
+            ctx.lineCap = 'round'; // 线条端点圆润
+            ctx.lineJoin = 'round'; // 线条连接处圆润
+
+            // 开始绘制
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY); // 起点
+            ctx.lineTo(currentX, currentY); // 终点
+            ctx.stroke(); // 绘制线条
+
+            // 更新上一个坐标
+            [lastX, lastY] = [currentX, currentY];
+        }
+
+        // 清空画布
+        clearBtn.addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
+
+        // 保存到本地
+        saveBtn.addEventListener('click', () => {
+            // 创建下载链接
+            const link = document.createElement('a');
+            // 将canvas内容转为图片数据URL
+            link.href = canvas.toDataURL('image/png');
+            // 设置默认文件名
+            link.download = `绘图作品_${new Date().toLocaleString().replace(/[/:\s]/g, '-')}.png`;
+            // 触发下载（浏览器会弹出保存对话框，可选择保存位置）
+            link.click();
+        });
+    </script>
+</body>
+</html>
