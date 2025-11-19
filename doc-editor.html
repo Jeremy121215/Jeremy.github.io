@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="logo.png" type="image/png" sizes="32x32">
+    <title>文档编辑工具 - 星河为梦的网页</title>
+    <!-- 引入Markdown渲染库和防XSS库 -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "微软雅黑", Arial, sans-serif;
+        }
+        body {
+            background-color: #f9f9f9;
+            padding: 20px;
+        }
+        .back-link {
+            display: inline-block;
+            margin: 10px 0 25px;
+            color: #3498db;
+            text-decoration: none;
+            font-size: 1.1rem;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+        /* 工具栏样式 */
+        .doc-toolbar {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        .tool-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        label {
+            color: #555;
+            font-weight: 500;
+        }
+        #doc-file-input {
+            display: none;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+            color: white;
+            white-space: nowrap;
+        }
+        .open-btn {
+            background-color: #3498db;
+        }
+        .open-btn:hover {
+            background-color: #2980b9;
+        }
+        .clear-btn {
+            background-color: #e74c3c;
+        }
+        .clear-btn:hover {
+            background-color: #c0392b;
+        }
+        .toggle-btn {
+            background-color: #9b59b6;
+        }
+        .toggle-btn:hover {
+            background-color: #8e44ad;
+        }
+        .save-btn {
+            background-color: #2ecc71;
+        }
+        .save-btn:hover {
+            background-color: #27ae60;
+        }
+        #save-format {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            outline: none;
+            font-size: 1rem;
+            min-width: 130px;
+        }
+        /* 编辑区和预览区布局 */
+        .edit-container {
+            display: flex;
+            gap: 20px;
+            height: 500px;
+            margin-bottom: 20px;
+        }
+        #editor {
+            flex: 1;
+            padding: 18px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            resize: none;
+            font-family: "Consolas", "微软雅黑", monospace;
+            background-color: #fdfdfd;
+        }
+        #preview {
+            flex: 1;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow-y: auto;
+            background-color: #fafafa;
+        }
+        /* Markdown渲染样式优化 */
+        #preview h1 {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin: 15px 0 10px;
+            text-align: left;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 8px;
+        }
+        #preview h2 {
+            font-size: 1.5rem;
+            color: #3498db;
+            margin: 12px 0 8px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        #preview h3 {
+            font-size: 1.25rem;
+            color: #9b59b6;
+            margin: 10px 0 6px;
+        }
+        #preview p {
+            margin: 8px 0;
+            line-height: 1.8;
+            color: #333;
+        }
+        #preview code {
+            background-color: #f1f1f1;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: Consolas, monospace;
+            font-size: 0.95rem;
+        }
+        #preview pre {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 12px 0;
+            border-left: 4px solid #3498db;
+        }
+        #preview blockquote {
+            border-left: 4px solid #2ecc71;
+            padding: 10px 15px;
+            margin: 12px 0;
+            color: #666;
+            background-color: #f9f9f9;
+            border-radius: 0 4px 4px 0;
+        }
+        #preview ul, #preview ol {
+            margin: 10px 0 10px 25px;
+            line-height: 1.8;
+        }
+        #preview li {
+            margin: 4px 0;
+        }
+        #preview a {
+            color: #3498db;
+            text-decoration: none;
+            border-bottom: 1px dotted #3498db;
+        }
+        #preview a:hover {
+            text-decoration: none;
+            border-bottom: 1px solid #3498db;
+        }
+        #preview table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        #preview th, #preview td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        #preview th {
+            background-color: #f8f9fa;
+        }
+        /* 提示信息样式 */
+        .status-message {
+            text-align: center;
+            margin: 10px 0;
+            padding: 8px;
+            border-radius: 4px;
+            display: none;
+        }
+        .success {
+            background-color: #e8f5e9;
+            color: #27ae60;
+        }
+        .error {
+            background-color: #ffebee;
+            color: #e74c3c;
+        }
+        .format-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+        }
+        .format-tag {
+            padding: 4px 10px;
+            background-color: #e3f2fd;
+            color: #1976d2;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        .tip {
+            text-align: center;
+            margin-top: 15px;
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.6;
