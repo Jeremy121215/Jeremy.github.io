@@ -72,6 +72,20 @@
         .ai-btn:hover {
             background-color: #8e44ad;
         }
+        .draw-btn {
+            background-color: #1abc9c;
+        }
+        .draw-btn:hover {
+            background-color: #16a085;
+        }
+        .version-info {
+            text-align: center;
+            margin: 40px 0 20px;
+            color: #666;
+            font-size: 0.9rem;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
     </style>
 </head>
 <body>
@@ -97,15 +111,12 @@
         </ol>
     </div>
     
-    <!-- 文件下载区 -->
     <div class="section">
         <h2>📁文件下载区</h2>
         <p>点击下方按钮进入文件下载页面，可搜索并下载所需文件：</p>
-        <!-- 跳转至下载页的按钮 -->
         <a href="downloads.html" class="function-btn">进入文件下载页</a>
     </div>
 
-    <!-- AI功能区 -->
     <div class="section">
         <h2>🤖AI助手</h2>
         <p>点击下方按钮进入AI助手页面，支持多种AI工具调用及历史记录管理：</p>
@@ -115,13 +126,22 @@
         </p>
     </div>
 
-    <!-- C++编译器功能区 -->
     <div class="section">
         <h2>💻C++编译器</h2>
         <p>点击下方按钮进入C++编译器页面，支持多版本切换、代码编辑、运行输入及结果查看：</p>
         <a href="cpp-compiler.html" class="function-btn" style="background-color: #e67e22;">打开C++编译器</a>
         <p style="margin-top: 15px; color: #666;">
             支持版本：C++98、C++11、C++14、C++17 | 功能：代码编辑、程序输入、实时输出
+        </p>
+    </div>
+
+    <!-- 新增：绘图功能区 -->
+    <div class="section">
+        <h2>🎨在线绘图工具</h2>
+        <p>点击下方按钮进入绘图页面，支持多颜色画笔、自由绘制，可保存作品到本地（刷新不保留）：</p>
+        <a href="draw.html" class="function-btn draw-btn">打开在线绘图</a>
+        <p style="margin-top: 15px; color: #666;">
+            支持功能：多颜色选择、调节画笔粗细、清空画布、本地保存（自定义保存位置）
         </p>
     </div>
 
@@ -133,10 +153,8 @@
         </ul>
     </div>
 
-    <!-- 版本信息 -->
     <div class="version-info">
-        网页版本：v1.3.3 | 最后更新：2025-11-18 17:18
+        网页版本：v1.3.4 | 最后更新：2025-11-19 10:30
     </div>
-    
 </body>
 </html>
