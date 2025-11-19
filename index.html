@@ -313,7 +313,7 @@
                 return;
             }
 
-            // 验证用户名格式：支持大小写字母、数字、下划线（新增数字支持）
+            // 用户名规则：支持大小写字母、数字、下划线
             const usernameRegex = /^[A-Za-z0-9_]+$/;
             if (!usernameRegex.test(username)) {
                 document.getElementById('register-user-error').style.display = 'block';
@@ -395,7 +395,7 @@
             }, 300);
         });
 
-        // 5. 注册逻辑（用户名允许数字）
+        // 5. 注册逻辑（用户名和密码均允许数字）
         document.getElementById('register-btn').addEventListener('click', () => {
             // 隐藏所有错误提示
             document.querySelectorAll('#register-panel .error-message').forEach(el => el.style.display = 'none');
