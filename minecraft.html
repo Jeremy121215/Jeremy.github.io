@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft资源中心 - 星河为梦的网页</title>
+    <style>
+        body {
+            font-family: "微软雅黑", Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        header {
+            text-align: center;
+            margin: 30px 0;
+        }
+        h1 {
+            color: #2c3e50;
+            font-size: 2rem;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #3498db;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        /* 搜索框样式 */
+        .search-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .search-box {
+            width: 70%;
+            max-width: 600px;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 30px;
+            font-size: 1rem;
+            outline: none;
+            transition: border 0.3s;
+        }
+        .search-box:focus {
+            border-color: #3498db;
+        }
+        .search-btn {
+            margin-left: 10px;
+            padding: 12px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .search-btn:hover {
+            background-color: #2980b9;
+        }
+        .search-result-info {
+            margin: 15px 0;
+            color: #666;
+            display: none; /* 默认隐藏 */
+        }
+        /* 分类标签样式 */
+        .category-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .category-tab {
+            padding: 8px 18px;
+            background-color: #eee;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+        .category-tab.active {
+            background-color: #3498db;
+            color: white;
+        }
+        /* 资源容器样式 */
+        .resources-container {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #3498db;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        /* 分类内容样式 */
+        .category-content {
+            display: none;
+        }
+        .category-content.active {
+            display: block;
+        }
+        /* 资源项样式 */
+        .resource-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            margin: 10px 0;
+            transition: background 0.3s;
+        }
+        .resource-item:hover {
+            background-color: #f5f9ff;
+        }
+        .resource-item.hidden {
+            display: none; /* 搜索时隐藏不匹配的项 */
+        }
+        .resource-icon {
+            margin-right: 15px;
+            color: #3498db;
+            font-size: 1.5rem;
+        }
+        .resource-info {
+            flex: 1;
+        }
+        .resource-title {
+            font-weight: bold;
+            margin: 0;
+        }
+        .resource-desc {
+            color: #666;
+            margin: 5px 0 0 0;
+            font-size: 0.9rem;
+        }
+        .resource-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .resource-btn:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <a href="home.html" class="back-link">← 返回主页</a>
+    
+    <header>
+        <h1>Minecraft资源中心</h1>
+        <p>提供MC版本、模组、软件、投影、存档等资源下载，支持关键词搜索</p>
+    </header>
+
+    <!-- 搜索区域 -->
+    <div class="search-container">
+        <input type="text" id="search-input" class="search-box" placeholder="输入资源名称或描述关键词搜索...">
+        <button class="search-btn" id="search-btn">搜索</button>
+        <p class="search-result-info" id="search-result-info">找到 <span id="match-count">0</span> 个匹配资源</p>
+    </div>
+
+    <!-- 分类标签 -->
+    <div class="category-tabs">
+        <button class="category-tab active" data-category="all">全部资源</button>
+        <button class="category-tab" data-category="version">MC版本</button>
+        <button class="category-tab" data-category="mod">MC模组</button>
+        <button class="category-tab" data-category="software">MC软件</button>
+        <button class="category-tab" data-category="projection">MC投影</button>
+    </div>
+
+    <!-- 资源容器 -->
+    <div class="resources-container">
+        <!-- 全部资源 -->
+        <div class="category-content active" id="all">
+            <h2>全部Minecraft资源</h2>
+            <!-- 软件类 -->
+            <div class="resource-item" data-type="software">
+                <div class="resource-icon">📦</div>
+                <div class="resource-info">
+                    <p class="resource-title">Plain Craft Launcher 2.exe</p>
+                    <p class="resource-desc">PCL - Minecraft启动器</p>
+                </div>
+                <a href="Plain Craft Launcher 2.exe" download><button class="resource-btn">下载</button></a>
+            </div>
+            <div class="resource-item" data-type="software">
+                <div class="resource-icon">📦</div>
+                <div class="resource-info">
+                    <p class="resource-title">HMCL-3.6.12.exe</p>
+                    <p class="resource-desc">HMCL-3.6.12.exe - Minecraft启动器</p>
+                </div>
+                <a href="HMCL-3.6.12.exe" download><button class="resource-btn">下载</button></a>
+            </div>
+            <!-- 投影类 -->
+            <div class="resource-item" data-type="projection">
+                <div class="resource-icon">📄</div>
+                <div class="resource-info">
+                    <p class="resource-title">dongdong羊像素画.litematic</p>
+                    <p class="resource-desc">dongdong羊像素画 - MC投影</p>
+                </div>
+                <a href="dongdong羊像素画.litematic" download><button class="resource-btn">下载</button></a>
+            </div>
+            <div class="resource-item" data-type="projection">
+                <div class="resource-icon">📄</div>
+                <div class="resource-info">
+                    <p class="resource-title">小蓝豆.litematic</p>
+                    <p class="resource-desc">小蓝豆 - MC投影</p>
+                </div>
+                <a href="小蓝豆.litematic" download><button class="resource-btn">下载</button></a>
+            </div>
+            <div class="resource-item" data-type="projection">
+                <div class="resource-icon">📄</div>
+                <div class="resource-info">
+                    <p class="resource-title">悬轨列车轨道站点组合.litematic</p>
+                    <p class="resource-desc">悬轨列车轨道站点组合 - MC投影</p>
+                </div>
+                <a href="悬轨列车轨道站点组合.litematic" download><button class="resource-btn">下载</button></a>
+            </div>
+            <div class="resource-item" data-type="projection">
+                <div class="resource-icon">📄</div>
+                <div class="resource-info">
+                    <p class="resource-title">猪神.litematic</p>
+                    <p class="resource-desc">猪神.litematic - MC投影</p>
+                </div>
+                <a href="猪神.litematic" download><button class="resource-btn">下载</button></a>
+            </div>
+            <div class="resource-item" data-type="projection">
+                <div class="resource-icon">📄</div>
+                <div class="resource-info">
+                    <p class="resource-title">纳粹1.litematic</p>
+                    <p class="resource-desc">纳粹1 - MC投影</p>
+                </div>
+                <a href="纳粹1.litematic" download><button class="resource-btn">下载</button></a>
+            </div>
+            <div class="resource-item" data-type="projection">
+                <div class="resource-icon">📄</div>
+                <div class="resource-info">
+                    <p class="resource-title">纳粹2.litematic</p>
+                    <p class="resource-desc">纳粹2 - MC投影</p>
+                </div>
+                <a href="纳粹2.litematic" download><button class="resource-btn">下载</button></a>
+            </div>
+        </div>
+
+        <!-- MC版本分类（暂未添加资源，可自行补充） -->
+        <div class="category-content" id="version">
+            <h2>Minecraft版本下载</h2>
+            <p>暂未上传Minecraft版本资源，敬请期待！</p>
+        </div>
+
+        <!-- MC模组分类（暂未添加资源，可自行补充） -->
+        <div class="category-content" id="mod">
+            <h2>Minecraft模组下载</h2>
+            <p>暂未上传Minecraft模组资源，敬请期待！</p>
+        </div>
+
+        <!-- MC软件分类 -->
+        <div class="category-content" id="software">
+            <h2>Minecraft软件下载</h2>
+            <div class="resource-item" data-type="software">
+                <div class="resource-icon">📦</div>
+                <div class="resource-info">
+                    <p class="resource-title">Plain Craft Launcher 2.exe</p>
+                    <p class="resource-desc">PCL - Minecraft启动器</p>
+                </div>
+                <a href="Plain Craft Launcher 2.exe" download><button class="resource-btn">下载</button></a>
+            </div>
+            <div class="resource-item" data-type="software">
+                <div class="resource-icon">📦</div>
+                <div class="resource-info">
+                    <p class="resource-title">HMCL-3.6.12.exe</p>
+                    <p class="resource-desc">HMCL-3.6.12.exe - Minecraft启动器</p>
+                </div>
+                <a href="HMCL-3.6.12.exe" download><button class="resource-btn">下载</button></a>
+            </div>
+        </div>
+
+        <!-- MC投影分类 -->
+        <div class="category-content" id="projection">
+            <h2>Minecraft投影下载</h2>
+            <div class="resource-item" data-type="projection">
+                <div class="resource-icon">📄</div>
+                <div class="resource-info">
+                    <p class="resource-title">dongdong羊像素画.litematic</p>
+                    <p class="resource-desc">dongdong羊像素画 - MC投影</p>
+                </div>
+                <a href="dongdong羊像素画.litematic" download><button class="resource-btn">下载</button></a>
+            </div>
+            <div class="resource-item" data-type="projection">
+                <div class="resource-icon">📄</div>
+                <div class="resource-info">
+                    <p class="resource-title">小蓝豆.litematic</p>
+                    <p class="resource-desc">小蓝豆 - MC投影</p>
+                </div>
+                <a href="小蓝豆.litematic" download><button class="resource-btn">下载</button></a>
+            </div>
+            <div class="resource-item" data-type="projection">
+                <div class="resource-icon">📄</div>
+                <div class="resource-info">
+                    <p class="resource-title">悬轨列车轨道站点组合.litematic</p>
+                    <p class="resource-desc">悬轨列车轨道站点组合 - MC投影</p>
+                </div>
+                <a href="悬轨列车轨道站点组合.litematic" download><button class="resource-btn">下载</button></a>
+            </div>
+            <div class="resource-item" data-type="projection">
+                <div class="resource-icon">📄</div>
+                <div class="resource-info">
+                    <p class="resource-title">猪神.litematic</p>
+                    <p class="resource-desc">猪神 - MC投影</p>
+                </div>
+                <a href="猪神.litematic" download><button class="resource-btn">下载</button></a>
+            </div>
+            <div class="resource-item" data-type="projection">
+                <div class="resource-icon">📄</div>
+                <div class="resource-info">
+                    <p class="resource-title">纳粹1.litematic</p>
+                    <p class="resource-desc">纳粹1 - MC投影</p>
+                </div>
+                <a href="纳粹1.litematic" download><button class="resource-btn">下载</button></a>
+            </div>
+            <div class="resource-item" data-type="projection">
+                <div class="resource-icon">📄</div>
+                <div class="resource-info">
+                    <p class="resource-title">纳粹2.litematic</p>
+                    <p class="resource-desc">纳粹2 - MC投影</p>
+                </div>
+                <a href="纳粹2.litematic" download><button class="resource-btn">下载</button></a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. 分类标签切换逻辑
+        const categoryTabs = document.querySelectorAll('.category-tab');
+        const categoryContents = document.querySelectorAll('.category-content');
+
+        categoryTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // 移除所有激活状态
+                categoryTabs.forEach(t => t.classList.remove('active'));
+                categoryContents.forEach(c => c.classList.remove('active'));
+                // 添加当前激活状态
+                tab.classList.add('active');
+                const targetId = tab.dataset.category;
+                document.getElementById(targetId).classList.add('active');
+                // 切换分类后重置搜索
+                searchInput.value = '';
+                resultInfo.style.display = 'none';
+                document.querySelectorAll('.resource-item').forEach(item => {
+                    item.classList.remove('hidden');
+                });
+            });
+        });
+
+        // 2. 搜索功能实现（支持资源名称和描述词搜索）
+        const searchInput = document.getElementById('search-input');
+        const searchBtn = document.getElementById('search-btn');
+        const resourceItems = document.querySelectorAll('.resource-item');
+        const resultInfo = document.getElementById('search-result-info');
+        const matchCount = document.getElementById('match-count');
+
+        function handleSearch() {
+            const searchText = searchInput.value.trim().toLowerCase();
+            let count = 0;
+
+            resourceItems.forEach(item => {
+                // 获取资源名称和描述文本
+                const resTitle = item.querySelector('.resource-title').textContent.toLowerCase();
+                const resDesc = item.querySelector('.resource-desc').textContent.toLowerCase();
+
+                // 搜索为空时显示所有资源
+                if (searchText === '') {
+                    item.classList.remove('hidden');
+                    count++;
+                } 
+                // 关键词匹配时显示
+                else if (resTitle.includes(searchText) || resDesc.includes(searchText)) {
+                    item.classList.remove('hidden');
+                    count++;
+                } 
+                // 不匹配时隐藏
+                else {
+                    item.classList.add('hidden');
+                }
+            });
+
+            // 显示搜索结果统计
+            if (searchText !== '') {
+                resultInfo.style.display = 'block';
+                matchCount.textContent = count;
+            } else {
+                resultInfo.style.display = 'none';
+            }
+        }
+
+        // 点击搜索按钮触发搜索
+        searchBtn.addEventListener('click', handleSearch);
+
+        // 按回车键触发搜索
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleSearch();
+            }
+        });
+    </script>
+</body>
+</html>
