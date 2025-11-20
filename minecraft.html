@@ -35,7 +35,7 @@
             background: white;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0.1);
             margin-bottom: 30px;
             text-align: center;
         }
@@ -95,7 +95,7 @@
             background: white;
             padding: 25px;
             border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0.1);
             margin-bottom: 30px;
         }
         h2 {
@@ -155,6 +155,30 @@
         }
         .resource-btn:hover {
             background-color: #2980b9;
+        }
+        /* 模组版本列表样式 */
+        .mod-versions {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .mod-versions.active {
+            display: block;
+        }
+        .mod-version-item {
+            margin: 8px 0;
+        }
+        .mod-version-title {
+            font-weight: 500;
+            color: #333;
+        }
+        .mod-warning {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 5px;
         }
     </style>
 </head>
@@ -229,6 +253,138 @@
                 </div>
                 <a href="1.20.1.zip" download><button class="resource-btn">下载</button></a>
             </div>
+            <!-- 模组类 -->
+            <div class="resource-item" data-type="mod">
+                <div class="resource-icon">🗂️</div>
+                <div class="resource-info">
+                    <p class="resource-title">连锁采集</p>
+                    <p class="resource-desc">连锁采集模组</p>
+                </div>
+                <button class="resource-btn show-mod-versions" data-mod="veinminer">展开版本</button>
+                <div class="mod-versions" id="veinminer">
+                    <div class="mod-warning">⚠️ 依赖：Cloth Config API、FTB Library、Architectury API</div>
+                    <div class="mod-version-item">
+                        <span class="mod-version-title">forge 1.16.5 连锁采集</span>
+                        <a href="ftb-ultimine-forge-1605.3.1-build.45.jar" download><button class="resource-btn">下载</button></a>
+                    </div>
+                    <div class="mod-version-item">
+                        <span class="mod-version-title">forge 1.20.1 连锁采集</span>
+                        <a href="ftb-ultimine-forge-2001.1.7.jar" download><button class="resource-btn">下载</button></a>
+                    </div>
+                </div>
+            </div>
+            <div class="resource-item" data-type="mod">
+                <div class="resource-icon">🗂️</div>
+                <div class="resource-info">
+                    <p class="resource-title">Xaero的世界地图</p>
+                    <p class="resource-desc">地图模组</p>
+                </div>
+                <button class="resource-btn show-mod-versions" data-mod="xaero-worldmap">展开版本</button>
+                <div class="mod-versions" id="xaero-worldmap">
+                    <div class="mod-version-item">
+                        <span class="mod-version-title">forge 1.16.5 Xaero的世界地图</span>
+                        <a href="XaerosWorldMap_1.39.12_Forge_1.16.5.jar" download><button class="resource-btn">下载</button></a>
+                    </div>
+                    <div class="mod-version-item">
+                        <span class="mod-version-title">forge 1.20.1 Xaero的世界地图</span>
+                        <a href="XaerosWorldMap_1.39.12_Forge_1.20.jar" download><button class="resource-btn">下载</button></a>
+                    </div>
+                </div>
+            </div>
+            <div class="resource-item" data-type="mod">
+                <div class="resource-icon">🗂️</div>
+                <div class="resource-info">
+                    <p class="resource-title">JEI物品管理器</p>
+                    <p class="resource-desc">物品管理模组</p>
+                </div>
+                <button class="resource-btn show-mod-versions" data-mod="jei">展开版本</button>
+                <div class="mod-versions" id="jei">
+                    <div class="mod-version-item">
+                        <span class="mod-version-title">forge 1.16.5 JEI物品管理器</span>
+                        <a href="jei-1.16.5-7.8.0.1013.jar" download><button class="resource-btn">下载</button></a>
+                    </div>
+                    <div class="mod-version-item">
+                        <span class="mod-version-title">forge 1.20.1 JEI物品管理器</span>
+                        <a href="jei-1.20.1-forge-15.20.0.121.jar" download><button class="resource-btn">下载</button></a>
+                    </div>
+                </div>
+            </div>
+            <div class="resource-item" data-type="mod">
+                <div class="resource-icon">🗂️</div>
+                <div class="resource-info">
+                    <p class="resource-title">Xaero的小地图</p>
+                    <p class="resource-desc">小地图模组</p>
+                </div>
+                <button class="resource-btn show-mod-versions" data-mod="xaero-minimap">展开版本</button>
+                <div class="mod-versions" id="xaero-minimap">
+                    <div class="mod-version-item">
+                        <span class="mod-version-title">forge 1.7.10 Xaero的小地图</span>
+                        <a href="Xaeros_Minimap_1.5.4_Forge_1.7.10.jar" download><button class="resource-btn">下载</button></a>
+                    </div>
+                    <div class="mod-version-item">
+                        <span class="mod-version-title">forge 1.16.5 Xaero的小地图</span>
+                        <a href="Xaeros_Minimap_21.23.1_Fabric_1.16.5.jar" download><button class="resource-btn">下载</button></a>
+                    </div>
+                    <div class="mod-version-item">
+                        <span class="mod-version-title">forge 1.20.1 Xaero的小地图</span>
+                        <a href="Xaeros_Minimap_25.2.10_Forge_1.20.jar" download><button class="resource-btn">下载</button></a>
+                    </div>
+                </div>
+            </div>
+            <div class="resource-item" data-type="mod">
+                <div class="resource-icon">🗂️</div>
+                <div class="resource-info">
+                    <p class="resource-title">Cloth Config API</p>
+                    <p class="resource-desc">模组依赖库</p>
+                </div>
+                <button class="resource-btn show-mod-versions" data-mod="cloth-config">展开版本</button>
+                <div class="mod-versions" id="cloth-config">
+                    <div class="mod-version-item">
+                        <span class="mod-version-title">forge 1.16.5 Cloth Config API</span>
+                        <a href="cloth-config-4.17.132-forge.jar" download><button class="resource-btn">下载</button></a>
+                    </div>
+                    <div class="mod-version-item">
+                        <span class="mod-version-title">forge 1.20.1 Cloth Config API</span>
+                        <a href="cloth-config-11.1.136-forge.jar" download><button class="resource-btn">下载</button></a>
+                    </div>
+                </div>
+            </div>
+            <div class="resource-item" data-type="mod">
+                <div class="resource-icon">🗂️</div>
+                <div class="resource-info">
+                    <p class="resource-title">FTB Library</p>
+                    <p class="resource-desc">模组依赖库</p>
+                </div>
+                <button class="resource-btn show-mod-versions" data-mod="ftb-library">展开版本</button>
+                <div class="mod-versions" id="ftb-library">
+                    <div class="mod-version-item">
+                        <span class="mod-version-title">forge 1.16.5 FTB Library</span>
+                        <a href="ftb-library-forge-1605.3.4-build.90.jar" download><button class="resource-btn">下载</button></a>
+                    </div>
+                    <div class="mod-version-item">
+                        <span class="mod-version-title">forge 1.20.1 FTB Library</span>
+                        <a href="ftb-library-forge-2001.2.10.jar" download><button class="resource-btn">下载</button></a>
+                    </div>
+                </div>
+            </div>
+            <div class="resource-item" data-type="mod">
+                <div class="resource-icon">🗂️</div>
+                <div class="resource-info">
+                    <p class="resource-title">Architectury API</p>
+                    <p class="resource-desc">模组依赖库</p>
+                </div>
+                <button class="resource-btn show-mod-versions" data-mod="architectury">展开版本</button>
+                <div class="mod-versions" id="architectury">
+                    <div class="mod-version-item">
+                        <span class="mod-version-title">forge 1.16.5 Architectury API</span>
+                        <a href="architectury-9.2.14-forge.jar" download><button class="resource-btn">下载</button></a>
+                    </div>
+                    <div class="mod-version-item">
+                        <span class="mod-version-title">forge 1.20.1 Architectury API</span>
+                        <a href="architectury-1.32.68.jar" download><button class="resource-btn">下载</button></a>
+                    </div>
+                </div>
+            </div>
             <!-- 投影类 -->
             <div class="resource-item" data-type="projection">
                 <div class="resource-icon">📄</div>
@@ -287,7 +443,7 @@
                 <div class="resource-icon">📦</div>
                 <div class="resource-info">
                     <p class="resource-title">1.7.10.zip</p>
-                    <p class="resource-desc">Minecraft 1.7.10 客户端/服务端整合包</p>
+                    <p class="resource-desc">Minecraft 1.7.10 版本</p>
                 </div>
                 <a href="1.7.10.zip" download><button class="resource-btn">下载</button></a>
             </div>
@@ -295,7 +451,7 @@
                 <div class="resource-icon">📦</div>
                 <div class="resource-info">
                     <p class="resource-title">1.16.5.zip</p>
-                    <p class="resource-desc">Minecraft 1.16.5 客户端/服务端整合包</p>
+                    <p class="resource-desc">Minecraft 1.16.5 版本</p>
                 </div>
                 <a href="1.16.5.zip" download><button class="resource-btn">下载</button></a>
             </div>
@@ -303,7 +459,7 @@
                 <div class="resource-icon">📦</div>
                 <div class="resource-info">
                     <p class="resource-title">1.20.1.zip</p>
-                    <p class="resource-desc">Minecraft 1.20.1 客户端/服务端整合包</p>
+                    <p class="resource-desc">Minecraft 1.20.1 版本</p>
                 </div>
                 <a href="1.20.1.zip" download><button class="resource-btn">下载</button></a>
             </div>
@@ -312,7 +468,137 @@
         <!-- MC模组分类 -->
         <div class="category-content" id="mod">
             <h2>Minecraft模组下载</h2>
-            <p>暂未上传Minecraft模组资源，敬请期待！</p>
+            <div class="resource-item" data-type="mod">
+                <div class="resource-icon">🗂️</div>
+                <div class="resource-info">
+                    <p class="resource-title">连锁采集</p>
+                    <p class="resource-desc">连锁采集模组</p>
+                </div>
+                <button class="resource-btn show-mod-versions" data-mod="veinminer">展开版本</button>
+                <div class="mod-versions" id="veinminer">
+                    <div class="mod-warning">⚠️ 前置模组：Cloth Config API、FTB Library、Architectury API</div>
+                    <div class="mod-version-item">
+                        <span class="mod-version-title">forge 1.16.5 连锁采集</span>
+                        <a href="ftb-ultimine-forge-1605.3.1-build.45.jar" download><button class="resource-btn">下载</button></a>
+                    </div>
+                    <div class="mod-version-item">
+                        <span class="mod-version-title">forge 1.20.1 连锁采集</span>
+                        <a href="ftb-ultimine-forge-2001.1.7.jar" download><button class="resource-btn">下载</button></a>
+                    </div>
+                </div>
+            </div>
+            <div class="resource-item" data-type="mod">
+                <div class="resource-icon">🗂️</div>
+                <div class="resource-info">
+                    <p class="resource-title">Xaero的世界地图</p>
+                    <p class="resource-desc">地图模组</p>
+                </div>
+                <button class="resource-btn show-mod-versions" data-mod="xaero-worldmap">展开版本</button>
+                <div class="mod-versions" id="xaero-worldmap">
+                    <div class="mod-version-item">
+                        <span class="mod-version-title">forge 1.16.5 Xaero的世界地图</span>
+                        <a href="XaerosWorldMap_1.39.12_Forge_1.16.5.jar" download><button class="resource-btn">下载</button></a>
+                    </div>
+                    <div class="mod-version-item">
+                        <span class="mod-version-title">forge 1.20.1 Xaero的世界地图</span>
+                        <a href="XaerosWorldMap_1.39.12_Forge_1.20.jar" download><button class="resource-btn">下载</button></a>
+                    </div>
+                </div>
+            </div>
+            <div class="resource-item" data-type="mod">
+                <div class="resource-icon">🗂️</div>
+                <div class="resource-info">
+                    <p class="resource-title">JEI物品管理器</p>
+                    <p class="resource-desc">物品管理模组</p>
+                </div>
+                <button class="resource-btn show-mod-versions" data-mod="jei">展开版本</button>
+                <div class="mod-versions" id="jei">
+                    <div class="mod-version-item">
+                        <span class="mod-version-title">forge 1.16.5 JEI物品管理器</span>
+                        <a href="jei-1.16.5-7.8.0.1013.jar" download><button class="resource-btn">下载</button></a>
+                    </div>
+                    <div class="mod-version-item">
+                        <span class="mod-version-title">forge 1.20.1 JEI物品管理器</span>
+                        <a href="jei-1.20.1-forge-15.20.0.121.jar" download><button class="resource-btn">下载</button></a>
+                    </div>
+                </div>
+            </div>
+            <div class="resource-item" data-type="mod">
+                <div class="resource-icon">🗂️</div>
+                <div class="resource-info">
+                    <p class="resource-title">Xaero的小地图</p>
+                    <p class="resource-desc">小地图模组</p>
+                </div>
+                <button class="resource-btn show-mod-versions" data-mod="xaero-minimap">展开版本</button>
+                <div class="mod-versions" id="xaero-minimap">
+                    <div class="mod-version-item">
+                        <span class="mod-version-title">forge 1.7.10 Xaero的小地图</span>
+                        <a href="Xaeros_Minimap_1.5.4_Forge_1.7.10.jar" download><button class="resource-btn">下载</button></a>
+                    </div>
+                    <div class="mod-version-item">
+                        <span class="mod-version-title">forge 1.16.5 Xaero的小地图</span>
+                        <a href="Xaeros_Minimap_21.23.1_Fabric_1.16.5.jar" download><button class="resource-btn">下载</button></a>
+                    </div>
+                    <div class="mod-version-item">
+                        <span class="mod-version-title">forge 1.20.1 Xaero的小地图</span>
+                        <a href="Xaeros_Minimap_25.2.10_Forge_1.20.jar" download><button class="resource-btn">下载</button></a>
+                    </div>
+                </div>
+            </div>
+            <div class="resource-item" data-type="mod">
+                <div class="resource-icon">🗂️</div>
+                <div class="resource-info">
+                    <p class="resource-title">Cloth Config API</p>
+                    <p class="resource-desc">模组依赖库</p>
+                </div>
+                <button class="resource-btn show-mod-versions" data-mod="cloth-config">展开版本</button>
+                <div class="mod-versions" id="cloth-config">
+                    <div class="mod-version-item">
+                        <span class="mod-version-title">forge 1.16.5 Cloth Config API</span>
+                        <a href="cloth-config-4.17.132-forge.jar" download><button class="resource-btn">下载</button></a>
+                    </div>
+                    <div class="mod-version-item">
+                        <span class="mod-version-title">forge 1.20.1 Cloth Config API</span>
+                        <a href="cloth-config-11.1.136-forge.jar" download><button class="resource-btn">下载</button></a>
+                    </div>
+                </div>
+            </div>
+            <div class="resource-item" data-type="mod">
+                <div class="resource-icon">🗂️</div>
+                <div class="resource-info">
+                    <p class="resource-title">FTB Library</p>
+                    <p class="resource-desc">模组依赖库</p>
+                </div>
+                <button class="resource-btn show-mod-versions" data-mod="ftb-library">展开版本</button>
+                <div class="mod-versions" id="ftb-library">
+                    <div class="mod-version-item">
+                        <span class="mod-version-title">forge 1.16.5 FTB Library</span>
+                        <a href="ftb-library-forge-1605.3.4-build.90.jar" download><button class="resource-btn">下载</button></a>
+                    </div>
+                    <div class="mod-version-item">
+                        <span class="mod-version-title">forge 1.20.1 FTB Library</span>
+                        <a href="ftb-library-forge-2001.2.10.jar" download><button class="resource-btn">下载</button></a>
+                    </div>
+                </div>
+            </div>
+            <div class="resource-item" data-type="mod">
+                <div class="resource-icon">🗂️</div>
+                <div class="resource-info">
+                    <p class="resource-title">Architectury API</p>
+                    <p class="resource-desc">模组依赖库</p>
+                </div>
+                <button class="resource-btn show-mod-versions" data-mod="architectury">展开版本</button>
+                <div class="mod-versions" id="architectury">
+                    <div class="mod-version-item">
+                        <span class="mod-version-title">forge 1.16.5 Architectury API</span>
+                        <a href="architectury-9.2.14-forge.jar" download><button class="resource-btn">下载</button></a>
+                    </div>
+                    <div class="mod-version-item">
+                        <span class="mod-version-title">forge 1.20.1 Architectury API</span>
+                        <a href="architectury-1.32.68.jar" download><button class="resource-btn">下载</button></a>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- MC软件分类 -->
@@ -404,16 +690,38 @@
                 tab.classList.add('active');
                 const targetId = tab.dataset.category;
                 document.getElementById(targetId).classList.add('active');
-                // 切换分类后重置搜索
+                // 切换分类后重置搜索和模组展开状态
                 searchInput.value = '';
                 resultInfo.style.display = 'none';
                 document.querySelectorAll('.resource-item').forEach(item => {
                     item.classList.remove('hidden');
                 });
+                document.querySelectorAll('.mod-versions').forEach(versions => {
+                    versions.classList.remove('active');
+                });
+                document.querySelectorAll('.show-mod-versions').forEach(btn => {
+                    btn.textContent = '展开版本';
+                });
             });
         });
 
-        // 2. 搜索功能实现（支持资源名称和描述词搜索）
+        // 2. 模组版本展开/收起逻辑
+        const showModVersionBtns = document.querySelectorAll('.show-mod-versions');
+        showModVersionBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const modId = btn.dataset.mod;
+                const modVersions = document.getElementById(modId);
+                modVersions.classList.toggle('active');
+                // 切换按钮文字
+                if (modVersions.classList.contains('active')) {
+                    btn.textContent = '收起版本';
+                } else {
+                    btn.textContent = '展开版本';
+                }
+            });
+        });
+
+        // 3. 搜索功能实现（支持资源名称和描述词搜索）
         const searchInput = document.getElementById('search-input');
         const searchBtn = document.getElementById('search-btn');
         const resourceItems = document.querySelectorAll('.resource-item');
