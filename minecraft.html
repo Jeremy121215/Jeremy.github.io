@@ -474,8 +474,10 @@
                     <p class="resource-title">连锁采集</p>
                     <p class="resource-desc">连锁采集模组</p>
                 </div>
-                <button class="resource-btn show-mod-versions" data-mod="veinminer">展开版本</button>
-                <div class="mod-versions" id="veinminer">
+                <!-- 添加data-is-mod-tab标识，区分模组分类下的按钮 -->
+                <button class="resource-btn show-mod-versions" data-mod="veinminer" data-is-mod-tab="true">展开版本</button>
+                <!-- ID添加-mod后缀，保证唯一 -->
+                <div class="mod-versions" id="veinminer-mod">
                     <div class="mod-warning">⚠️ 依赖：Cloth Config API、FTB Library、Architectury API</div>
                     <div class="mod-version-item">
                         <span class="mod-version-title">forge 1.16.5 连锁破坏</span>
@@ -493,8 +495,8 @@
                     <p class="resource-title">Xaero的世界地图</p>
                     <p class="resource-desc">地图模组</p>
                 </div>
-                <button class="resource-btn show-mod-versions" data-mod="xaero-worldmap">展开版本</button>
-                <div class="mod-versions" id="xaero-worldmap">
+                <button class="resource-btn show-mod-versions" data-mod="xaero-worldmap" data-is-mod-tab="true">展开版本</button>
+                <div class="mod-versions" id="xaero-worldmap-mod">
                     <div class="mod-version-item">
                         <span class="mod-version-title">forge 1.7.10 Xaero的世界地图</span>
                         <a href="[Xaero的世界地图] XaerosWorldMap_1.5.4_Forge_1.7.10.jar" download><button class="resource-btn">下载</button></a>
@@ -515,8 +517,8 @@
                     <p class="resource-title">JEI物品管理器</p>
                     <p class="resource-desc">物品管理模组</p>
                 </div>
-                <button class="resource-btn show-mod-versions" data-mod="jei">展开版本</button>
-                <div class="mod-versions" id="jei">
+                <button class="resource-btn show-mod-versions" data-mod="jei" data-is-mod-tab="true">展开版本</button>
+                <div class="mod-versions" id="jei-mod">
                     <div class="mod-version-item">
                         <span class="mod-version-title">forge 1.16.5 JEI物品管理器</span>
                         <a href="[JEI物品管理器] jei-1.16.5-7.8.0.1013.jar" download><button class="resource-btn">下载</button></a>
@@ -533,8 +535,8 @@
                     <p class="resource-title">Xaero的小地图</p>
                     <p class="resource-desc">小地图模组</p>
                 </div>
-                <button class="resource-btn show-mod-versions" data-mod="xaero-minimap">展开版本</button>
-                <div class="mod-versions" id="xaero-minimap">
+                <button class="resource-btn show-mod-versions" data-mod="xaero-minimap" data-is-mod-tab="true">展开版本</button>
+                <div class="mod-versions" id="xaero-minimap-mod">
                     <div class="mod-version-item">
                         <span class="mod-version-title">forge 1.16.5 Xaero的小地图</span>
                         <a href="[Xaero的小地图] Xaeros_Minimap_25.2.10_Forge_1.16.5.jar" download><button class="resource-btn">下载</button></a>
@@ -551,8 +553,8 @@
                     <p class="resource-title">Cloth Config API</p>
                     <p class="resource-desc">模组依赖库</p>
                 </div>
-                <button class="resource-btn show-mod-versions" data-mod="cloth-config">展开版本</button>
-                <div class="mod-versions" id="cloth-config">
+                <button class="resource-btn show-mod-versions" data-mod="cloth-config" data-is-mod-tab="true">展开版本</button>
+                <div class="mod-versions" id="cloth-config-mod">
                     <div class="mod-version-item">
                         <span class="mod-version-title">forge 1.16.5 Cloth Config API</span>
                         <a href="cloth-config-4.17.132-forge.jar" download><button class="resource-btn">下载</button></a>
@@ -569,8 +571,8 @@
                     <p class="resource-title">FTB Library</p>
                     <p class="resource-desc">模组依赖库</p>
                 </div>
-                <button class="resource-btn show-mod-versions" data-mod="ftb-library">展开版本</button>
-                <div class="mod-versions" id="ftb-library">
+                <button class="resource-btn show-mod-versions" data-mod="ftb-library" data-is-mod-tab="true">展开版本</button>
+                <div class="mod-versions" id="ftb-library-mod">
                     <div class="mod-version-item">
                         <span class="mod-version-title">forge 1.16.5 FTB Library</span>
                         <a href="ftb-library-forge-1605.3.4-build.90.jar" download><button class="resource-btn">下载</button></a>
@@ -587,8 +589,8 @@
                     <p class="resource-title">Architectury API</p>
                     <p class="resource-desc">模组依赖库</p>
                 </div>
-                <button class="resource-btn show-mod-versions" data-mod="architectury">展开版本</button>
-                <div class="mod-versions" id="architectury">
+                <button class="resource-btn show-mod-versions" data-mod="architectury" data-is-mod-tab="true">展开版本</button>
+                <div class="mod-versions" id="architectury-mod">
                     <div class="mod-version-item">
                         <span class="mod-version-title">forge 1.16.5 Architectury API</span>
                         <a href="architectury-9.2.14-forge.jar" download><button class="resource-btn">下载</button></a>
@@ -705,18 +707,18 @@
             });
         });
 
-        // 2. 模组版本展开/收起逻辑
+        // 2. 模组版本展开/收起逻辑 - 修复重复ID问题
         const showModVersionBtns = document.querySelectorAll('.show-mod-versions');
         showModVersionBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 const modId = btn.dataset.mod;
-                const modVersions = document.getElementById(modId);
-                modVersions.classList.toggle('active');
-                // 切换按钮文字
-                if (modVersions.classList.contains('active')) {
-                    btn.textContent = '收起版本';
-                } else {
-                    btn.textContent = '展开版本';
+                // 判断是否是模组分类下的按钮，若是则拼接-mod后缀
+                const finalModId = btn.dataset.isModTab ? `${modId}-mod` : modId;
+                const modVersions = document.getElementById(finalModId);
+                if (modVersions) { // 防止找不到元素报错
+                    modVersions.classList.toggle('active');
+                    // 切换按钮文字
+                    btn.textContent = modVersions.classList.contains('active') ? '收起版本' : '展开版本';
                 }
             });
         });
