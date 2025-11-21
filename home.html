@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="logo.png" type="image/png" sizes="32x32">
-    <title>星河为梦的网页</title>
+    <title>星河音乐 - 星河为梦的网页</title>
     <style>
         body {
             font-family: "微软雅黑", Arial, sans-serif;
-            max-width: 1000px;
+            max-width: 800px;
             margin: 0 auto;
             padding: 20px;
             line-height: 1.6;
@@ -20,88 +20,157 @@
             margin: 30px 0;
         }
         h1 {
-            color: #2c3e50;
-            font-size: 2.2rem;
+            color: #8e44ad;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
         }
-        .section {
-            background: white;
-            padding: 25px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        h2 {
-            color: #3498db;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-        ul {
-            margin-left: 20px;
-        }
-        li {
-            margin: 8px 0;
-        }
-        a {
-            color: #3498db;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-        /* 功能按钮样式 */
-        .function-btn {
-            display: inline-block;
-            margin: 20px 0;
-            padding: 12px 25px;
-            background-color: #3498db;
-            color: white;
-            border-radius: 5px;
+        .subtitle {
+            color: #666;
             font-size: 1.1rem;
-            font-weight: 500;
-            transition: background 0.3s;
-            border: none;
+        }
+        .music-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        .music-header {
+            background-color: #8e44ad;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        .music-playlist {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .music-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
             cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 4px;
         }
-        .function-btn:hover {
-            background-color: #2980b9;
+        .music-item:hover {
+            background-color: #f5f5f5;
+            transform: translateX(5px);
+        }
+        .music-item.active {
+            background-color: #e6d7f0;
+            color: #8e44ad;
+            font-weight: 500;
+            border-left: 4px solid #8e44ad;
+        }
+        .music-controls {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .control-btn {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s;
+            padding: 10px;
+            border-radius: 50%;
+        }
+        .control-btn:hover {
+            color: #8e44ad;
+            background-color: #f0e6f5;
+        }
+        .play-pause {
+            font-size: 2.5rem;
+            color: #8e44ad;
+        }
+        .play-pause:hover {
+            background-color: #e6d7f0;
+        }
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background-color: #ddd;
+            border-radius: 5px;
+            margin: 15px 0;
+            cursor: pointer;
+            position: relative;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: #8e44ad;
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .progress-handle {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            background-color: #8e44ad;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .progress-container:hover .progress-handle {
+            opacity: 1;
+        }
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1rem;
+            color: #666;
+            padding: 0 5px;
+            margin-bottom: 10px;
+        }
+        .mode-controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        .mode-btn {
+            background: none;
+            border: 1px solid #ddd;
+            padding: 8px 15px;
+            border-radius: 20px;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+        .mode-btn.active {
+            background-color: #8e44ad;
+            color: white;
+            border-color: #8e44ad;
+        }
+        .mode-btn:hover {
+            border-color: #8e44ad;
+            color: #8e44ad;
+        }
+        .back-link {
+            display: inline-block;
+            margin: 30px 0;
+            color: #3498db;
             text-decoration: none;
+            font-size: 1.1rem;
         }
-        .ai-btn {
-            background-color: #9b59b6;
-        }
-        .ai-btn:hover {
-            background-color: #8e44ad;
-        }
-        .draw-btn {
-            background-color: #1abc9c;
-        }
-        .draw-btn:hover {
-            background-color: #16a085;
-        }
-        .doc-btn {
-            background-color: #e67e22;
-        }
-        .doc-btn:hover {
-            background-color: #d35400;
-        }
-        .treasure-btn {
-            background-color: #f39c12;
-        }
-        .treasure-btn:hover {
-            background-color: #e67e22;
-        }
-        .mc-btn {
-            background-color: #2ecc71;
-        }
-        .mc-btn:hover {
-            background-color: #27ae60;
-        }
-        .music-btn {
-            background-color: #8e44ad;
-        }
-        .music-btn:hover {
-            background-color: #9b59b6;
+        .back-link:hover {
+            text-decoration: underline;
         }
         .version-info {
             text-align: center;
@@ -111,287 +180,52 @@
             padding-top: 20px;
             border-top: 1px solid #eee;
         }
-
-        /* 百宝箱弹窗样式（嵌入treasure-box.html） */
-        .treasure-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        .treasure-modal-content {
-            width: 90%;
-            max-width: 500px;
-            height: 90%;
-            max-height: 600px;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            position: relative;
-        }
-        .close-modal {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 1.5rem;
-            color: #666;
-            cursor: pointer;
-            z-index: 1001;
-            background: white;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .close-modal:hover {
-            color: #e74c3c;
-        }
-        #treasure-iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        /* 音乐播放器样式 */
-        .music-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        .music-modal-content {
-            width: 90%;
-            max-width: 600px;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            position: relative;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        .music-header {
-            background-color: #8e44ad;
-            color: white;
-            padding: 15px;
-            text-align: center;
-            font-size: 1.2rem;
-            font-weight: 600;
-        }
-        .music-playlist {
-            max-height: 300px;
-            overflow-y: auto;
-            padding: 10px;
-        }
-        .music-item {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        .music-item:hover {
-            background-color: #f5f5f5;
-        }
-        .music-item.active {
-            background-color: #e6d7f0;
-            color: #8e44ad;
-            font-weight: 500;
-        }
-        .music-controls {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding: 15px;
-            background-color: #f9f9f9;
-        }
-        .control-btn {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: #333;
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-        .control-btn:hover {
-            color: #8e44ad;
-        }
-        .play-pause {
-            font-size: 2rem;
-        }
-        .progress-container {
-            width: 100%;
-            height: 8px;
-            background-color: #ddd;
-            border-radius: 4px;
-            margin: 10px 0;
-            cursor: pointer;
-        }
-        .progress-bar {
-            height: 100%;
-            background-color: #8e44ad;
-            border-radius: 4px;
-            width: 0%;
-        }
-        .time-display {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.9rem;
-            color: #666;
-            padding: 0 10px;
-        }
-        .mode-btn {
-            background: none;
-            border: none;
-            color: #666;
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-        .mode-btn.active {
-            color: #8e44ad;
-            font-weight: 500;
-        }
     </style>
 </head>
 <body>
+    <a href="home.html" class="back-link">← 返回主页</a>
+
     <header>
-        <h1>星河为梦的网页</h1>
-        <p>欢迎访问星河为梦的 GitHub Pages 个人网页！这里会分享我的项目成果等（可以下载）～</p>
+        <h1>🎵 星河音乐</h1>
+        <p class="subtitle">高品质在线音乐播放器，支持多种播放模式与精准进度控制</p>
     </header>
 
-    <div class="section">
-        <h2>关于网页</h2>
-        <ul>
-            <li>搭建工具：GitHub Pages</li>
-            <li>网页地址：<a href="https://jeremy121215.github.io/Jeremy.github.io/home.html" target="_blank">https://jeremy121215.github.io/Jeremy.github.io/home.html</a></li>
-        </ul>
-    </div>
+    <div class="music-container">
+        <div class="music-header">当前播放列表</div>
+        
+        <div class="music-playlist" id="musicPlaylist">
+            <!-- 歌曲列表将通过JS动态生成 -->
+        </div>
 
-    <div class="section">
-        <h2>如何访问</h2>
-        <ol>
-            <li>直接点击上方网页地址即可打开</li>
-            <li>若配置了自定义域名，输入域名也可快速访问</li>
-            <li>网页支持 HTTPS 安全访问，无需担心隐私问题</li>
-        </ol>
-    </div>
-    
-    <!-- 修改：文件下载区改为Minecraft资源 -->
-    <div class="section">
-        <h2>🎮 Minecraft资源</h2>
-        <p>点击下方按钮进入Minecraft资源中心，包含MC版本、模组、软件、投影、存档等下载：</p>
-        <a href="minecraft.html" class="function-btn mc-btn">进入MC资源中心</a>
-    </div>
+        <div class="time-display">
+            <span id="currentTime">00:00</span>
+            <span id="duration">00:00</span>
+        </div>
 
-    <div class="section">
-        <h2>🤖AI助手</h2>
-        <p>点击下方按钮进入AI助手页面，支持多种AI工具调用及历史记录管理：</p>
-        <a href="ai.html" class="function-btn ai-btn">打开AI助手</a>
-        <p style="margin-top: 15px; color: #666;">
-            支持功能：AI问答、历史记录查看、记录删除等
-        </p>
-    </div>
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar" id="progressBar"></div>
+            <div class="progress-handle" id="progressHandle"></div>
+        </div>
 
-    <div class="section">
-        <h2>💻C++编译器</h2>
-        <p>点击下方按钮进入C++编译器页面，支持多版本切换、代码编辑、运行输入及结果查看：</p>
-        <a href="cpp-compiler.html" class="function-btn" style="background-color: #e67e22;">打开C++编译器</a>
-        <p style="margin-top: 15px; color: #666;">
-            支持版本：C++98、C++11、C++14、C++17 | 功能：代码编辑、程序输入、实时输出
-        </p>
-    </div>
+        <div class="music-controls">
+            <button class="control-btn" id="prevBtn">❮</button>
+            <button class="control-btn play-pause" id="playPauseBtn">▶</button>
+            <button class="control-btn" id="nextBtn">❯</button>
+        </div>
 
-    <div class="section">
-        <h2>🎨在线绘图工具</h2>
-        <p>点击下方按钮进入绘图页面，支持多颜色画笔、自由绘制，可保存作品到本地（刷新不保留）：</p>
-        <a href="draw.html" class="function-btn draw-btn">打开在线绘图</a>
-        <p style="margin-top: 15px; color: #666;">
-            支持功能：多颜色选择、调节画笔粗细、清空画布、本地保存（自定义保存位置）
-        </p>
-    </div>
-
-    <div class="section">
-        <h2>📝文档编辑工具</h2>
-        <p>点击下方按钮进入文档编辑页面，支持多格式文本文档打开、编辑、保存及Markdown渲染：</p>
-        <a href="doc-editor.html" class="function-btn doc-btn">打开文档编辑</a>
-        <p style="margin-top: 15px; color: #666;">
-            支持格式：TXT/MD/DOC/DOCX/RTF/JSON/XML | 功能：Markdown实时渲染、多格式保存、视图切换
-        </p>
-    </div>
-
-    <!-- 新增：音乐收听功能 -->
-    <div class="section">
-        <h2>🎵 音乐收听</h2>
-        <p>点击下方按钮打开音乐播放器，支持在线播放、进度控制、循环模式切换及切歌功能：</p>
-        <button class="function-btn music-btn" id="openMusicBtn">打开音乐播放器</button>
-    </div>
-
-    <!-- 新增：百宝箱功能入口 -->
-    <div class="section">
-        <h2>🔮百宝箱</h2>
-        <p>点击下方按钮打开百宝箱，体验每日人品、自定义下载趣味功能：</p>
-        <button class="function-btn treasure-btn" id="openTreasureBtn">打开百宝箱</button>
-    </div>
-
-    <div class="section">
-        <h2>联系方式</h2>
-        <ul>
-            <li>GitHub：<a href="https://github.com/jeremy121215" target="_blank">jeremy121215</a></li>
-            <li>邮箱：<a href="mailto:xhwm121215@qq.com">xhwm121215@qq.com</a></li>
-        </ul>
+        <div class="mode-controls">
+            <button class="mode-btn" id="repeatBtn">单曲循环</button>
+            <button class="mode-btn" id="loopBtn">列表循环</button>
+            <button class="mode-btn active" id="shuffleBtn">随机播放</button>
+        </div>
     </div>
 
     <div class="version-info">
-        网页版本：v2.3.0 | 最后更新：2025-11-21
-    </div>
-
-    <!-- 音乐播放器弹窗 -->
-    <div class="music-modal" id="musicModal">
-        <div class="music-modal-content">
-            <div class="music-header">星河音乐播放器</div>
-            <div class="music-playlist" id="musicPlaylist">
-                <!-- 歌曲列表将通过JS动态生成 -->
-            </div>
-            <div class="time-display">
-                <span id="currentTime">00:00</span>
-                <span id="duration">00:00</span>
-            </div>
-            <div class="progress-container" id="progressContainer">
-                <div class="progress-bar" id="progressBar"></div>
-            </div>
-            <div class="music-controls">
-                <button class="control-btn" id="prevBtn">❮</button>
-                <button class="control-btn play-pause" id="playPauseBtn">▶</button>
-                <button class="control-btn" id="nextBtn">❯</button>
-                <div style="flex: 1;"></div>
-                <button class="mode-btn" id="repeatBtn">单曲循环</button>
-                <button class="mode-btn" id="loopBtn">列表循环</button>
-                <button class="mode-btn active" id="shuffleBtn">随机播放</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 百宝箱弹窗（嵌入独立的treasure-box.html） -->
-    <div class="treasure-modal" id="treasureModal">
-        <div class="close-modal" id="closeTreasureModal">×</div>
-        <div class="treasure-modal-content">
-            <iframe id="treasure-iframe" src="treasure-box.html"></iframe>
-        </div>
+        播放器版本：v1.0.0 | 支持格式：MP3 | 最后更新：2025-11-21
     </div>
 
     <script>
-        // 音乐数据
+        // 音乐数据库（需确保MP3文件路径正确）
         const musicList = [
             { name: "Bubble Beat - Cloud", src: "Bubble Beat - Cloud.MP3" },
             { name: "Bubble Beat - Sunny", src: "Bubble Beat - Sunny.MP3" },
@@ -404,55 +238,70 @@
             { name: "北京五十五日 (Fifty-five days at Peking)", src: "北京五十五日（Fifty-five days at Peking).MP3" }
         ];
 
-        // 音乐状态
+        // 全局状态管理
         let currentIndex = 0;
         let isPlaying = false;
-        let playMode = "shuffle"; // 单曲循环: repeat, 列表循环: loop, 随机播放: shuffle
+        let playMode = "shuffle"; // repeat:单曲循环, loop:列表循环, shuffle:随机播放
         let audio = new Audio();
-        let isRandomized = false;
-        let randomList = [];
+        let randomList = [...Array(musicList.length).keys()]; // 随机播放序列
+        let isDragging = false; // 进度条拖动状态
 
-        // DOM元素
-        const openMusicBtn = document.getElementById('openMusicBtn');
-        const musicModal = document.getElementById('musicModal');
-        const musicPlaylist = document.getElementById('musicPlaylist');
-        const playPauseBtn = document.getElementById('playPauseBtn');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const progressBar = document.getElementById('progressBar');
-        const progressContainer = document.getElementById('progressContainer');
-        const currentTimeEl = document.getElementById('currentTime');
-        const durationEl = document.getElementById('duration');
-        const repeatBtn = document.getElementById('repeatBtn');
-        const loopBtn = document.getElementById('loopBtn');
-        const shuffleBtn = document.getElementById('shuffleBtn');
+        // DOM元素缓存
+        const dom = {
+            musicPlaylist: document.getElementById('musicPlaylist'),
+            playPauseBtn: document.getElementById('playPauseBtn'),
+            prevBtn: document.getElementById('prevBtn'),
+            nextBtn: document.getElementById('nextBtn'),
+            progressBar: document.getElementById('progressBar'),
+            progressContainer: document.getElementById('progressContainer'),
+            progressHandle: document.getElementById('progressHandle'),
+            currentTime: document.getElementById('currentTime'),
+            duration: document.getElementById('duration'),
+            repeatBtn: document.getElementById('repeatBtn'),
+            loopBtn: document.getElementById('loopBtn'),
+            shuffleBtn: document.getElementById('shuffleBtn')
+        };
 
-        // 初始化音乐列表
+        // 初始化函数
+        function init() {
+            initMusicList();
+            initAudioEvent();
+            initControlEvent();
+            initProgressEvent();
+            initModeEvent();
+            loadMusic(currentIndex);
+        }
+
+        // 初始化歌曲列表
         function initMusicList() {
+            dom.musicPlaylist.innerHTML = '';
             musicList.forEach((music, index) => {
-                const musicItem = document.createElement('div');
-                musicItem.className = `music-item ${index === currentIndex ? 'active' : ''}`;
-                musicItem.dataset.index = index;
-                musicItem.textContent = music.name;
-                musicItem.addEventListener('click', () => {
+                const item = document.createElement('div');
+                item.className = `music-item ${index === currentIndex ? 'active' : ''}`;
+                item.dataset.index = index;
+                item.textContent = `${index + 1}. ${music.name}`;
+                item.addEventListener('click', () => {
                     currentIndex = index;
-                    loadMusic();
+                    loadMusic(currentIndex);
                     updatePlaylistHighlight();
                 });
-                musicPlaylist.appendChild(musicItem);
+                dom.musicPlaylist.appendChild(item);
             });
         }
 
         // 加载音乐
-        function loadMusic() {
-            const music = musicList[currentIndex];
+        function loadMusic(index) {
+            const music = musicList[index];
             audio.src = music.src;
             audio.load();
+            
+            // 自动播放
             audio.play().then(() => {
                 isPlaying = true;
-                playPauseBtn.textContent = '❚❚';
+                dom.playPauseBtn.textContent = '❚❚';
             }).catch(err => {
-                console.log('播放错误:', err);
+                console.error('播放失败:', err);
+                alert('音乐加载失败，请检查文件路径是否正确');
             });
         }
 
@@ -463,7 +312,7 @@
             });
         }
 
-        // 格式化时间
+        // 格式化时间（秒转分:秒）
         function formatTime(seconds) {
             const mins = Math.floor(seconds / 60);
             const secs = Math.floor(seconds % 60);
@@ -473,130 +322,161 @@
         // 切换播放模式
         function switchPlayMode(mode) {
             playMode = mode;
-            // 更新按钮样式
-            repeatBtn.className = 'mode-btn';
-            loopBtn.className = 'mode-btn';
-            shuffleBtn.className = 'mode-btn';
-            if (mode === 'repeat') repeatBtn.className = 'mode-btn active';
-            else if (mode === 'loop') loopBtn.className = 'mode-btn active';
-            else if (mode === 'shuffle') shuffleBtn.className = 'mode-btn active';
+            // 更新按钮状态
+            dom.repeatBtn.classList.remove('active');
+            dom.loopBtn.classList.remove('active');
+            dom.shuffleBtn.classList.remove('active');
+            dom[`${mode}Btn`].classList.add('active');
 
-            // 随机播放时初始化随机列表
-            if (mode === 'shuffle' && !isRandomized) {
+            // 随机播放模式初始化随机序列
+            if (mode === 'shuffle') {
                 randomList = [...Array(musicList.length).keys()];
-                randomList.sort(() => Math.random() - 0.5);
-                isRandomized = true;
+                // 确保当前歌曲在随机序列的第一个位置
+                const currentPos = randomList.indexOf(currentIndex);
+                [randomList[0], randomList[currentPos]] = [randomList[currentPos], randomList[0]];
             }
         }
 
-        // 事件监听
-        openMusicBtn.addEventListener('click', () => {
-            musicModal.style.display = 'flex';
-            initMusicList();
-            loadMusic();
-        });
+        // 获取下一首歌曲索引
+        function getNextIndex() {
+            switch (playMode) {
+                case 'repeat':
+                    return currentIndex;
+                case 'loop':
+                    return (currentIndex + 1) % musicList.length;
+                case 'shuffle':
+                    return randomList[(randomList.indexOf(currentIndex) + 1) % randomList.length];
+                default:
+                    return (currentIndex + 1) % musicList.length;
+            }
+        }
 
-        musicModal.addEventListener('click', (e) => {
-            if (e.target === musicModal) {
-                musicModal.style.display = 'none';
+        // 获取上一首歌曲索引
+        function getPrevIndex() {
+            switch (playMode) {
+                case 'repeat':
+                    return currentIndex;
+                case 'loop':
+                    return (currentIndex - 1 + musicList.length) % musicList.length;
+                case 'shuffle':
+                    const currentPos = randomList.indexOf(currentIndex);
+                    return randomList[(currentPos - 1 + randomList.length) % randomList.length];
+                default:
+                    return (currentIndex - 1 + musicList.length) % musicList.length;
+            }
+        }
+
+        // 初始化音频事件
+        function initAudioEvent() {
+            // 音乐元数据加载完成（获取总时长）
+            audio.addEventListener('loadedmetadata', () => {
+                dom.duration.textContent = formatTime(audio.duration);
+            });
+
+            // 播放进度更新
+            audio.addEventListener('timeupdate', () => {
+                if (!isDragging) {
+                    const progress = (audio.currentTime / audio.duration) * 100;
+                    dom.progressBar.style.width = `${progress}%`;
+                    dom.progressHandle.style.left = `${progress}%`;
+                    dom.currentTime.textContent = formatTime(audio.currentTime);
+                }
+            });
+
+            // 音乐播放结束
+            audio.addEventListener('ended', () => {
+                currentIndex = getNextIndex();
+                loadMusic(currentIndex);
+                updatePlaylistHighlight();
+            });
+        }
+
+        // 初始化控制按钮事件
+        function initControlEvent() {
+            // 播放/暂停
+            dom.playPauseBtn.addEventListener('click', () => {
+                if (isPlaying) {
+                    audio.pause();
+                    dom.playPauseBtn.textContent = '▶';
+                } else {
+                    audio.play();
+                    dom.playPauseBtn.textContent = '❚❚';
+                }
+                isPlaying = !isPlaying;
+            });
+
+            // 上一首
+            dom.prevBtn.addEventListener('click', () => {
+                currentIndex = getPrevIndex();
+                loadMusic(currentIndex);
+                updatePlaylistHighlight();
+            });
+
+            // 下一首
+            dom.nextBtn.addEventListener('click', () => {
+                currentIndex = getNextIndex();
+                loadMusic(currentIndex);
+                updatePlaylistHighlight();
+            });
+        }
+
+        // 初始化进度条事件
+        function initProgressEvent() {
+            // 点击进度条跳转
+            dom.progressContainer.addEventListener('click', (e) => {
+                const width = dom.progressContainer.clientWidth;
+                const clickX = e.offsetX;
+                const progress = (clickX / width) * 100;
+                updateProgress(progress);
+            });
+
+            // 拖动进度条开始
+            dom.progressHandle.addEventListener('mousedown', () => {
+                isDragging = true;
                 audio.pause();
-                isPlaying = false;
-                playPauseBtn.textContent = '▶';
-            }
-        });
+            });
 
-        playPauseBtn.addEventListener('click', () => {
-            if (isPlaying) {
-                audio.pause();
-                playPauseBtn.textContent = '▶';
-            } else {
-                audio.play();
-                playPauseBtn.textContent = '❚❚';
-            }
-            isPlaying = !isPlaying;
-        });
+            // 拖动进度条过程
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    const rect = dom.progressContainer.getBoundingClientRect();
+                    const clickX = e.clientX - rect.left;
+                    let progress = (clickX / rect.width) * 100;
+                    // 限制进度在0-100%
+                    progress = Math.max(0, Math.min(100, progress));
+                    updateProgress(progress);
+                }
+            });
 
-        prevBtn.addEventListener('click', () => {
-            if (playMode === 'shuffle') {
-                const currentRandomIndex = randomList.indexOf(currentIndex);
-                currentIndex = randomList[(currentRandomIndex - 1 + randomList.length) % randomList.length];
-            } else {
-                currentIndex = (currentIndex - 1 + musicList.length) % musicList.length;
-            }
-            loadMusic();
-            updatePlaylistHighlight();
-        });
+            // 拖动进度条结束
+            document.addEventListener('mouseup', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    if (isPlaying) {
+                        audio.play();
+                    }
+                }
+            });
+        }
 
-        nextBtn.addEventListener('click', () => {
-            if (playMode === 'shuffle') {
-                const currentRandomIndex = randomList.indexOf(currentIndex);
-                currentIndex = randomList[(currentRandomIndex + 1) % randomList.length];
-            } else {
-                currentIndex = (currentIndex + 1) % musicList.length;
-            }
-            loadMusic();
-            updatePlaylistHighlight();
-        });
-
-        progressContainer.addEventListener('click', (e) => {
-            const width = progressContainer.clientWidth;
-            const clickX = e.offsetX;
-            const duration = audio.duration;
-            const seekTime = (clickX / width) * duration;
+        // 更新进度条
+        function updateProgress(progress) {
+            dom.progressBar.style.width = `${progress}%`;
+            dom.progressHandle.style.left = `${progress}%`;
+            const seekTime = (progress / 100) * audio.duration;
             audio.currentTime = seekTime;
-        });
+            dom.currentTime.textContent = formatTime(audio.currentTime);
+        }
 
-        audio.addEventListener('timeupdate', () => {
-            const progress = (audio.currentTime / audio.duration) * 100;
-            progressBar.style.width = `${progress}%`;
-            currentTimeEl.textContent = formatTime(audio.currentTime);
-        });
+        // 初始化播放模式切换事件
+        function initModeEvent() {
+            dom.repeatBtn.addEventListener('click', () => switchPlayMode('repeat'));
+            dom.loopBtn.addEventListener('click', () => switchPlayMode('loop'));
+            dom.shuffleBtn.addEventListener('click', () => switchPlayMode('shuffle'));
+        }
 
-        audio.addEventListener('loadedmetadata', () => {
-            durationEl.textContent = formatTime(audio.duration);
-        });
-
-        audio.addEventListener('ended', () => {
-            if (playMode === 'repeat') {
-                // 单曲循环
-                audio.currentTime = 0;
-                audio.play();
-            } else if (playMode === 'loop') {
-                // 列表循环
-                currentIndex = (currentIndex + 1) % musicList.length;
-                loadMusic();
-                updatePlaylistHighlight();
-            } else if (playMode === 'shuffle') {
-                // 随机播放
-                const currentRandomIndex = randomList.indexOf(currentIndex);
-                currentIndex = randomList[(currentRandomIndex + 1) % randomList.length];
-                loadMusic();
-                updatePlaylistHighlight();
-            }
-        });
-
-        repeatBtn.addEventListener('click', () => switchPlayMode('repeat'));
-        loopBtn.addEventListener('click', () => switchPlayMode('loop'));
-        shuffleBtn.addEventListener('click', () => switchPlayMode('shuffle'));
-
-        // 百宝箱弹窗控制
-        const openTreasureBtn = document.getElementById('openTreasureBtn');
-        const treasureModal = document.getElementById('treasureModal');
-        const closeTreasureModal = document.getElementById('closeTreasureModal');
-
-        openTreasureBtn.addEventListener('click', () => {
-            treasureModal.style.display = 'flex';
-        });
-
-        closeTreasureModal.addEventListener('click', () => {
-            treasureModal.style.display = 'none';
-        });
-
-        treasureModal.addEventListener('click', (e) => {
-            if (e.target === treasureModal) {
-                treasureModal.style.display = 'none';
-            }
-        });
+        // 页面加载完成后初始化
+        window.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
