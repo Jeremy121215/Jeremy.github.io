@@ -719,7 +719,15 @@
             let osVersion = '未知版本';
 
             // 检测操作系统 - 改进的检测逻辑
-            if (/Windows/.test(userAgent)) {
+            if (/Android/.test(userAgent)) {
+                osName = 'Android';
+                const androidVersion = userAgent.match(/Android ([\d.]+)/);
+                osVersion = androidVersion ? androidVersion[1] : '未知版本';
+            } else if (/iPhone|iPad|iPod/.test(platform)) {
+                osName = 'iOS';
+                const iosVersion = userAgent.match(/OS ([\d_]+)/);
+                osVersion = iosVersion ? iosVersion[1].replace(/_/g, '.') : '未知版本';
+            } else if (/Windows/.test(userAgent)) {
                 osName = 'Windows';
                 if (/Windows NT 10/.test(userAgent)) osVersion = '10/11';
                 else if (/Windows NT 6.3/.test(userAgent)) osVersion = '8.1';
@@ -732,6 +740,9 @@
                 osName = 'macOS';
                 const macVersion = userAgent.match(/Mac OS X ([\d_]+)/);
                 osVersion = macVersion ? macVersion[1].replace(/_/g, '.') : '未知版本';
+            } else if (/CrOS/.test(userAgent)) {
+                osName = 'Chrome OS';
+                osVersion = '未知版本';
             } else if (/Linux/.test(platform)) {
                 osName = 'Linux';
                 osVersion = '未知发行版';
@@ -745,19 +756,8 @@
                 } else if (/CentOS/.test(userAgent)) {
                     osVersion = 'CentOS';
                 }
-            } else if (/Android/.test(userAgent)) {
-                osName = 'Android';
-                const androidVersion = userAgent.match(/Android ([\d.]+)/);
-                osVersion = androidVersion ? androidVersion[1] : '未知版本';
-            } else if (/iPhone|iPad|iPod/.test(platform)) {
-                osName = 'iOS';
-                const iosVersion = userAgent.match(/OS ([\d_]+)/);
-                osVersion = iosVersion ? iosVersion[1].replace(/_/g, '.') : '未知版本';
-            } else if (/CrOS/.test(userAgent)) {
-                osName = 'Chrome OS';
-                osVersion = '未知版本';
             }
-
+            
             // 检测设备类型 - 改进的检测逻辑
             let deviceType = '桌面设备';
             const isMobile = /Mobile|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
