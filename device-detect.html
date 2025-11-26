@@ -6,136 +6,251 @@
     <link rel="icon" href="logo.png" type="image/png" sizes="32x32">
     <title>设备检测 - 星河为梦的网页</title>
     <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --accent-color: #9b59b6;
+            --success-color: #2ecc71;
+            --warning-color: #e67e22;
+            --danger-color: #e74c3c;
+            --light-bg: #f9f9f9;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --text-light: #666;
+            --border-radius: 12px;
+            --box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            font-family: "微软雅黑", Arial, sans-serif;
+            font-family: "微软雅黑", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            line-height: 1.8;
-            background-color: #f9f9f9;
-            color: #333;
+            line-height: 1.6;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            font-size: 16px;
         }
+
+        /* 移动端字体调整 */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+                font-size: 14px;
+            }
+        }
+
         header {
             text-align: center;
-            margin: 30px 0;
+            margin: 20px 0;
         }
+
         h1 {
-            color: #2c3e50;
-            font-size: 2.4rem;
+            color: var(--secondary-color);
+            font-size: 2.2rem;
             margin-bottom: 10px;
         }
+
         .subtitle {
-            color: #666;
+            color: var(--text-light);
             font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
         }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+        }
+
         .back-link {
             display: inline-block;
             margin: 20px 0;
-            color: #3498db;
+            color: var(--primary-color);
             text-decoration: none;
             font-size: 1.1rem;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: var(--transition);
+            border: 1px solid var(--primary-color);
         }
+
         .back-link:hover {
-            text-decoration: underline;
+            background-color: var(--primary-color);
+            color: white;
         }
+
         .detect-container {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
             margin-bottom: 30px;
         }
+
+        @media (max-width: 768px) {
+            .detect-container {
+                padding: 15px;
+            }
+        }
+
         .detect-header {
             text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
             border-bottom: 1px solid #eee;
         }
+
         .detect-header h2 {
-            color: #3498db;
+            color: var(--primary-color);
             font-size: 1.8rem;
+            margin-bottom: 8px;
         }
+
         .detect-tabs {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             border-bottom: 1px solid #eee;
             padding-bottom: 10px;
+            justify-content: center;
         }
+
         .detect-tab {
-            padding: 8px 20px;
+            padding: 10px 18px;
             background-color: #eee;
             border: none;
             border-radius: 20px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: var(--transition);
             font-size: 1rem;
+            white-space: nowrap;
         }
+
+        @media (max-width: 768px) {
+            .detect-tabs {
+                gap: 5px;
+            }
+            
+            .detect-tab {
+                padding: 8px 14px;
+                font-size: 0.9rem;
+            }
+        }
+
         .detect-tab.active {
-            background-color: #3498db;
+            background-color: var(--primary-color);
             color: white;
         }
+
         .detect-content {
             display: none;
         }
+
         .detect-content.active {
             display: block;
         }
+
         .info-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
         }
+
+        @media (max-width: 480px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         .info-item {
             background-color: #f8f9fa;
             padding: 15px;
             border-radius: 8px;
-            border-left: 4px solid #3498db;
+            border-left: 4px solid var(--primary-color);
+            transition: var(--transition);
         }
+
+        .info-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+
         .info-label {
             font-weight: 600;
-            color: #2c3e50;
+            color: var(--secondary-color);
             margin-bottom: 5px;
             display: block;
-        }
-        .info-value {
-            color: #666;
-            word-break: break-all;
-        }
-        .warning {
-            color: #e74c3c;
             font-size: 0.95rem;
+        }
+
+        .info-value {
+            color: var(--text-light);
+            word-break: break-all;
+            font-size: 0.9rem;
+        }
+
+        .warning {
+            color: var(--danger-color);
+            font-size: 0.9rem;
             margin-top: 5px;
         }
+
         .btn-refresh {
             display: block;
             margin: 30px auto;
             padding: 12px 30px;
-            background-color: #3498db;
+            background-color: var(--primary-color);
             color: white;
             border: none;
             border-radius: 5px;
             font-size: 1.1rem;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: var(--transition);
+            box-shadow: 0 3px 10px rgba(52, 152, 219, 0.3);
         }
+
         .btn-refresh:hover {
             background-color: #2980b9;
+            transform: translateY(-2px);
         }
+
+        @media (max-width: 768px) {
+            .btn-refresh {
+                width: 100%;
+                padding: 14px 20px;
+            }
+        }
+
         .geo-btn {
-            padding: 6px 12px;
-            background-color: #2ecc71;
+            padding: 8px 16px;
+            background-color: var(--success-color);
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: var(--transition);
             margin-top: 8px;
+            font-size: 0.9rem;
         }
+
         .geo-btn:hover {
             background-color: #27ae60;
         }
+
         /* 图片生成区域样式 */
         .image-generate {
             text-align: center;
@@ -144,41 +259,51 @@
             background-color: #f5f9ff;
             border-radius: 8px;
         }
+
         .image-generate h3 {
-            color: #2c3e50;
-            margin-bottom: 20px;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
         }
-        .generate-btn {
+
+        .generate-btn, .download-btn {
             padding: 12px 25px;
-            background-color: #9b59b6;
             color: white;
             border: none;
             border-radius: 5px;
             font-size: 1.1rem;
             cursor: pointer;
-            transition: background 0.3s;
-            margin-right: 10px;
+            transition: var(--transition);
+            margin: 5px;
         }
+
+        .generate-btn {
+            background-color: var(--accent-color);
+        }
+
         .generate-btn:hover {
             background-color: #8e44ad;
         }
+
         .download-btn {
-            padding: 12px 25px;
-            background-color: #e67e22;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: background 0.3s;
+            background-color: var(--warning-color);
             display: none;
         }
+
         .download-btn.active {
             display: inline-block;
         }
+
         .download-btn:hover {
             background-color: #d35400;
         }
+
+        @media (max-width: 768px) {
+            .generate-btn, .download-btn {
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
+
         #imagePreview {
             margin-top: 20px;
             max-width: 100%;
@@ -186,17 +311,57 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             display: none;
         }
+
         #imagePreview.active {
             display: inline-block;
             max-height: 500px;
         }
+
         .version-info {
             text-align: center;
             margin: 40px 0 20px;
-            color: #666;
+            color: var(--text-light);
             font-size: 0.9rem;
             padding-top: 20px;
             border-top: 1px solid #eee;
+        }
+
+        /* 加载动画 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 检测状态指示器 */
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-success {
+            background-color: var(--success-color);
+        }
+
+        .status-warning {
+            background-color: var(--warning-color);
+        }
+
+        .status-error {
+            background-color: var(--danger-color);
         }
     </style>
 </head>
@@ -205,7 +370,7 @@
 
     <header>
         <h1>🔍 设备检测中心</h1>
-        <p class="subtitle">全面检测设备系统、浏览器（可能有偏差）、硬件、网络信息，支持生成专属设备信息图片</p>
+        <p class="subtitle">全面检测设备系统、浏览器、硬件、网络信息，支持生成专属设备信息图片</p>
     </header>
 
     <div class="detect-container">
@@ -258,6 +423,10 @@
                     <span class="info-label">语言设置</span>
                     <span class="info-value" id="language">检测中...</span>
                 </div>
+                <div class="info-item">
+                    <span class="info-label">设备方向</span>
+                    <span class="info-value" id="deviceOrientation">检测中...</span>
+                </div>
             </div>
         </div>
 
@@ -295,6 +464,10 @@
                 <div class="info-item">
                     <span class="info-label">本地存储容量</span>
                     <span class="info-value" id="storageQuota">检测中...</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">用户代理</span>
+                    <span class="info-value" id="userAgent">检测中...</span>
                 </div>
             </div>
         </div>
@@ -334,6 +507,10 @@
                     <span class="info-label">GPU信息</span>
                     <span class="info-value" id="gpuInfo">检测中...</span>
                 </div>
+                <div class="info-item">
+                    <span class="info-label">设备像素比</span>
+                    <span class="info-value" id="devicePixelRatio">检测中...</span>
+                </div>
             </div>
         </div>
 
@@ -353,8 +530,8 @@
                     <span class="info-value" id="ipAddress">检测中...</span>
                 </div>
                 <div class="info-item">
-                    <span class="info-label">用户代理</span>
-                    <span class="info-value" id="userAgent">检测中...</span>
+                    <span class="info-label">连接类型</span>
+                    <span class="info-value" id="connectionType">检测中...</span>
                 </div>
                 <div class="info-item">
                     <span class="info-label">下载速度</span>
@@ -371,6 +548,10 @@
                 <div class="info-item">
                     <span class="info-label">是否支持HTTPS</span>
                     <span class="info-value" id="httpsSupport">检测中...</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">在线状态</span>
+                    <span class="info-value" id="onlineStatus">检测中...</span>
                 </div>
             </div>
         </div>
@@ -430,7 +611,7 @@
     <button class="btn-refresh" id="refreshAll">刷新所有检测信息</button>
 
     <div class="version-info">
-        设备检测版本：v1.0.0 | 检测项：32项 | 支持图片生成 | 最后更新：2025-11-21
+        设备检测版本：v2.0.0 | 检测项：40项 | 支持图片生成 | 移动端优化 | 最后更新：2025-11-21
     </div>
 
     <script>
@@ -448,6 +629,7 @@
             freeMemory: document.getElementById('freeMemory'),
             batteryStatus: document.getElementById('batteryStatus'),
             language: document.getElementById('language'),
+            deviceOrientation: document.getElementById('deviceOrientation'),
             // 浏览器信息
             browserName: document.getElementById('browserName'),
             browserVersion: document.getElementById('browserVersion'),
@@ -457,6 +639,7 @@
             html5Support: document.getElementById('html5Support'),
             cookieEnabled: document.getElementById('cookieEnabled'),
             storageQuota: document.getElementById('storageQuota'),
+            userAgent: document.getElementById('userAgent'),
             // 硬件信息
             screenResolution: document.getElementById('screenResolution'),
             screenVisible: document.getElementById('screenVisible'),
@@ -466,15 +649,17 @@
             microphoneStatus: document.getElementById('microphoneStatus'),
             speakerStatus: document.getElementById('speakerStatus'),
             gpuInfo: document.getElementById('gpuInfo'),
+            devicePixelRatio: document.getElementById('devicePixelRatio'),
             // 网络信息
             networkType: document.getElementById('networkType'),
             networkStatus: document.getElementById('networkStatus'),
             ipAddress: document.getElementById('ipAddress'),
-            userAgent: document.getElementById('userAgent'),
+            connectionType: document.getElementById('connectionType'),
             downloadSpeed: document.getElementById('downloadSpeed'),
             uploadSpeed: document.getElementById('uploadSpeed'),
             networkLatency: document.getElementById('networkLatency'),
             httpsSupport: document.getElementById('httpsSupport'),
+            onlineStatus: document.getElementById('onlineStatus'),
             // 地理位置
             longitude: document.getElementById('longitude'),
             latitude: document.getElementById('latitude'),
@@ -526,44 +711,62 @@
             });
         }
 
-        // 检测系统信息
+        // 改进的操作系统检测
         function detectSystemInfo() {
             const userAgent = navigator.userAgent;
+            const platform = navigator.platform;
             let osName = '未知系统';
             let osVersion = '未知版本';
 
-            // 检测操作系统
-            if (userAgent.includes('Windows')) {
+            // 检测操作系统 - 改进的检测逻辑
+            if (/Windows/.test(userAgent)) {
                 osName = 'Windows';
-                if (userAgent.includes('Windows 11')) osVersion = '11';
-                else if (userAgent.includes('Windows 10')) osVersion = '10';
-                else if (userAgent.includes('Windows 8')) osVersion = '8';
-                else if (userAgent.includes('Windows 7')) osVersion = '7';
-                else if (userAgent.includes('Windows Vista')) osVersion = 'Vista';
-                else if (userAgent.includes('Windows XP')) osVersion = 'XP';
-            } else if (userAgent.includes('Mac OS')) {
+                if (/Windows NT 10/.test(userAgent)) osVersion = '10/11';
+                else if (/Windows NT 6.3/.test(userAgent)) osVersion = '8.1';
+                else if (/Windows NT 6.2/.test(userAgent)) osVersion = '8';
+                else if (/Windows NT 6.1/.test(userAgent)) osVersion = '7';
+                else if (/Windows NT 6.0/.test(userAgent)) osVersion = 'Vista';
+                else if (/Windows NT 5.1/.test(userAgent)) osVersion = 'XP';
+                else if (/Windows NT 5.0/.test(userAgent)) osVersion = '2000';
+            } else if (/Macintosh|MacIntel|MacPPC|Mac68K/.test(platform)) {
                 osName = 'macOS';
                 const macVersion = userAgent.match(/Mac OS X ([\d_]+)/);
                 osVersion = macVersion ? macVersion[1].replace(/_/g, '.') : '未知版本';
-            } else if (userAgent.includes('Linux')) {
+            } else if (/Linux/.test(platform)) {
                 osName = 'Linux';
                 osVersion = '未知发行版';
-            } else if (userAgent.includes('Android')) {
+                // 尝试检测Linux发行版
+                if (/Ubuntu/.test(userAgent)) {
+                    osVersion = 'Ubuntu';
+                } else if (/Fedora/.test(userAgent)) {
+                    osVersion = 'Fedora';
+                } else if (/Debian/.test(userAgent)) {
+                    osVersion = 'Debian';
+                } else if (/CentOS/.test(userAgent)) {
+                    osVersion = 'CentOS';
+                }
+            } else if (/Android/.test(userAgent)) {
                 osName = 'Android';
                 const androidVersion = userAgent.match(/Android ([\d.]+)/);
                 osVersion = androidVersion ? androidVersion[1] : '未知版本';
-            } else if (userAgent.includes('iOS')) {
+            } else if (/iPhone|iPad|iPod/.test(platform)) {
                 osName = 'iOS';
-                const iosVersion = userAgent.match(/iOS ([\d.]+)/);
-                osVersion = iosVersion ? iosVersion[1] : '未知版本';
+                const iosVersion = userAgent.match(/OS ([\d_]+)/);
+                osVersion = iosVersion ? iosVersion[1].replace(/_/g, '.') : '未知版本';
+            } else if (/CrOS/.test(userAgent)) {
+                osName = 'Chrome OS';
+                osVersion = '未知版本';
             }
 
-            // 检测设备类型
+            // 检测设备类型 - 改进的检测逻辑
             let deviceType = '桌面设备';
-            if (/(Mobile|Android|iOS|iPhone|iPad|iPod|BlackBerry|Windows Phone)/i.test(userAgent)) {
-                deviceType = '移动设备';
-            } else if (/(Tablet|iPad)/i.test(userAgent)) {
+            const isMobile = /Mobile|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+            const isTablet = /Tablet|iPad/i.test(userAgent);
+            
+            if (isTablet) {
                 deviceType = '平板设备';
+            } else if (isMobile) {
+                deviceType = '移动设备';
             }
 
             // 检测CPU核心数
@@ -587,7 +790,16 @@
                 navigator.getBattery().then(battery => {
                     const level = (battery.level * 100).toFixed(0);
                     const status = battery.charging ? '充电中' : '未充电';
+                    const chargingTime = battery.chargingTime === Infinity ? '未知' : `${Math.round(battery.chargingTime / 60)}分钟`;
+                    const dischargingTime = battery.dischargingTime === Infinity ? '未知' : `${Math.round(battery.dischargingTime / 60)}分钟`;
+                    
                     batteryStatus = `${level}% (${status})`;
+                    if (battery.charging) {
+                        batteryStatus += `，充满还需${chargingTime}`;
+                    } else {
+                        batteryStatus += `，预计可用${dischargingTime}`;
+                    }
+                    
                     dom.batteryStatus.textContent = batteryStatus;
                     deviceInfo.batteryStatus = batteryStatus;
                 });
@@ -595,6 +807,14 @@
 
             // 检测语言
             const language = navigator.language || navigator.userLanguage || '未知';
+
+            // 检测设备方向
+            let deviceOrientation = '未知';
+            if (window.screen && window.screen.orientation) {
+                deviceOrientation = window.screen.orientation.type;
+            } else if (window.orientation !== undefined) {
+                deviceOrientation = Math.abs(window.orientation) === 90 ? 'landscape' : 'portrait';
+            }
 
             // 更新DOM
             dom.osName.textContent = osName;
@@ -604,6 +824,7 @@
             dom.totalMemory.textContent = totalMemory;
             dom.freeMemory.textContent = freeMemory;
             dom.language.textContent = language;
+            dom.deviceOrientation.textContent = deviceOrientation;
 
             // 存储到设备信息对象
             deviceInfo = {
@@ -615,7 +836,8 @@
                 totalMemory,
                 freeMemory,
                 batteryStatus,
-                language
+                language,
+                deviceOrientation
             };
         }
 
@@ -626,35 +848,35 @@
             let browserVersion = '未知版本';
             let renderEngine = '未知引擎';
 
-            // 检测浏览器名称和版本
-            if (userAgent.includes('Chrome')) {
-                browserName = 'Chrome';
+            // 检测浏览器名称和版本 - 改进的检测逻辑
+            if (/Edg\//.test(userAgent)) {
+                browserName = 'Microsoft Edge';
+                const version = userAgent.match(/Edg\/([\d.]+)/);
+                browserVersion = version ? version[1] : '未知版本';
+                renderEngine = 'Blink';
+            } else if (/Chrome\//.test(userAgent) && !/Edg\//.test(userAgent)) {
+                browserName = 'Google Chrome';
                 const version = userAgent.match(/Chrome\/([\d.]+)/);
                 browserVersion = version ? version[1] : '未知版本';
                 renderEngine = 'Blink';
-            } else if (userAgent.includes('Firefox')) {
-                browserName = 'Firefox';
+            } else if (/Firefox\//.test(userAgent)) {
+                browserName = 'Mozilla Firefox';
                 const version = userAgent.match(/Firefox\/([\d.]+)/);
                 browserVersion = version ? version[1] : '未知版本';
                 renderEngine = 'Gecko';
-            } else if (userAgent.includes('Safari')) {
-                browserName = 'Safari';
+            } else if (/Safari\//.test(userAgent) && !/Chrome\//.test(userAgent)) {
+                browserName = 'Apple Safari';
                 const version = userAgent.match(/Version\/([\d.]+)/);
                 browserVersion = version ? version[1] : '未知版本';
                 renderEngine = 'WebKit';
-            } else if (userAgent.includes('Edge')) {
-                browserName = 'Edge';
-                const version = userAgent.match(/Edge\/([\d.]+)/);
+            } else if (/OPR\//.test(userAgent)) {
+                browserName = 'Opera';
+                const version = userAgent.match(/OPR\/([\d.]+)/);
                 browserVersion = version ? version[1] : '未知版本';
                 renderEngine = 'Blink';
-            } else if (userAgent.includes('Opera') || userAgent.includes('OPR')) {
-                browserName = 'Opera';
-                const version = userAgent.match(/(Opera|OPR)\/([\d.]+)/);
-                browserVersion = version ? version[2] : '未知版本';
-                renderEngine = 'Blink';
-            } else if (userAgent.includes('MSIE') || userAgent.includes('Trident')) {
+            } else if (/Trident\//.test(userAgent)) {
                 browserName = 'Internet Explorer';
-                const version = userAgent.match(/MSIE ([\d.]+)/) || userAgent.match(/rv:([\d.]+)/);
+                const version = userAgent.match(/rv:([\d.]+)/);
                 browserVersion = version ? version[1] : '未知版本';
                 renderEngine = 'Trident';
             }
@@ -665,11 +887,13 @@
             // 检测CSS3支持
             let css3Support = '不支持';
             if (window.CSS && CSS.supports) {
-                css3Support = CSS.supports('border-radius', '5px') ? '支持' : '不支持';
+                css3Support = CSS.supports('border-radius', '5px') && 
+                             CSS.supports('display', 'flex') ? '支持' : '部分支持';
             }
 
             // 检测HTML5支持
-            const html5Support = 'HTMLCanvasElement' in window ? '支持' : '不支持';
+            const html5Support = 'HTMLCanvasElement' in window && 
+                                'localStorage' in window ? '支持' : '不支持';
 
             // 检测Cookie启用状态
             const cookieEnabled = navigator.cookieEnabled ? '已启用' : '未启用';
@@ -695,6 +919,7 @@
             dom.html5Support.textContent = html5Support;
             dom.cookieEnabled.textContent = cookieEnabled;
             dom.storageQuota.textContent = storageQuota;
+            dom.userAgent.textContent = userAgent;
 
             // 存储到设备信息对象
             deviceInfo = {
@@ -706,7 +931,8 @@
                 css3Support,
                 html5Support,
                 cookieEnabled,
-                storageQuota
+                storageQuota,
+                userAgent
             };
         }
 
@@ -727,7 +953,9 @@
             const pixelRatioText = `${pixelRatio}x (${(pixelRatio * 100).toFixed(0)}%)`;
 
             // 检测触摸支持
-            const touchSupport = 'ontouchstart' in window || navigator.maxTouchPoints > 0 ? '支持' : '不支持';
+            const touchSupport = 'ontouchstart' in window || 
+                                navigator.maxTouchPoints > 0 || 
+                                navigator.msMaxTouchPoints > 0 ? '支持' : '不支持';
 
             // 检测摄像头数量
             let cameraCount = '不支持检测';
@@ -752,7 +980,7 @@
             }
 
             // 检测扬声器状态（间接检测）
-            const speakerStatus = 'ontouchstart' in window ? '已检测到' : '未检测到';
+            const speakerStatus = 'audio' in navigator.mediaDevices ? '已检测到' : '未检测到';
 
             // 检测GPU信息
             let gpuInfo = '不支持检测';
@@ -763,9 +991,16 @@
                     const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
                     if (debugInfo) {
                         gpuInfo = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                    } else {
+                        gpuInfo = 'WebGL已支持但无法获取详细信息';
                     }
+                } else {
+                    gpuInfo = 'WebGL不支持';
                 }
             }
+
+            // 设备像素比
+            const devicePixelRatio = window.devicePixelRatio || 1;
 
             // 更新DOM
             dom.screenResolution.textContent = screenResolution;
@@ -776,6 +1011,7 @@
             dom.microphoneStatus.textContent = microphoneStatus;
             dom.speakerStatus.textContent = speakerStatus;
             dom.gpuInfo.textContent = gpuInfo;
+            dom.devicePixelRatio.textContent = devicePixelRatio;
 
             // 存储到设备信息对象
             deviceInfo = {
@@ -787,7 +1023,8 @@
                 cameraCount,
                 microphoneStatus,
                 speakerStatus,
-                gpuInfo
+                gpuInfo,
+                devicePixelRatio
             };
         }
 
@@ -795,21 +1032,30 @@
         function detectNetworkInfo() {
             // 检测网络类型
             let networkType = '未知类型';
+            let connectionType = '未知';
             if (navigator.connection) {
-                const type = navigator.connection.type;
+                const connection = navigator.connection;
+                const type = connection.type;
+                const effectiveType = connection.effectiveType;
+                
                 const typeMap = {
                     'wifi': 'WiFi',
                     'cellular': '蜂窝网络',
                     'ethernet': '以太网',
                     'bluetooth': '蓝牙',
+                    'wimax': 'WiMAX',
                     'none': '无网络',
-                    'unknown': '未知类型'
+                    'unknown': '未知类型',
+                    'other': '其他'
                 };
+                
                 networkType = typeMap[type] || type;
+                connectionType = effectiveType || '未知';
             }
 
             // 检测网络状态
             const networkStatus = navigator.onLine ? '在线' : '离线';
+            const onlineStatus = navigator.onLine ? '在线' : '离线';
 
             // 检测IP地址（通过第三方接口，需联网）
             let ipAddress = '检测中...';
@@ -825,9 +1071,6 @@
                     dom.ipAddress.textContent = ipAddress;
                     deviceInfo.ipAddress = ipAddress;
                 });
-
-            // 检测用户代理
-            const userAgent = navigator.userAgent;
 
             // 检测下载/上传速度（模拟检测）
             let downloadSpeed = '检测中...';
@@ -885,7 +1128,8 @@
             // 更新DOM
             dom.networkType.textContent = networkType;
             dom.networkStatus.textContent = networkStatus;
-            dom.userAgent.textContent = userAgent;
+            dom.connectionType.textContent = connectionType;
+            dom.onlineStatus.textContent = onlineStatus;
             dom.downloadSpeed.textContent = downloadSpeed;
             dom.uploadSpeed.textContent = uploadSpeed;
             dom.networkLatency.textContent = networkLatency;
@@ -896,12 +1140,13 @@
                 ...deviceInfo,
                 networkType,
                 networkStatus,
+                connectionType,
                 ipAddress,
-                userAgent,
                 downloadSpeed,
                 uploadSpeed,
                 networkLatency,
-                httpsSupport
+                httpsSupport,
+                onlineStatus
             };
         }
 
@@ -917,7 +1162,7 @@
             // 获取地理位置
             dom.getLocation.addEventListener('click', () => {
                 if (navigator.geolocation) {
-                    dom.getLocation.textContent = '定位中...';
+                    dom.getLocation.innerHTML = '<span class="loading"></span>定位中...';
                     navigator.geolocation.getCurrentPosition(
                         (position) => {
                             const { longitude, latitude, altitude, accuracy } = position.coords;
@@ -949,6 +1194,22 @@
                                     dom.address.textContent = '地址解析失败';
                                     deviceInfo.address = '地址解析失败';
                                 });*/
+
+                            // 使用免费的OpenStreetMap Nominatim API
+                            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    let address = '地址解析失败';
+                                    if (data.display_name) {
+                                        address = data.display_name;
+                                    }
+                                    dom.address.textContent = address;
+                                    deviceInfo.address = address;
+                                })
+                                .catch(err => {
+                                    dom.address.textContent = '地址解析失败';
+                                    deviceInfo.address = '地址解析失败';
+                                });
 
                             // 存储到设备信息对象
                             deviceInfo = {
@@ -982,7 +1243,7 @@
                             dom.getLocation.textContent = '重新获取';
                             deviceInfo.address = errorMsg;
                         },
-                        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
                     );
                 } else {
                     dom.address.textContent = '浏览器不支持地理定位';
@@ -1061,7 +1322,7 @@
                     'HTTPS支持：' + (deviceInfo.httpsSupport || '未知'),
                     'Cookie状态：' + (deviceInfo.cookieEnabled || '未知'),
                     '时区：' + (deviceInfo.timezone || '未知'),
-                    '地理位置：' + (deviceInfo.address || '未获取')
+                    '设备方向：' + (deviceInfo.deviceOrientation || '未知')
                 ];
 
                 ctx.fillStyle = '#333';
@@ -1110,7 +1371,7 @@
             dom.refreshAll.addEventListener('click', () => {
                 // 重置所有显示为"检测中..."
                 Object.values(dom).forEach(element => {
-                    if (element.tagName === 'SPAN' && element.classList.contains('info-value')) {
+                    if (element && element.tagName === 'SPAN' && element.classList.contains('info-value')) {
                         element.textContent = '检测中...';
                     }
                 });
