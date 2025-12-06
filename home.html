@@ -2,117 +2,272 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="icon" href="logo.png" type="image/png" sizes="32x32">
     <title>星河为梦的网页</title>
     <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --accent-color: #9b59b6;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-bg: #f9f9f9;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --text-light: #666;
+            --border-radius: 8px;
+            --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "微软雅黑", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+        }
+
         body {
-            font-family: "微软雅黑", Arial, sans-serif;
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
             line-height: 1.6;
-            background-color: #f9f9f9;
-            color: #333;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            font-size: 16px;
+            min-height: 100vh;
         }
+
+        /* 移动端优化 */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+                font-size: 13px;
+            }
+        }
+
         header {
             text-align: center;
             margin: 30px 0;
+            padding: 0 10px;
         }
+
         h1 {
-            color: #2c3e50;
+            color: var(--secondary-color);
             font-size: 2.2rem;
+            margin-bottom: 15px;
+            line-height: 1.3;
         }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+
         .section {
-            background: white;
+            background: var(--card-bg);
             padding: 25px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: var(--border-radius);
+            margin-bottom: 25px;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
         }
+
+        @media (max-width: 768px) {
+            .section {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .section {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+        }
+
         h2 {
-            color: #3498db;
+            color: var(--primary-color);
             border-bottom: 2px solid #eee;
             padding-bottom: 10px;
             margin-bottom: 15px;
+            font-size: 1.5rem;
         }
+
+        @media (max-width: 768px) {
+            h2 {
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h2 {
+                font-size: 1.2rem;
+                margin-bottom: 12px;
+            }
+        }
+
         ul {
             margin-left: 20px;
+            margin-bottom: 15px;
         }
+
         li {
             margin: 8px 0;
+            line-height: 1.5;
         }
+
         a {
-            color: #3498db;
+            color: var(--primary-color);
             text-decoration: none;
+            transition: var(--transition);
         }
+
         a:hover {
             text-decoration: underline;
+            color: #2980b9;
         }
-        /* 功能按钮样式 */
+
+        /* 功能按钮样式 - 响应式优化 */
         .function-btn {
             display: inline-block;
-            margin: 20px 0;
+            margin: 15px 0;
             padding: 12px 25px;
-            background-color: #3498db;
             color: white;
-            border-radius: 5px;
+            border-radius: var(--border-radius);
             font-size: 1.1rem;
             font-weight: 500;
-            transition: background 0.3s;
+            transition: var(--transition);
             border: none;
             cursor: pointer;
+            text-align: center;
+            width: 100%;
+            max-width: 300px;
         }
-        .function-btn:hover {
-            background-color: #2980b9;
-            text-decoration: none;
+
+        @media (max-width: 768px) {
+            .function-btn {
+                padding: 10px 20px;
+                font-size: 1rem;
+                max-width: 250px;
+            }
         }
+
+        @media (max-width: 480px) {
+            .function-btn {
+                padding: 8px 16px;
+                font-size: 0.95rem;
+                max-width: 200px;
+            }
+        }
+
         .ai-btn {
-            background-color: #9b59b6;
+            background-color: var(--accent-color);
         }
+
         .ai-btn:hover {
             background-color: #8e44ad;
         }
+
         .draw-btn {
             background-color: #1abc9c;
         }
+
         .draw-btn:hover {
             background-color: #16a085;
         }
+
         .doc-btn {
             background-color: #e67e22;
         }
+
         .doc-btn:hover {
             background-color: #d35400;
         }
+
         .treasure-btn {
-            background-color: #f39c12;
+            background-color: var(--warning-color);
         }
+
         .treasure-btn:hover {
             background-color: #e67e22;
         }
+
         .mc-btn {
-            background-color: #2ecc71;
+            background-color: var(--success-color);
         }
+
         .mc-btn:hover {
             background-color: #27ae60;
         }
+
         .music-btn {
             background-color: #8e44ad;
         }
+
         .music-btn:hover {
-            background-color: #9b59b6;
+            background-color: var(--accent-color);
         }
+
+        .device-btn {
+            background-color: var(--primary-color);
+        }
+
+        .device-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .cpp-btn {
+            background-color: #e67e22;
+        }
+
+        .cpp-btn:hover {
+            background-color: #d35400;
+        }
+
+        /* 新增连接工具按钮样式 */
+        .connect-btn {
+            background-color: #34495e;
+        }
+
+        .connect-btn:hover {
+            background-color: #2c3e50;
+        }
+
         .version-info {
             text-align: center;
             margin: 40px 0 20px;
-            color: #666;
+            color: var(--text-light);
             font-size: 0.9rem;
             padding-top: 20px;
             border-top: 1px solid #eee;
         }
 
-        /* 百宝箱弹窗样式 */
+        @media (max-width: 768px) {
+            .version-info {
+                margin: 30px 0 15px;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* 百宝箱弹窗样式 - 移动端优化 */
         .treasure-modal {
             display: none;
             position: fixed;
@@ -124,40 +279,105 @@
             z-index: 1000;
             justify-content: center;
             align-items: center;
+            padding: 10px;
         }
+
         .treasure-modal-content {
-            width: 90%;
+            width: 100%;
             max-width: 500px;
             height: 90%;
-            max-height: 600px;
+            max-height: 700px;
             background: white;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             overflow: hidden;
             position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
+
+        @media (max-width: 768px) {
+            .treasure-modal-content {
+                max-width: 95%;
+                max-height: 85%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .treasure-modal-content {
+                max-width: 100%;
+                max-height: 90%;
+                border-radius: 0;
+            }
+        }
+
         .close-modal {
             position: absolute;
             top: 10px;
             right: 10px;
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             color: #666;
             cursor: pointer;
             z-index: 1001;
             background: white;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 36px;
+            height: 36px;
             display: flex;
             justify-content: center;
             align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: var(--transition);
         }
+
         .close-modal:hover {
-            color: #e74c3c;
+            color: var(--danger-color);
+            transform: scale(1.1);
         }
+
+        @media (max-width: 480px) {
+            .close-modal {
+                width: 32px;
+                height: 32px;
+                font-size: 1.5rem;
+                top: 8px;
+                right: 8px;
+            }
+        }
+
         #treasure-iframe {
             width: 100%;
             height: 100%;
             border: none;
+        }
+
+        /* 功能按钮容器 - 确保在小屏幕上按钮居中 */
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        /* 移动端优化：段落文字行高和间距 */
+        p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            p {
+                line-height: 1.5;
+                margin-bottom: 12px;
+            }
+        }
+
+        /* 列表项间距优化 */
+        ol, ul {
+            padding-left: 20px;
+        }
+
+        @media (max-width: 480px) {
+            ol, ul {
+                padding-left: 15px;
+            }
         }
     </style>
 </head>
@@ -188,14 +408,18 @@
     <div class="section">
         <h2>🎮 Minecraft资源</h2>
         <p>点击下方按钮进入Minecraft资源中心，包含MC版本、模组、软件、投影、存档等下载：</p>
-        <a href="minecraft.html" class="function-btn mc-btn">进入MC资源中心</a>
+        <div class="btn-container">
+            <a href="minecraft.html" class="function-btn mc-btn">进入MC资源中心</a>
+        </div>
     </div>
 
     <div class="section">
         <h2>🤖AI助手</h2>
         <p>点击下方按钮进入AI助手页面，支持多种AI工具调用及历史记录管理：</p>
-        <a href="ai.html" class="function-btn ai-btn">打开AI助手</a>
-        <p style="margin-top: 15px; color: #666;">
+        <div class="btn-container">
+            <a href="ai.html" class="function-btn ai-btn">打开AI助手</a>
+        </div>
+        <p style="margin-top: 15px; color: var(--text-light);">
             支持功能：AI问答、历史记录查看、记录删除等
         </p>
     </div>
@@ -203,8 +427,10 @@
     <div class="section">
         <h2>💻C++编译器</h2>
         <p>点击下方按钮进入C++编译器页面，支持多版本切换、代码编辑、运行输入及结果查看：</p>
-        <a href="cpp-compiler.html" class="function-btn" style="background-color: #e67e22;">打开C++编译器</a>
-        <p style="margin-top: 15px; color: #666;">
+        <div class="btn-container">
+            <a href="cpp-compiler.html" class="function-btn cpp-btn">打开C++编译器</a>
+        </div>
+        <p style="margin-top: 15px; color: var(--text-light);">
             支持版本：C++98、C++11、C++14、C++17 | 功能：代码编辑、程序输入、实时输出
         </p>
     </div>
@@ -212,8 +438,10 @@
     <div class="section">
         <h2>🎨在线绘图工具</h2>
         <p>点击下方按钮进入绘图页面，支持多颜色画笔、自由绘制，可保存作品到本地（刷新不保留）：</p>
-        <a href="draw.html" class="function-btn draw-btn">打开在线绘图</a>
-        <p style="margin-top: 15px; color: #666;">
+        <div class="btn-container">
+            <a href="draw.html" class="function-btn draw-btn">打开在线绘图</a>
+        </div>
+        <p style="margin-top: 15px; color: var(--text-light);">
             支持功能：多颜色选择、调节画笔粗细、清空画布、本地保存（自定义保存位置）
         </p>
     </div>
@@ -221,26 +449,44 @@
     <div class="section">
         <h2>📝文档编辑工具</h2>
         <p>点击下方按钮进入文档编辑页面，支持多格式文本文档打开、编辑、保存及Markdown渲染：</p>
-        <a href="doc-editor.html" class="function-btn doc-btn">打开文档编辑</a>
-        <p style="margin-top: 15px; color: #666;">
+        <div class="btn-container">
+            <a href="doc-editor.html" class="function-btn doc-btn">打开文档编辑</a>
+        </div>
+        <p style="margin-top: 15px; color: var(--text-light);">
             支持格式：TXT/MD/DOC/DOCX/RTF/JSON/XML | 功能：Markdown实时渲染、多格式保存、视图切换
         </p>
     </div>
 
-    <!-- 音乐收听功能（仅保留入口） -->
+    <!-- 音乐收听功能 -->
     <div class="section">
         <h2>🎵 音乐收听</h2>
         <p>点击下方按钮访问独立音乐页面：</p>
-        <a href="music.html" class="function-btn music-btn">进入音乐播放器</a>
+        <div class="btn-container">
+            <a href="music.html" class="function-btn music-btn">进入音乐播放器</a>
+        </div>
     </div>
 
     <!-- 设备检测功能入口 -->
     <div class="section">
         <h2>🔍 设备检测</h2>
         <p>点击下方按钮进入设备检测页面，查看系统、浏览器、硬件、网络等详细信息，支持生成专属图片：</p>
-        <a href="device-detect.html" class="function-btn device-btn">进入设备检测</a>
-        <p style="margin-top: 15px; color: #666;">
+        <div class="btn-container">
+            <a href="device-detect.html" class="function-btn device-btn">进入设备检测</a>
+        </div>
+        <p style="margin-top: 15px; color: var(--text-light);">
             支持检测：系统版本、浏览器信息、屏幕分辨率、内存状态、网络类型、地理位置（需授权）等；支持生成设备信息图片
+        </p>
+    </div>
+
+    <!-- 新增：无线连接工具入口 -->
+    <div class="section">
+        <h2>📡 无线连接工具</h2>
+        <p>点击下方按钮进入无线连接工具页面，支持蓝牙设备连接、数据传输和WLAN信息查看：</p>
+        <div class="btn-container">
+            <a href="connectivity.html" class="function-btn connect-btn">打开连接工具</a>
+        </div>
+        <p style="margin-top: 15px; color: var(--text-light);">
+            支持功能：蓝牙设备扫描与连接、数据传输、WLAN信息查看、设备配对等
         </p>
     </div>
 
@@ -248,7 +494,9 @@
     <div class="section">
         <h2>🔮百宝箱</h2>
         <p>点击下方按钮打开百宝箱，体验每日人品、自定义下载趣味功能：</p>
-        <button class="function-btn treasure-btn" id="openTreasureBtn">打开百宝箱</button>
+        <div class="btn-container">
+            <button class="function-btn treasure-btn" id="openTreasureBtn">打开百宝箱</button>
+        </div>
     </div>
 
     <div class="section">
@@ -260,7 +508,7 @@
     </div>
 
     <div class="version-info">
-        网页版本：v2.4.2 | 最后更新：2025-11-21
+        网页版本：v2.5.0 | 最后更新：2025-11-21 | 新增：无线连接工具
     </div>
 
     <!-- 百宝箱弹窗 -->
@@ -290,6 +538,14 @@
                 treasureModal.style.display = 'none';
             }
         });
+
+        // 阻止弹窗内的点击事件冒泡
+        document.querySelector('.treasure-modal-content').addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+
+        // 移动端触摸优化
+        document.addEventListener('touchstart', function() {}, {passive: true});
     </script>
 </body>
 </html>
