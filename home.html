@@ -145,7 +145,7 @@
             color: #2980b9;
         }
 
-        /* 功能按钮样式 - 响应式优化 */
+        /* 功能按钮样式 - 左对齐 */
         .function-btn {
             display: inline-block;
             margin: 15px 0;
@@ -349,13 +349,6 @@
             border: none;
         }
 
-        /* 功能按钮容器 - 确保在小屏幕上按钮居中 */
-        .btn-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 10px;
-        }
-
         /* 移动端优化：段落文字行高和间距 */
         p {
             margin-bottom: 15px;
@@ -378,6 +371,18 @@
             ol, ul {
                 padding-left: 15px;
             }
+        }
+
+        /* 按钮容器 - 确保按钮靠左对齐 */
+        .btn-container {
+            display: block;
+            text-align: left;
+            margin-top: 10px;
+        }
+
+        /* 移除之前可能存在的居中样式 */
+        .section > .btn-container {
+            text-align: left;
         }
     </style>
 </head>
