@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>答题系统 - 星河为梦的网页</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --info-color: #9b59b6;
+            --light-bg: #f9f9f9;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --text-light: #666;
+            --border-color: #ddd;
+            --border-radius: 8px;
+            --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "微软雅黑", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            font-size: 16px;
+            min-height: 100vh;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+                font-size: 13px;
+            }
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 0 10px;
+        }
+
+        h1 {
+            color: var(--secondary-color);
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.6rem;
+            }
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            border: 1px solid var(--primary-color);
+        }
+
+        .back-link:hover {
+            text-decoration: none;
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+
+        .mode-selector {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 768px) {
+            .mode-selector {
+                gap: 20px;
+            }
+        }
+
+        .mode-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            transition: var(--transition);
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .mode-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+            border-color: var(--primary-color);
+        }
+
+        .mode-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .mode-card h2 {
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .mode-card p {
+            color: var(--text-light);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .mode-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .mode-btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .create-mode {
+            background-color: #f9f9ff;
+        }
+
+        .create-mode:hover {
+            border-color: var(--info-color);
+        }
+
+        .create-mode .mode-btn {
+            background-color: var(--info-color);
+        }
+
+        .create-mode .mode-btn:hover {
+            background-color: #8e44ad;
+        }
+
+        .join-mode {
+            background-color: #f9fff9;
+        }
+
+        .join-mode:hover {
+            border-color: var(--success-color);
+        }
+
+        .join-mode .mode-btn {
+            background-color: var(--success-color);
+        }
+
+        .join-mode .mode-btn:hover {
+            background-color: #27ae60;
+        }
+
+        .instructions {
+            max-width: 800px;
+            margin: 50px auto 0;
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .instructions h3 {
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .instructions ul {
+            list-style-type: none;
+            margin-left: 0;
+        }
+
+        .instructions li {
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .instructions li:before {
+            content: "•";
+            color: var(--primary-color);
+            position: absolute;
+            left: 0;
+            font-size: 1.2rem;
+        }
+
+        .version-info {
+            text-align: center;
+            margin: 50px 0 20px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        @media (max-width: 768px) {
+            .mode-card {
+                padding: 20px;
+            }
+            
+            .mode-icon {
+                font-size: 2.5rem;
+            }
+            
+            .instructions {
+                margin-top: 30px;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="home.html" class="back-link">← 返回主页</a>
+    
+    <header>
+        <h1>📝 答题系统</h1>
+        <p>选择您想要使用的模式：创建新试卷或加入现有考试</p>
+    </header>
+
+    <div class="mode-selector">
+        <!-- 创建试卷模式 -->
+        <div class="mode-card create-mode" onclick="window.location.href='create-quiz.html'">
+            <div class="mode-icon">📄</div>
+            <h2>创建试卷</h2>
+            <p>创建全新的考试试卷，设置题目、答案和评分规则，生成唯一邀请码</p>
+            <button class="mode-btn">开始创建</button>
+        </div>
+
+        <!-- 加入考试模式 -->
+        <div class="mode-card join-mode" onclick="window.location.href='join-quiz.html'">
+            <div class="mode-icon">✏️</div>
+            <h2>输入邀请码</h2>
+            <p>通过邀请码加入现有考试，完成答题后获取成绩和详细报告</p>
+            <button class="mode-btn">加入考试</button>
+        </div>
+    </div>
+
+    <div class="instructions">
+        <h3>使用说明</h3>
+        <ul>
+            <li><strong>创建试卷</strong>：创建者需要设置题目类型、分值、答案条件等，系统会生成唯一邀请码</li>
+            <li><strong>邀请码</strong>：创建者需将生成的JSON文件保存到GitHub仓库指定位置</li>
+            <li><strong>参加考试</strong>：通过邀请码访问试卷，完成答题后系统会自动评分</li>
+            <li><strong>成绩报告</strong>：答题结束后可生成详细的成绩报告图片</li>
+            <li><strong>文件存储</strong>：试卷数据存储在 <code>https://github.com/Jeremy121215/Jeremy.github.io/blob/main/试卷库/</code> 目录下</li>
+        </ul>
+    </div>
+
+    <div class="version-info">
+        答题系统版本：v1.0.0 | 最后更新：2025-11-21 | 支持试卷创建和答题功能
+    </div>
+</body>
+</html>
