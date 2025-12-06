@@ -392,6 +392,72 @@
         .section > .btn-container {
             text-align: left;
         }
+        
+        /* 新增：答题系统入口样式 */
+        .quiz-system-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .quiz-option-btn {
+            display: inline-block;
+            padding: 14px 25px;
+            color: white;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 500;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            max-width: 300px;
+        }
+        
+        .create-quiz-btn {
+            background-color: #9b59b6;
+        }
+        
+        .create-quiz-btn:hover {
+            background-color: #8e44ad;
+        }
+        
+        .join-quiz-btn {
+            background-color: #3498db;
+        }
+        
+        .join-quiz-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .quiz-instructions {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--warning-color);
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+        
+        .quiz-instructions h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: var(--secondary-color);
+            font-size: 1rem;
+        }
+        
+        .quiz-instructions ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .quiz-instructions li {
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
@@ -415,6 +481,28 @@
             <li>若配置了自定义域名，输入域名也可快速访问</li>
             <li>网页支持 HTTPS 安全访问，无需担心隐私问题</li>
         </ol>
+    </div>
+    
+    <!-- 答题系统入口 -->
+    <div class="section">
+        <h2>📝 答题系统</h2>
+        <p>点击下方按钮进入答题系统，支持创建试卷和答题：</p>
+        
+        <div class="quiz-system-options">
+            <a href="create-quiz.html" class="quiz-option-btn create-quiz-btn">创建试卷</a>
+            <a href="render-quiz.html" class="quiz-option-btn join-quiz-btn">输入邀请码答题</a>
+        </div>
+        
+        <div class="quiz-instructions">
+            <h3>使用说明：</h3>
+            <ul>
+                <li><strong>创建试卷</strong>：创建者设置题目、答案和评分规则，生成唯一试卷ID</li>
+                <li><strong>保存试卷</strong>：将生成的JSON文件保存到GitHub仓库的main目录下</li>
+                <li><strong>参加考试</strong>：通过邀请码（试卷ID）访问答题页面</li>
+                <li><strong>成绩报告</strong>：答题结束后查看详细报告，包括得分、正确率、错题解析等</li>
+                <li><strong>GitHub存储</strong>：试卷数据存储在 <code>https://github.com/Jeremy121215/Jeremy.github.io/blob/main/试卷ID.json</code></li>
+            </ul>
+        </div>
     </div>
     
     <!-- Minecraft资源中心 -->
@@ -503,18 +591,6 @@
         </p>
     </div>
 
-    <!-- 新增：答题功能入口 -->
-    <div class="section">
-        <h2>📝 答题系统</h2>
-        <p>点击下方按钮进入答题系统，支持创建试卷和答题：</p>
-        <div class="btn-container">
-            <a href="quiz-system.html" class="function-btn quiz-btn">进入答题系统</a>
-        </div>
-        <p style="margin-top: 15px; color: var(--text-light);">
-            支持功能：创建试卷、输入邀请码答题、自动评分、生成成绩报告
-        </p>
-    </div>
-
     <!-- 百宝箱 -->
     <div class="section">
         <h2>🔮百宝箱</h2>
@@ -533,7 +609,7 @@
     </div>
 
     <div class="version-info">
-        网页版本：v2.5.0 | 最后更新：2025-11-21 | 新增：无线连接工具
+        网页版本：v2.6.0 | 最后更新：2025-11-22 | 新增：完整答题系统
     </div>
 
     <!-- 百宝箱弹窗 -->
@@ -571,6 +647,39 @@
 
         // 移动端触摸优化
         document.addEventListener('touchstart', function() {}, {passive: true});
+        
+        // 答题系统提示
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查URL参数，如果有试卷ID，提示用户
+            const urlParams = new URLSearchParams(window.location.search);
+            const quizCode = urlParams.get('code');
+            
+            if (quizCode) {
+                // 提示用户可以使用这个试卷ID答题
+                const quizSection = document.querySelector('.section:nth-child(3)'); // 答题系统部分
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'quiz-instructions';
+                alertDiv.innerHTML = `
+                    <h3>📢 检测到试卷邀请码</h3>
+                    <p>检测到您有试卷邀请码：<strong>${quizCode}</strong></p>
+                    <p>您可以：</p>
+                    <ol>
+                        <li>点击"输入邀请码答题"按钮，然后在页面URL后添加 <code>?code=${quizCode}</code></li>
+                        <li>或直接访问：<a href="render-quiz.html?code=${quizCode}" style="color: var(--primary-color); font-weight: bold;">立即开始答题</a></li>
+                    </ol>
+                `;
+                quizSection.insertBefore(alertDiv, quizSection.querySelector('.quiz-system-options'));
+                
+                // 高亮答题系统部分
+                quizSection.style.border = '2px solid var(--primary-color)';
+                quizSection.style.boxShadow = '0 4px 12px rgba(52, 152, 219, 0.3)';
+                
+                // 滚动到答题系统部分
+                setTimeout(() => {
+                    quizSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 500);
+            }
+        });
     </script>
 </body>
 </html>
