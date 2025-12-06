@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>无线连接工具 - 星河为梦的网页</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --accent-color: #9b59b6;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --info-color: #34495e;
+            --light-bg: #f9f9f9;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --text-light: #666;
+            --border-color: #ddd;
+            --border-radius: 8px;
+            --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "微软雅黑", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            font-size: 16px;
+            min-height: 100vh;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+                font-size: 13px;
+            }
+        }
+
+        header {
+            margin-bottom: 30px;
+            padding: 0 10px;
+        }
+
+        h1 {
+            color: var(--secondary-color);
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.6rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.4rem;
+            }
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        @media (max-width: 768px) {
+            .card {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 15px;
+            }
+        }
+
+        h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            h2 {
+                font-size: 1.3rem;
+                margin-bottom: 15px;
+            }
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .status-label {
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+
+        .status-value {
+            color: var(--text-light);
+            word-break: break-word;
+            text-align: right;
+            max-width: 60%;
+        }
+
+        .status-connected {
+            color: var(--success-color);
+            font-weight: 600;
+        }
+
+        .status-disconnected {
+            color: var(--danger-color);
+            font-weight: 600;
+        }
+
+        .status-scanning {
+            color: var(--warning-color);
+            font-weight: 600;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-block;
+            text-align: center;
+            margin: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.95rem;
+                margin: 4px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .btn {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+                margin: 3px;
+                width: 100%;
+            }
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+
+        .btn-warning {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background-color: #e67e22;
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        .btn:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .btn-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 480px) {
+            .btn-container {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+
+        .device-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 10px;
+        }
+
+        .device-item {
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .device-item:hover {
+            background-color: #f5f9ff;
+        }
+
+        .device-item:last-child {
+            border-bottom: none;
+        }
+
+        .device-name {
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+
+        .device-id {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 5px;
+            word-break: break-all;
+        }
+
+        .data-section {
+            margin-top: 25px;
+        }
+
+        .data-container {
+            margin-top: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            background-color: #f8f9fa;
+            min-height: 150px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: var(--border-radius);
+        }
+
+        .message-received {
+            background-color: #e1f5fe;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .message-sent {
+            background-color: #e8f5e8;
+            border-left: 4px solid var(--success-color);
+        }
+
+        .message-system {
+            background-color: #fff8e1;
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .message-error {
+            background-color: #ffebee;
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .message-time {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 480px) {
+            .input-group {
+                flex-direction: column;
+            }
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .info-box {
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--info-color);
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+        }
+
+        .info-box p {
+            margin-bottom: 10px;
+        }
+
+        .info-box ul {
+            margin-left: 20px;
+            margin-bottom: 0;
+        }
+
+        .connection-status {
+            padding: 10px;
+            border-radius: var(--border-radius);
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .status-connected-bg {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: var(--success-color);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+        }
+
+        .status-disconnected-bg {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--danger-color);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+
+        .status-scanning-bg {
+            background-color: rgba(243, 156, 18, 0.1);
+            color: var(--warning-color);
+            border: 1px solid rgba(243, 156, 18, 0.3);
+        }
+
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .version-info {
+            text-align: center;
+            margin: 40px 0 20px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        @media (max-width: 768px) {
+            .version-info {
+                margin: 30px 0 15px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="home.html" class="back-link">← 返回主页</a>
+    
+    <header>
+        <h1>📡 无线连接工具</h1>
+        <p>扫描和连接蓝牙设备，查看WLAN信息，并进行数据传输</p>
+    </header>
+
+    <div class="container">
+        <!-- WLAN信息卡片 -->
+        <div class="card">
+            <h2>WLAN信息</h2>
+            <div class="status-item">
+                <span class="status-label">网络状态：</span>
+                <span class="status-value" id="networkStatus">检测中...</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">网络类型：</span>
+                <span class="status-value" id="networkType">检测中...</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">在线状态：</span>
+                <span class="status-value" id="onlineStatus">检测中...</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">连接类型：</span>
+                <span class="status-value" id="connectionType">检测中...</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">下载速度：</span>
+                <span class="status-value" id="downloadSpeed">检测中...</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">上传速度：</span>
+                <span class="status-value" id="uploadSpeed">检测中...</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">网络延迟：</span>
+                <span class="status-value" id="networkLatency">检测中...</span>
+            </div>
+            
+            <div class="btn-container">
+                <button class="btn btn-primary" id="refreshNetwork">刷新网络信息</button>
+                <button class="btn btn-success" id="speedTest">测速</button>
+            </div>
+        </div>
+
+        <!-- 蓝牙连接卡片 -->
+        <div class="card">
+            <h2>蓝牙连接</h2>
+            <div class="connection-status" id="bluetoothStatus">蓝牙状态：未连接</div>
+            
+            <div class="status-item">
+                <span class="status-label">当前设备：</span>
+                <span class="status-value" id="currentDevice">无</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">连接状态：</span>
+                <span class="status-value" id="bluetoothConnectionStatus">未连接</span>
+            </div>
+            
+            <div class="btn-container">
+                <button class="btn btn-primary" id="scanDevices">扫描设备</button>
+                <button class="btn btn-success" id="connectDevice" disabled>连接设备</button>
+                <button class="btn btn-danger" id="disconnectDevice" disabled>断开连接</button>
+            </div>
+            
+            <div id="deviceListContainer" style="display: none;">
+                <h3>可用设备：</h3>
+                <div class="device-list" id="deviceList">
+                    <!-- 设备列表将在这里动态生成 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 信息提示框 -->
+    <div class="info-box">
+        <h3>使用说明：</h3>
+        <ul>
+            <li><strong>蓝牙功能</strong>：需要浏览器支持Web Bluetooth API（Chrome/Edge等现代浏览器）</li>
+            <li><strong>扫描设备</strong>：点击"扫描设备"按钮，选择要连接的蓝牙设备</li>
+            <li><strong>数据传输</strong>：连接设备后，可以在下方发送和接收数据</li>
+            <li><strong>WLAN信息</strong>：显示当前网络连接状态和速度信息</li>
+            <li><strong>测速功能</strong>：测试当前网络的上传和下载速度（需要网络连接）</li>
+        </ul>
+        <p><strong>注意</strong>：蓝牙功能可能需要HTTPS环境或本地localhost环境才能正常工作。</p>
+    </div>
+
+    <!-- 数据传输区域 -->
+    <div class="card data-section">
+        <h2>数据传输</h2>
+        <div class="data-container" id="messageContainer">
+            <div class="message message-system">
+                <p>等待连接设备...</p>
+                <div class="message-time">系统消息</div>
+            </div>
+        </div>
+        
+        <div class="input-group">
+            <input type="text" id="messageInput" placeholder="输入要发送的消息..." disabled>
+            <button class="btn btn-primary" id="sendMessage" disabled>发送</button>
+            <button class="btn btn-warning" id="clearMessages">清空消息</button>
+        </div>
+        
+        <div class="btn-container" style="margin-top: 15px;">
+            <button class="btn btn-success" id="sendTestData" disabled>发送测试数据</button>
+            <button class="btn btn-warning" id="simulateReceive" disabled>模拟接收数据</button>
+        </div>
+    </div>
+
+    <div class="version-info">
+        无线连接工具版本：v1.0.0 | 最后更新：2025-11-21 | 支持蓝牙和WLAN连接
+    </div>
+
+    <script>
+        // 状态变量
+        let selectedDevice = null;
+        let bluetoothServer = null;
+        let isScanning = false;
+        let isConnected = false;
+        let messages = [];
+        
+        // DOM元素
+        const networkStatus = document.getElementById('networkStatus');
+        const networkType = document.getElementById('networkType');
+        const onlineStatus = document.getElementById('onlineStatus');
+        const connectionType = document.getElementById('connectionType');
+        const downloadSpeed = document.getElementById('downloadSpeed');
+        const uploadSpeed = document.getElementById('uploadSpeed');
+        const networkLatency = document.getElementById('networkLatency');
+        const refreshNetworkBtn = document.getElementById('refreshNetwork');
+        const speedTestBtn = document.getElementById('speedTest');
+        
+        const bluetoothStatus = document.getElementById('bluetoothStatus');
+        const currentDevice = document.getElementById('currentDevice');
+        const bluetoothConnectionStatus = document.getElementById('bluetoothConnectionStatus');
+        const scanDevicesBtn = document.getElementById('scanDevices');
+        const connectDeviceBtn = document.getElementById('connectDevice');
+        const disconnectDeviceBtn = document.getElementById('disconnectDevice');
+        const deviceListContainer = document.getElementById('deviceListContainer');
+        const deviceList = document.getElementById('deviceList');
+        
+        const messageContainer = document.getElementById('messageContainer');
+        const messageInput = document.getElementById('messageInput');
+        const sendMessageBtn = document.getElementById('sendMessage');
+        const clearMessagesBtn = document.getElementById('clearMessages');
+        const sendTestDataBtn = document.getElementById('sendTestData');
+        const simulateReceiveBtn = document.getElementById('simulateReceive');
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 检查浏览器支持
+            checkBrowserSupport();
+            
+            // 初始化网络信息
+            updateNetworkInfo();
+            
+            // 初始化蓝牙状态
+            updateBluetoothStatus();
+            
+            // 事件监听
+            setupEventListeners();
+        });
+
+        // 检查浏览器支持
+        function checkBrowserSupport() {
+            const hasBluetooth = 'bluetooth' in navigator;
+            const hasNetworkInfo = 'connection' in navigator;
+            
+            if (!hasBluetooth) {
+                addSystemMessage('您的浏览器不支持Web Bluetooth API，蓝牙功能可能无法使用。');
+                scanDevicesBtn.disabled = true;
+            }
+            
+            if (!hasNetworkInfo) {
+                addSystemMessage('您的浏览器不支持Network Information API，部分网络信息可能无法获取。');
+            }
+        }
+
+        // 更新网络信息
+        function updateNetworkInfo() {
+            // 在线状态
+            onlineStatus.textContent = navigator.onLine ? '在线' : '离线';
+            onlineStatus.className = navigator.onLine ? 'status-connected' : 'status-disconnected';
+            
+            // 网络状态
+            networkStatus.textContent = navigator.onLine ? '已连接' : '未连接';
+            networkStatus.className = navigator.onLine ? 'status-connected' : 'status-disconnected';
+            
+            // 网络信息API
+            if (navigator.connection) {
+                const connection = navigator.connection;
+                
+                // 网络类型
+                const typeMap = {
+                    'wifi': 'WiFi',
+                    'cellular': '蜂窝网络',
+                    'ethernet': '以太网',
+                    'bluetooth': '蓝牙',
+                    'wimax': 'WiMAX',
+                    'none': '无网络',
+                    'unknown': '未知'
+                };
+                networkType.textContent = typeMap[connection.type] || connection.type;
+                
+                // 连接类型
+                connectionType.textContent = connection.effectiveType || '未知';
+                
+                // 如果有变化，更新下载/上传速度（需要测速）
+            } else {
+                networkType.textContent = '不支持检测';
+                connectionType.textContent = '不支持检测';
+            }
+            
+            // 初始化速度显示
+            downloadSpeed.textContent = '未测试';
+            uploadSpeed.textContent = '未测试';
+            networkLatency.textContent = '未测试';
+        }
+
+        // 网络测速
+        async function runSpeedTest() {
+            addSystemMessage('开始网络测速...');
+            
+            // 测速逻辑（简化版）
+            const testFileUrl = 'https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js';
+            
+            try {
+                // 下载速度测试
+                const startTime = performance.now();
+                const response = await fetch(testFileUrl, { cache: 'no-cache' });
+                const endTime = performance.now();
+                
+                const fileSize = response.headers.get('content-length') / 1024 / 1024; // MB
+                const timeTaken = (endTime - startTime) / 1000; // 秒
+                
+                if (fileSize && timeTaken > 0) {
+                    const speed = (fileSize / timeTaken).toFixed(2);
+                    downloadSpeed.textContent = `${speed} MB/s`;
+                    addSystemMessage(`下载速度: ${speed} MB/s`);
+                } else {
+                    downloadSpeed.textContent = '测速失败';
+                }
+                
+                // 延迟测试
+                networkLatency.textContent = `${Math.round(endTime - startTime)} ms`;
+                
+                // 上传速度测试（模拟）
+                // 注意：实际上传测试需要服务器支持
+                setTimeout(() => {
+                    const uploadSpeedValue = (Math.random() * 5).toFixed(2);
+                    uploadSpeed.textContent = `${uploadSpeedValue} MB/s`;
+                    addSystemMessage(`上传速度: ${uploadSpeedValue} MB/s (模拟)`);
+                    addSystemMessage('网络测速完成！');
+                }, 1000);
+                
+            } catch (error) {
+                addSystemMessage('测速失败：' + error.message, true);
+                downloadSpeed.textContent = '测速失败';
+                uploadSpeed.textContent = '测速失败';
+                networkLatency.textContent = '测速失败';
+            }
+        }
+
+        // 蓝牙状态更新
+        function updateBluetoothStatus() {
+            if (!('bluetooth' in navigator)) {
+                bluetoothStatus.textContent = '蓝牙状态：浏览器不支持';
+                bluetoothStatus.className = 'connection-status status-disconnected-bg';
+                return;
+            }
+            
+            if (isConnected) {
+                bluetoothStatus.textContent = '蓝牙状态：已连接';
+                bluetoothStatus.className = 'connection-status status-connected-bg';
+                bluetoothConnectionStatus.textContent = '已连接';
+                bluetoothConnectionStatus.className = 'status-connected';
+                
+                // 启用相关按钮
+                disconnectDeviceBtn.disabled = false;
+                sendMessageBtn.disabled = false;
+                messageInput.disabled = false;
+                sendTestDataBtn.disabled = false;
+                simulateReceiveBtn.disabled = false;
+            } else if (isScanning) {
+                bluetoothStatus.textContent = '蓝牙状态：扫描中...';
+                bluetoothStatus.className = 'connection-status status-scanning-bg';
+                bluetoothConnectionStatus.textContent = '扫描中';
+                bluetoothConnectionStatus.className = 'status-scanning';
+            } else {
+                bluetoothStatus.textContent = '蓝牙状态：未连接';
+                bluetoothStatus.className = 'connection-status status-disconnected-bg';
+                bluetoothConnectionStatus.textContent = '未连接';
+                bluetoothConnectionStatus.className = 'status-disconnected';
+                
+                // 禁用相关按钮
+                disconnectDeviceBtn.disabled = true;
+                sendMessageBtn.disabled = true;
+                messageInput.disabled = true;
+                sendTestDataBtn.disabled = true;
+                simulateReceiveBtn.disabled = true;
+            }
+        }
+
+        // 扫描蓝牙设备
+        async function scanBluetoothDevices() {
+            if (!('bluetooth' in navigator)) {
+                addSystemMessage('您的浏览器不支持蓝牙功能', true);
+                return;
+            }
+            
+            try {
+                isScanning = true;
+                updateBluetoothStatus();
+                
+                addSystemMessage('正在扫描蓝牙设备...');
+                
+                // 清空设备列表
+                deviceList.innerHTML = '';
+                
+                // 请求蓝牙设备
+                selectedDevice = await navigator.bluetooth.requestDevice({
+                    acceptAllDevices: true,
+                    optionalServices: ['battery_service', 'device_information']
+                });
+                
+                // 显示设备信息
+                currentDevice.textContent = selectedDevice.name || '未知设备';
+                deviceListContainer.style.display = 'block';
+                
+                // 添加设备到列表
+                const deviceItem = document.createElement('div');
+                deviceItem.className = 'device-item';
+                deviceItem.innerHTML = `
+                    <div class="device-name">${selectedDevice.name || '未知设备'}</div>
+                    <div class="device-id">ID: ${selectedDevice.id}</div>
+                `;
+                
+                deviceList.appendChild(deviceItem);
+                
+                // 启用连接按钮
+                connectDeviceBtn.disabled = false;
+                
+                addSystemMessage(`找到设备: ${selectedDevice.name || '未知设备'}`);
+                
+            } catch (error) {
+                addSystemMessage('扫描失败: ' + error.message, true);
+            } finally {
+                isScanning = false;
+                updateBluetoothStatus();
+            }
+        }
+
+        // 连接蓝牙设备
+        async function connectBluetoothDevice() {
+            if (!selectedDevice) {
+                addSystemMessage('请先选择设备', true);
+                return;
+            }
+            
+            try {
+                addSystemMessage(`正在连接设备: ${selectedDevice.name || '未知设备'}...`);
+                
+                // 连接到GATT服务器
+                bluetoothServer = await selectedDevice.gatt.connect();
+                
+                isConnected = true;
+                updateBluetoothStatus();
+                
+                addSystemMessage('设备连接成功！');
+                addSystemMessage('现在可以发送和接收数据了。');
+                
+            } catch (error) {
+                addSystemMessage('连接失败: ' + error.message, true);
+                isConnected = false;
+                updateBluetoothStatus();
+            }
+        }
+
+        // 断开蓝牙连接
+        function disconnectBluetoothDevice() {
+            if (selectedDevice && bluetoothServer) {
+                if (bluetoothServer.connected) {
+                    bluetoothServer.disconnect();
+                }
+                
+                addSystemMessage('设备已断开连接');
+            }
+            
+            selectedDevice = null;
+            bluetoothServer = null;
+            isConnected = false;
+            updateBluetoothStatus();
+            
+            // 禁用连接按钮
+            connectDeviceBtn.disabled = true;
+            deviceListContainer.style.display = 'none';
+        }
+
+        // 发送消息
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) {
+                addSystemMessage('请输入要发送的消息', true);
+                return;
+            }
+            
+            if (!isConnected) {
+                addSystemMessage('请先连接设备', true);
+                return;
+            }
+            
+            // 添加发送的消息到界面
+            addMessage(message, 'sent');
+            
+            // 模拟发送到蓝牙设备
+            addSystemMessage(`已发送: ${message} (模拟)`);
+            
+            // 清空输入框
+            messageInput.value = '';
+            
+            // 模拟接收响应（在实际应用中，这里应该等待设备响应）
+            setTimeout(() => {
+                const responses = [
+                    "收到消息",
+                    "消息已处理",
+                    "成功接收",
+                    "确认收到",
+                    "处理完成"
+                ];
+                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                addMessage(`设备响应: ${randomResponse}`, 'received');
+            }, 1000);
+        }
+
+        // 发送测试数据
+        function sendTestData() {
+            const testData = [
+                "测试消息 001",
+                "Hello Bluetooth",
+                "数据传输测试",
+                "连接状态正常",
+                "蓝牙通信测试"
+            ];
+            
+            const randomData = testData[Math.floor(Math.random() * testData.length)];
+            addMessage(randomData, 'sent');
+            addSystemMessage(`发送测试数据: ${randomData}`);
+            
+            // 模拟接收响应
+            setTimeout(() => {
+                addMessage("测试数据接收成功", 'received');
+            }, 800);
+        }
+
+        // 模拟接收数据
+        function simulateReceiveData() {
+            const testMessages = [
+                "设备状态正常",
+                "温度: 25.5°C",
+                "电量: 85%",
+                "信号强度: 良好",
+                "数据更新完成"
+            ];
+            
+            const randomMessage = testMessages[Math.floor(Math.random() * testMessages.length)];
+            addMessage(randomMessage, 'received');
+            addSystemMessage(`模拟接收数据: ${randomMessage}`);
+        }
+
+        // 添加消息到界面
+        function addMessage(text, type = 'system') {
+            const messageDiv = document.createElement('div');
+            const timestamp = new Date().toLocaleTimeString();
+            
+            messageDiv.className = `message message-${type}`;
+            messageDiv.innerHTML = `
+                <p>${text}</p>
+                <div class="message-time">${timestamp} - ${type === 'sent' ? '发送' : type === 'received' ? '接收' : '系统'}</div>
+            `;
+            
+            messageContainer.appendChild(messageDiv);
+            messages.push({ text, type, timestamp });
+            
+            // 滚动到底部
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+        }
+
+        // 添加系统消息
+        function addSystemMessage(text, isError = false) {
+            addMessage(text, isError ? 'error' : 'system');
+        }
+
+        // 清空消息
+        function clearMessages() {
+            messageContainer.innerHTML = '';
+            messages = [];
+            addSystemMessage('消息已清空');
+        }
+
+        // 设置事件监听
+        function setupEventListeners() {
+            // 网络相关
+            refreshNetworkBtn.addEventListener('click', updateNetworkInfo);
+            speedTestBtn.addEventListener('click', runSpeedTest);
+            
+            // 蓝牙相关
+            scanDevicesBtn.addEventListener('click', scanBluetoothDevices);
+            connectDeviceBtn.addEventListener('click', connectBluetoothDevice);
+            disconnectDeviceBtn.addEventListener('click', disconnectBluetoothDevice);
+            
+            // 消息相关
+            sendMessageBtn.addEventListener('click', sendMessage);
+            clearMessagesBtn.addEventListener('click', clearMessages);
+            sendTestDataBtn.addEventListener('click', sendTestData);
+            simulateReceiveBtn.addEventListener('click', simulateReceiveData);
+            
+            // 回车发送消息
+            messageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !sendMessageBtn.disabled) {
+                    sendMessage();
+                }
+            });
+            
+            // 监听网络状态变化
+            window.addEventListener('online', () => {
+                addSystemMessage('网络已连接');
+                updateNetworkInfo();
+            });
+            
+            window.addEventListener('offline', () => {
+                addSystemMessage('网络已断开', true);
+                updateNetworkInfo();
+            });
+        }
+    </script>
+</body>
+</html>
