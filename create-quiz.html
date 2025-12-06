@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>创建试卷 - 答题系统</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --info-color: #9b59b6;
+            --light-bg: #f9f9f9;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --text-light: #666;
+            --border-color: #ddd;
+            --border-radius: 8px;
+            --box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "微软雅黑", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            font-size: 16px;
+            min-height: 100vh;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+                font-size: 14px;
+            }
+        }
+
+        header {
+            margin-bottom: 30px;
+            padding: 0 10px;
+            position: relative;
+        }
+
+        h1 {
+            color: var(--secondary-color);
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .invite-code-display {
+            position: absolute;
+            top: 0;
+            right: 10px;
+            background-color: var(--info-color);
+            color: white;
+            padding: 8px 15px;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .invite-code-display {
+                position: static;
+                display: inline-block;
+                margin-top: 10px;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            border: 1px solid var(--primary-color);
+        }
+
+        .back-link:hover {
+            text-decoration: none;
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .card {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+        }
+
+        h2 {
+            color: var(--secondary-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--secondary-color);
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-block;
+            text-align: center;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+
+        .btn-warning {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background-color: #e67e22;
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        .btn-info {
+            background-color: var(--info-color);
+            color: white;
+        }
+
+        .btn-info:hover {
+            background-color: #8e44ad;
+        }
+
+        .btn:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .question-item {
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .question-type {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .question-points {
+            font-weight: 500;
+            color: var(--warning-color);
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .option-label {
+            display: inline-block;
+            width: 30px;
+            font-weight: 500;
+            color: var(--secondary-color);
+        }
+
+        .option-input {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            color: var(--danger-color);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 5px;
+        }
+
+        .condition-item {
+            background-color: #f0f8ff;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid #d1e7ff;
+        }
+
+        .condition-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .condition-row select,
+        .condition-row input {
+            flex: 1;
+        }
+
+        .json-output {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        .code-container {
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+        }
+
+        .instructions {
+            background-color: #fff8e1;
+            border-left: 4px solid var(--warning-color);
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+        }
+
+        .instructions ul {
+            margin-left: 20px;
+            margin-bottom: 0;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+        }
+
+        .timer-section {
+            background-color: #e8f5e9;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .timer-label {
+            font-weight: 500;
+            color: var(--secondary-color);
+        }
+
+        .timer-input {
+            width: 100px;
+            padding: 8px;
+        }
+
+        .total-points {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--success-color);
+            margin-left: auto;
+        }
+
+        @media (max-width: 768px) {
+            .condition-row {
+                flex-direction: column;
+            }
+            
+            .question-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .timer-section {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .total-points {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="quiz-system.html" class="back-link">← 返回答题系统</a>
+    
+    <header>
+        <h1>创建试卷</h1>
+        <div class="invite-code-display" id="inviteCodeDisplay">邀请码：未设置</div>
+        <p>创建新的考试试卷，设置题目和评分规则</p>
+    </header>
+
+    <!-- 邀请码设置 -->
+    <div class="card">
+        <h2>1. 设置邀请码</h2>
+        <div class="input-group">
+            <label for="inviteCode">邀请码（至少一位，数字、下划线和英文）：</label>
+            <input type="text" id="inviteCode" placeholder="例如：quiz_2025" pattern="^[a-zA-Z0-9_]+$" title="只能包含字母、数字和下划线">
+            <button class="btn btn-primary" onclick="setInviteCode()" style="margin-top: 10px;">设置邀请码</button>
+        </div>
+    </div>
+
+    <!-- 试卷信息 -->
+    <div class="card">
+        <h2>2. 试卷基本信息</h2>
+        <div class="input-group">
+            <label for="quizTitle">试卷标题：</label>
+            <input type="text" id="quizTitle" placeholder="例如：数学期中考试">
+        </div>
+        <div class="input-group">
+            <label for="quizDescription">试卷描述：</label>
+            <textarea id="quizDescription" placeholder="描述试卷内容和要求"></textarea>
+        </div>
+        <div class="timer-section">
+            <span class="timer-label">考试时间（分钟）：</span>
+            <input type="number" id="quizTime" class="timer-input" min="1" max="300" value="60">
+            <span class="total-points" id="totalPointsDisplay">总分：0分</span>
+        </div>
+    </div>
+
+    <!-- 题目列表 -->
+    <div class="card">
+        <h2>3. 题目列表</h2>
+        <div id="questionsContainer">
+            <!-- 题目会动态添加到这里 -->
+        </div>
+        <button class="btn btn-success" onclick="addQuestion()">+ 添加题目</button>
+    </div>
+
+    <!-- 操作按钮 -->
+    <div class="card">
+        <h2>4. 完成创建</h2>
+        <button class="btn btn-primary" onclick="generateJSON()" id="generateBtn" disabled>生成JSON代码</button>
+        <button class="btn btn-info" onclick="saveToFile()" id="saveBtn" disabled>保存为文件</button>
+        <button class="btn btn-warning" onclick="resetQuiz()">重置所有内容</button>
+    </div>
+
+    <!-- JSON输出 -->
+    <div class="card" id="jsonOutputContainer" style="display: none;">
+        <h2>5. JSON代码</h2>
+        <div class="instructions">
+            <p><strong>重要：</strong>请将以下JSON代码保存为文件，并上传到GitHub仓库的以下位置：</p>
+            <p><code>https://github.com/Jeremy121215/Jeremy.github.io/blob/main/试卷库/邀请码.json</code></p>
+            <p>请将"邀请码"替换为您设置的邀请码。</p>
+        </div>
+        <div class="code-container">
+            <pre class="json-output" id="jsonOutput"></pre>
+            <button class="btn btn-primary copy-btn" onclick="copyJSON()">复制代码</button>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let inviteCode = '';
+        let questions = [];
+        let nextQuestionId = 1;
+
+        // 设置邀请码
+        function setInviteCode() {
+            const codeInput = document.getElementById('inviteCode');
+            const code = codeInput.value.trim();
+            
+            if (!code) {
+                alert('请输入邀请码');
+                return;
+            }
+            
+            // 验证邀请码格式
+            const pattern = /^[a-zA-Z0-9_]+$/;
+            if (!pattern.test(code)) {
+                alert('邀请码只能包含字母、数字和下划线');
+                return;
+            }
+            
+            inviteCode = code;
+            document.getElementById('inviteCodeDisplay').textContent = `邀请码：${inviteCode}`;
+            document.getElementById('generateBtn').disabled = false;
+            document.getElementById('saveBtn').disabled = false;
+            
+            alert('邀请码设置成功！');
+        }
+
+        // 添加新题目
+        function addQuestion() {
+            const questionId = nextQuestionId++;
+            questions.push({
+                id: questionId,
+                type: 'choice',
+                content: '',
+                points: 5,
+                options: [''],
+                correctAnswer: '',
+                conditions: []
+            });
+            
+            renderQuestions();
+            updateTotalPoints();
+        }
+
+        // 渲染所有题目
+        function renderQuestions() {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+            
+            questions.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-item';
+                questionDiv.innerHTML = `
+                    <div class="question-header">
+                        <h3>题目 ${index + 1}</h3>
+                        <div>
+                            <span class="question-type" id="typeLabel${question.id}">选择题</span>
+                            <span class="question-points" id="pointsDisplay${question.id}">${question.points}分</span>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>题目类型：</label>
+                        <select onchange="changeQuestionType(${question.id}, this.value)">
+                            <option value="choice">选择题</option>
+                            <option value="fill">填空题</option>
+                            <option value="answer">解答题</option>
+                            <option value="text">文本题</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>题干：</label>
+                        <textarea id="content${question.id}" placeholder="请输入题目内容" oninput="updateQuestion(${question.id}, 'content', this.value)">${question.content}</textarea>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>分值：</label>
+                        <input type="number" id="points${question.id}" value="${question.points}" min="1" max="100" oninput="updateQuestion(${question.id}, 'points', this.value)">
+                    </div>
+                    
+                    <div id="optionsContainer${question.id}" style="margin-bottom: 15px;">
+                        <!-- 选项会动态生成 -->
+                    </div>
+                    
+                    <div id="answerContainer${question.id}">
+                        <!-- 答案设置会动态生成 -->
+                    </div>
+                    
+                    <div style="margin-top: 15px; display: flex; gap: 10px;">
+                        <button class="btn btn-danger" onclick="removeQuestion(${question.id})">删除题目</button>
+                        ${question.type === 'fill' || question.type === 'answer' ? 
+                            `<button class="btn btn-warning" onclick="addCondition(${question.id})">添加答案条件</button>` : 
+                            ''
+                        }
+                    </div>
+                `;
+                
+                container.appendChild(questionDiv);
+                
+                // 设置题目类型
+                const typeSelect = questionDiv.querySelector('select');
+                typeSelect.value = question.type;
+                changeQuestionType(question.id, question.type);
+                
+                // 渲染选项
+                renderOptions(question.id);
+                
+                // 渲染答案设置
+                renderAnswerSettings(question.id);
+            });
+        }
+
+        // 更改题目类型
+        function changeQuestionType(questionId, type) {
+            const question = questions.find(q => q.id === questionId);
+            question.type = type;
+            
+            // 更新类型标签
+            const typeLabels = {
+                'choice': '选择题',
+                'fill': '填空题',
+                'answer': '解答题',
+                'text': '文本题'
+            };
+            document.getElementById(`typeLabel${questionId}`).textContent = typeLabels[type];
+            
+            // 重新渲染选项和答案设置
+            renderOptions(questionId);
+            renderAnswerSettings(questionId);
+        }
+
+        // 渲染选项
+        function renderOptions(questionId) {
+            const question = questions.find(q => q.id === questionId);
+            const container = document.getElementById(`optionsContainer${questionId}`);
+            
+            if (question.type === 'choice') {
+                container.innerHTML = '<label>选项：</label>';
+                
+                question.options.forEach((option, index) => {
+                    const optionDiv = document.createElement('div');
+                    optionDiv.className = 'option-item';
+                    optionDiv.innerHTML = `
+                        <span class="option-label">${String.fromCharCode(65 + index)}.</span>
+                        <input type="text" class="option-input" value="${option}" oninput="updateOption(${questionId}, ${index}, this.value)" placeholder="请输入选项内容">
+                        <button class="remove-btn" onclick="removeOption(${questionId}, ${index})" ${question.options.length <= 1 ? 'disabled' : ''}>×</button>
+                    `;
+                    container.appendChild(optionDiv);
+                });
+                
+                // 添加选项按钮
+                const addBtn = document.createElement('button');
+                addBtn.className = 'btn btn-primary';
+                addBtn.textContent = '+ 添加选项';
+                addBtn.onclick = () => addOption(questionId);
+                container.appendChild(addBtn);
+                
+                container.style.display = 'block';
+            } else {
+                container.style.display = 'none';
+            }
+        }
+
+        // 添加选项
+        function addOption(questionId) {
+            const question = questions.find(q => q.id === questionId);
+            question.options.push('');
+            renderOptions(questionId);
+        }
+
+        // 删除选项
+        function removeOption(questionId, index) {
+            const question = questions.find(q => q.id === questionId);
+            if (question.options.length > 1) {
+                question.options.splice(index, 1);
+                renderOptions(questionId);
+            }
+        }
+
+        // 更新选项
+        function updateOption(questionId, index, value) {
+            const question = questions.find(q => q.id === questionId);
+            question.options[index] = value;
+        }
+
+        // 渲染答案设置
+        function renderAnswerSettings(questionId) {
+            const question = questions.find(q => q.id === questionId);
+            const container = document.getElementById(`answerContainer${questionId}`);
+            
+            if (question.type === 'choice') {
+                container.innerHTML = `
+                    <div class="input-group">
+                        <label>正确答案（输入字母，如A、B、C）：</label>
+                        <input type="text" id="correctAnswer${questionId}" value="${question.correctAnswer}" oninput="updateQuestion(${questionId}, 'correctAnswer', this.value.toUpperCase())" placeholder="例如：A">
+                    </div>
+                `;
+            } else if (question.type === 'fill' || question.type === 'answer') {
+                container.innerHTML = `
+                    <div class="input-group">
+                        <label>答案条件设置：</label>
+                        <div id="conditionsContainer${questionId}">
+                            <!-- 条件会动态生成 -->
+                        </div>
+                    </div>
+                `;
+                
+                renderConditions(questionId);
+            } else {
+                container.innerHTML = '<p class="text-light">文本题不需要设置答案</p>';
+            }
+        }
+
+        // 渲染条件
+        function renderConditions(questionId) {
+            const question = questions.find(q => q.id === questionId);
+            const container = document.getElementById(`conditionsContainer${questionId}`);
+            container.innerHTML = '';
+            
+            if (question.conditions.length === 0) {
+                container.innerHTML = '<p class="text-light">暂无答案条件，点击"添加答案条件"按钮添加</p>';
+            } else {
+                question.conditions.forEach((condition, index) => {
+                    const conditionDiv = document.createElement('div');
+                    conditionDiv.className = 'condition-item';
+                    conditionDiv.innerHTML = `
+                        <div class="condition-row">
+                            <select onchange="updateCondition(${questionId}, ${index}, 'type', this.value)">
+                                <option value="contains" ${condition.type === 'contains' ? 'selected' : ''}>包含内容</option>
+                                <option value="exact" ${condition.type === 'exact' ? 'selected' : ''}>完全匹配</option>
+                                <option value="regex" ${condition.type === 'regex' ? 'selected' : ''}>正则表达式</option>
+                            </select>
+                            <input type="text" value="${condition.value}" oninput="updateCondition(${questionId}, ${index}, 'value', this.value)" placeholder="条件内容">
+                        </div>
+                        <div class="condition-row">
+                            <select onchange="updateCondition(${questionId}, ${index}, 'relation', this.value)">
+                                <option value="must" ${condition.relation === 'must' ? 'selected' : ''}>必须达成</option>
+                                <option value="optional" ${condition.relation === 'optional' ? 'selected' : ''}>选择性达成</option>
+                            </select>
+                            <input type="number" value="${condition.points}" min="0" max="${question.points}" oninput="updateCondition(${questionId}, ${index}, 'points', this.value)" placeholder="分值">
+                        </div>
+                        <button class="btn btn-danger" onclick="removeCondition(${questionId}, ${index})" style="margin-top: 10px;">删除条件</button>
+                    `;
+                    container.appendChild(conditionDiv);
+                });
+            }
+        }
+
+        // 添加条件
+        function addCondition(questionId) {
+            const question = questions.find(q => q.id === questionId);
+            question.conditions.push({
+                type: 'contains',
+                value: '',
+                relation: 'must',
+                points: Math.floor(question.points / 2)
+            });
+            renderConditions(questionId);
+        }
+
+        // 更新条件
+        function updateCondition(questionId, index, field, value) {
+            const question = questions.find(q => q.id === questionId);
+            question.conditions[index][field] = value;
+        }
+
+        // 删除条件
+        function removeCondition(questionId, index) {
+            const question = questions.find(q => q.id === questionId);
+            question.conditions.splice(index, 1);
+            renderConditions(questionId);
+        }
+
+        // 更新题目
+        function updateQuestion(questionId, field, value) {
+            const question = questions.find(q => q.id === questionId);
+            
+            if (field === 'points') {
+                question[field] = parseInt(value) || 0;
+                document.getElementById(`pointsDisplay${questionId}`).textContent = `${question.points}分`;
+                updateTotalPoints();
+            } else {
+                question[field] = value;
+            }
+        }
+
+        // 删除题目
+        function removeQuestion(questionId) {
+            if (confirm('确定要删除这个题目吗？')) {
+                questions = questions.filter(q => q.id !== questionId);
+                renderQuestions();
+                updateTotalPoints();
+            }
+        }
+
+        // 更新总分
+        function updateTotalPoints() {
+            const totalPoints = questions.reduce((sum, q) => sum + (parseInt(q.points) || 0), 0);
+            document.getElementById('totalPointsDisplay').textContent = `总分：${totalPoints}分`;
+        }
+
+        // 生成JSON代码
+        function generateJSON() {
+            if (!inviteCode) {
+                alert('请先设置邀请码');
+                return;
+            }
+            
+            if (questions.length === 0) {
+                alert('请至少添加一个题目');
+                return;
+            }
+            
+            const quizData = {
+                inviteCode: inviteCode,
+                title: document.getElementById('quizTitle').value || '未命名试卷',
+                description: document.getElementById('quizDescription').value || '',
+                timeLimit: parseInt(document.getElementById('quizTime').value) || 60,
+                totalPoints: questions.reduce((sum, q) => sum + (parseInt(q.points) || 0), 0),
+                questions: questions.map(q => ({
+                    type: q.type,
+                    content: q.content,
+                    points: parseInt(q.points) || 0,
+                    options: q.type === 'choice' ? q.options : undefined,
+                    correctAnswer: q.type === 'choice' ? q.correctAnswer : undefined,
+                    conditions: q.type === 'fill' || q.type === 'answer' ? q.conditions : undefined
+                })),
+                createdAt: new Date().toISOString()
+            };
+            
+            const jsonOutput = JSON.stringify(quizData, null, 2);
+            document.getElementById('jsonOutput').textContent = jsonOutput;
+            document.getElementById('jsonOutputContainer').style.display = 'block';
+            
+            // 滚动到JSON输出区域
+            document.getElementById('jsonOutputContainer').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 复制JSON代码
+        function copyJSON() {
+            const jsonText = document.getElementById('jsonOutput').textContent;
+            navigator.clipboard.writeText(jsonText).then(() => {
+                alert('JSON代码已复制到剪贴板！');
+            }).catch(err => {
+                console.error('复制失败:', err);
+                alert('复制失败，请手动复制代码');
+            });
+        }
+
+        // 保存为文件
+        function saveToFile() {
+            if (!inviteCode) {
+                alert('请先设置邀请码');
+                return;
+            }
+            
+            const quizData = {
+                inviteCode: inviteCode,
+                title: document.getElementById('quizTitle').value || '未命名试卷',
+                description: document.getElementById('quizDescription').value || '',
+                timeLimit: parseInt(document.getElementById('quizTime').value) || 60,
+                totalPoints: questions.reduce((sum, q) => sum + (parseInt(q.points) || 0), 0),
+                questions: questions.map(q => ({
+                    type: q.type,
+                    content: q.content,
+                    points: parseInt(q.points) || 0,
+                    options: q.type === 'choice' ? q.options : undefined,
+                    correctAnswer: q.type === 'choice' ? q.correctAnswer : undefined,
+                    conditions: q.type === 'fill' || q.type === 'answer' ? q.conditions : undefined
+                })),
+                createdAt: new Date().toISOString()
+            };
+            
+            const jsonData = JSON.stringify(quizData, null, 2);
+            const blob = new Blob([jsonData], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${inviteCode}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            URL.revokeObjectURL(url);
+            
+            alert(`文件已保存为 ${inviteCode}.json，请上传到GitHub仓库的指定位置`);
+        }
+
+        // 重置所有内容
+        function resetQuiz() {
+            if (confirm('确定要重置所有内容吗？这将清除所有已设置的题目和邀请码。')) {
+                inviteCode = '';
+                questions = [];
+                nextQuestionId = 1;
+                
+                document.getElementById('inviteCode').value = '';
+                document.getElementById('inviteCodeDisplay').textContent = '邀请码：未设置';
+                document.getElementById('quizTitle').value = '';
+                document.getElementById('quizDescription').value = '';
+                document.getElementById('quizTime').value = '60';
+                document.getElementById('totalPointsDisplay').textContent = '总分：0分';
+                document.getElementById('jsonOutputContainer').style.display = 'none';
+                document.getElementById('generateBtn').disabled = true;
+                document.getElementById('saveBtn').disabled = true;
+                
+                renderQuestions();
+            }
+        }
+
+        // 初始化时添加一个示例题目
+        window.addEventListener('DOMContentLoaded', () => {
+            addQuestion();
+        });
+    </script>
+</body>
+</html>
