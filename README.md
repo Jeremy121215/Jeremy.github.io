@@ -3,7 +3,7 @@
 
 ## 关于网页
 - 搭建工具：GitHub Pages
-- 网页地址：[https://jeremy121215.github.io]
+- 网页地址：[https://jeremy121215.github.io/Jeremy.github.io/]
 
 ## 如何访问
 1. 直接点击上方网页地址即可打开
